@@ -2,70 +2,72 @@
 #include "EntityManager.h"
 #include "EntityComponentMap.h"
 
-class BaseComponentArray
-{
-public:
-	virtual ~BaseComponentArray() = default;
-	virtual void EntityDestroyed(Entity entity) = 0;
-};
-
-template <typename ComponentType>
-class ComponentArray : public BaseComponentArray
-{
-private:
-	std::array<ComponentType, MAX_ENTITIES> m_ComponentArray;
-
-	EntityComponentMap m_ECMap;
-
-	size_t m_Size = 0;
-
-public:
-	ComponentType& AddComponent(Entity entity, const ComponentType& component)
+namespace Basic {
+	class BaseComponentArray
 	{
-		// copying component to array
-		m_ComponentArray[m_Size] = component;
+	public:
+		virtual ~BaseComponentArray() = default;
+		virtual void EntityDestroyed(Entity entity) = 0;
+	};
 
-		// updating entity -> arrIndex and arrIndex -> entity system
-		m_ECMap.AddEntity(entity);
-
-		// returning component reference and increasing m_Size by one
-		return m_ComponentArray[m_Size++];
-	}
-
-	void RemoveComponent(Entity entity)
+	template <typename ComponentType>
+	class ComponentArray : public BaseComponentArray
 	{
-		if (m_Size > 1)
+	private:
+		std::array<ComponentType, MAX_ENTITIES> m_ComponentArray;
+
+		EntityComponentMap m_ECMap;
+
+		size_t m_Size = 0;
+
+	public:
+		ComponentType& AddComponent(Entity entity, const ComponentType& component)
+		{
+			// copying component to array
+			m_ComponentArray[m_Size] = component;
+
+			// updating entity -> arrIndex and arrIndex -> entity system
+			m_ECMap.AddEntity(entity);
+
+			// returning component reference and increasing m_Size by one
+			return m_ComponentArray[m_Size++];
+		}
+
+		void RemoveComponent(Entity entity)
+		{
+			if (m_Size > 1)
+			{
+				size_t arrIndex = m_ECMap.ToArrIndex(entity);
+				m_ComponentArray[arrIndex] = std::move(m_ComponentArray[m_Size]);
+			}
+			m_ECMap.RemoveEntity(entity);
+
+			m_Size--;
+		}
+
+		void EntityDestroyed(Entity entity) override
+		{
+			if (m_ECMap.IsContain(entity))
+			{
+				RemoveComponent(entity);
+			}
+		}
+
+		ComponentType* Data()
+		{
+			return m_ComponentArray.data();
+		}
+
+		ComponentType& GetComponent(Entity entity)
 		{
 			size_t arrIndex = m_ECMap.ToArrIndex(entity);
-			m_ComponentArray[arrIndex] = std::move(m_ComponentArray[m_Size]);
+			return m_ComponentArray[arrIndex];
 		}
-		m_ECMap.RemoveEntity(entity);
 
-		m_Size--;
-	}
-
-	void EntityDestroyed(Entity entity) override
-	{
-		if (m_ECMap.IsContain(entity))
+		size_t Size()
 		{
-			RemoveComponent(entity);
+			return m_Size;
 		}
-	}
+	};
 
-	ComponentType* Data()
-	{
-		return m_ComponentArray.data();
-	}
-
-	ComponentType& GetComponent(Entity entity)
-	{
-		size_t arrIndex = m_ECMap.ToArrIndex(entity);
-		return m_ComponentArray[arrIndex];
-	}
-
-	size_t Size()
-	{
-		return m_Size;
-	}
-};
-
+} // end of basic

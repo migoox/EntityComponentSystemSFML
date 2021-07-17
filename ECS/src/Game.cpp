@@ -1,10 +1,10 @@
 #include "Game.h"
 
-Framework::Scene* Framework::Game::s_CurrentScene;
-sf::Time Framework::Game::s_DeltaTime;
-Framework::Game Framework::Game::s_Instance;
+Basic::Scene* Basic::Game::s_CurrentScene;
+sf::Time Basic::Game::s_DeltaTime;
+Basic::Game Basic::Game::s_Instance;
 
-void Framework::Game::InitWindow()
+void Basic::Game::InitWindow()
 {
 	std::ifstream file;
 	file.open("Config/window.ini");
@@ -35,14 +35,15 @@ void Framework::Game::InitWindow()
 
 	// create default window in case there is no config file
 	m_Window.create(sf::VideoMode(800, 600), "Game");
+	m_Window.setFramerateLimit(60);
 }
 
-void Framework::Game::IReloadWindow()
+void Basic::Game::IReloadWindow()
 {
 
 }
 
-void Framework::Game::UpdateWindowEvents()
+void Basic::Game::UpdateWindowEvents()
 {
 	// if close button is clicked, close app
 	if (m_Event.type == sf::Event::Closed)
@@ -51,25 +52,25 @@ void Framework::Game::UpdateWindowEvents()
 	s_CurrentScene->UpdateEvents(m_Event);
 }
 
-void Framework::Game::Update()
+void Basic::Game::Update()
 {
 	// update current scene
 	UpdateStateMachine();
 }
 
-void Framework::Game::Render()
+void Basic::Game::Render()
 {
 	// render current scene
 	s_CurrentScene->Render(m_Window);
 }
 
-Framework::Game::Game()
+Basic::Game::Game()
 {
 	// init window
 	InitWindow();
 }
 
-void Framework::Game::ISetScene(Scene* scene)
+void Basic::Game::ISetScene(Scene* scene)
 {
 	// setting current scene
 	s_CurrentScene = scene;
@@ -78,7 +79,7 @@ void Framework::Game::ISetScene(Scene* scene)
 	LaunchState(s_CurrentScene);
 }
 
-void Framework::Game::IRun()
+void Basic::Game::IRun()
 {
 	// start counting
 	m_Timer.restart();
@@ -113,22 +114,27 @@ void Framework::Game::IRun()
 	}
 }
 
-void Framework::Game::ReloadWindow()
+void Basic::Game::ReloadWindow()
 {
 	s_Instance.IReloadWindow();
 }
 
-void Framework::Game::SetScene(Scene* scene)
+void Basic::Game::SetScene(Scene* scene)
 {
 	s_Instance.ISetScene(scene);
 }
 
-void Framework::Game::Run()
+void Basic::Game::Run()
 {
 	s_Instance.IRun();
 }
 
-const sf::Time& Framework::Game::DeltaTime()
+const sf::Time& Basic::Game::DeltaTime()
 {
 	return s_DeltaTime;
+}
+
+sf::Vector2u Basic::Game::WindowSize()
+{
+	return s_Instance.m_Window.getSize();
 }

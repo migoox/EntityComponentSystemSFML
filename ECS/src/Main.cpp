@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "Scenes/GameScene.h"
 #include <iostream>
-
+/*
 struct AllocationMetrics
 {
 	uint32_t TotalAllocated = 0;
@@ -31,13 +31,15 @@ void operator delete(void* memory, size_t size)
 
 	free(memory);
 }
+*/
+
 int main()
 {
 	// set start scene
-	Framework::Game::SetScene(new GameScene());
+	Basic::Game::SetScene(new GameScene());
 
 	// run game
-	Framework::Game::Run();
+	Basic::Game::Run();
 	
 	return 0;
 }

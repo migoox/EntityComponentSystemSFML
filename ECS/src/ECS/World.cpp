@@ -1,8 +1,8 @@
 #include "World.h"
-#include "EntityHandle.h"
+#include "GameObject.h"
 
 
-void World::Init()
+void Basic::World::Init()
 {
 	for (auto& system : m_Systems)
 	{
@@ -10,7 +10,7 @@ void World::Init()
 	}
 }
 
-void World::Update(const sf::Time& deltaTime)
+void Basic::World::Update(const sf::Time& deltaTime)
 {
 	for (auto& system : m_Systems)
 	{
@@ -18,7 +18,7 @@ void World::Update(const sf::Time& deltaTime)
 	}
 }
 
-void World::Render(sf::RenderTarget& target)
+void Basic::World::Render(sf::RenderTarget& target)
 {
 	for (auto& system : m_Systems)
 	{
@@ -26,24 +26,31 @@ void World::Render(sf::RenderTarget& target)
 	}
 }
 
-void World::AddSystem(std::shared_ptr<System> system)
+void Basic::World::AddSystem(std::shared_ptr<System> system)
 {
 	system->RegisterWorld(this);
 
 	m_Systems.push_back(system);
 }
 
-EntityHandle World::CreateEntity()
+Basic::GameObject Basic::World::CreateEntity()
 {
 	return { EntityManager::CreateEntity(), this };
 }
 
-void World::DestroyEntity(Entity entity)
+void Basic::World::DestroyEntity(Entity entity)
 {
 	for (auto& system : m_Systems)
 	{
 		system->TryToUnregisterEntity(entity);
 	}
+	
+	m_ComponentManager->EntityDestroyed(entity);
 
 	EntityManager::DestroyEntity(entity);
+}
+
+Basic::GameObject Basic::World::GetGameObject(Entity entity)
+{
+	return {entity, this};
 }

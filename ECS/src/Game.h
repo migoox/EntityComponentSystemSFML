@@ -10,7 +10,7 @@ SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 #endif
 
 // singleton Game Class
-namespace Framework {
+namespace Basic {
 	class Game : public StateMachine
 	{
 	private:
@@ -48,5 +48,7 @@ namespace Framework {
 		static void Run();
 
 		static const sf::Time& DeltaTime();
+
+		static sf::Vector2u WindowSize();
 	};
 }

@@ -1,12 +1,15 @@
 #pragma once
 #include <bitset>
 
-using Entity = std::uint32_t;
+namespace Basic
+{
+	using Entity = std::uint32_t;
 
-const Entity MAX_ENTITIES = 1024;
+	const Entity MAX_ENTITIES = 1024;
 
-using ComponentID = std::uint8_t;
+	using ComponentID = std::uint8_t;
 
-const ComponentID MAX_COMPONENTS = 32;
+	const ComponentID MAX_COMPONENTS = 32;
 
-using Signature = std::bitset<MAX_COMPONENTS>;
+	using Signature = std::bitset<MAX_COMPONENTS>;
+} // end of Basic

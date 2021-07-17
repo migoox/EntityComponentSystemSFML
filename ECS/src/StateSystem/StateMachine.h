@@ -1,7 +1,7 @@
 #pragma once
 #include "State.h"
 
-namespace Framework
+namespace Basic
 {
 	class StateMachine
 	{

@@ -3,32 +3,34 @@
 #include <array>
 #include "ECSModules.h"
 
-class EntityManager
-{
-private:
-	std::stack<Entity> m_AvailableEntites{};
+namespace Basic {
+	class EntityManager
+	{
+	private:
+		std::stack<Entity> m_AvailableEntites{};
 
-	std::array<Signature, MAX_ENTITIES> m_EntitySignatures{};
+		std::array<Signature, MAX_ENTITIES> m_EntitySignatures{};
 
-	Entity m_EntitiesCount = 0;
+		Entity m_EntitiesCount = 0;
 
-	static EntityManager s_Instance;
+		static EntityManager s_Instance;
 
-private:
-	EntityManager();
+	private:
+		EntityManager();
 
-	Entity ICreateEntity();
-	void IDestroyEntity(Entity entity);
+		Entity ICreateEntity();
+		void IDestroyEntity(Entity entity);
 
-	Entity IEntitiesCount();
+		Entity IEntitiesCount();
 
-	Signature& IEntitySignature(Entity entity);
-public:
+		Signature& IEntitySignature(Entity entity);
+	public:
 
-	static Entity CreateEntity();
-	static void DestroyEntity(Entity entity);
+		static Entity CreateEntity();
+		static void DestroyEntity(Entity entity);
 
-	static Entity EntitiesCount();
+		static Entity EntitiesCount();
 
-	static Signature& EntitySignature(Entity entity);
-};
+		static Signature& EntitySignature(Entity entity);
+	};
+} // end of Basic

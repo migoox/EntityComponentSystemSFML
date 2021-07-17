@@ -1,16 +1,16 @@
 #include "StateMachine.h"
 
-Framework::StateMachine::StateMachine()
+Basic::StateMachine::StateMachine()
 	: m_CurrentState(nullptr)
 {
 }
 
-Framework::StateMachine::~StateMachine()
+Basic::StateMachine::~StateMachine()
 {
 	EndCurrentState();
 }
 
-void Framework::StateMachine::LaunchState(State* state)
+void Basic::StateMachine::LaunchState(State* state)
 {
 	EndCurrentState();
 
@@ -19,7 +19,7 @@ void Framework::StateMachine::LaunchState(State* state)
 	m_CurrentState->OnEnter();
 }
 
-void Framework::StateMachine::UpdateStateMachine()
+void Basic::StateMachine::UpdateStateMachine()
 {
 	if (m_CurrentState->IsEnded())
 	{
@@ -31,7 +31,7 @@ void Framework::StateMachine::UpdateStateMachine()
 	}
 }
 
-void Framework::StateMachine::EndCurrentState()
+void Basic::StateMachine::EndCurrentState()
 {
 	if (m_CurrentState != nullptr)
 	{
@@ -43,7 +43,7 @@ void Framework::StateMachine::EndCurrentState()
 	}
 }
 
-bool Framework::StateMachine::IsMachineActive()
+bool Basic::StateMachine::IsMachineActive()
 {
 	return m_CurrentState != nullptr;
 }

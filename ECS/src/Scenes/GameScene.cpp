@@ -6,19 +6,25 @@ GameScene::~GameScene()
 
 void GameScene::OnEnter()
 {
-	renderer = std::make_shared<RendererSystem>();
-	world.AddSystem(renderer);
+	srand((unsigned)time(NULL));
 
-	world.Init();
+	// 1. Add systems
+	AddSystem<RendererSystem>();
+	AddSystem<InputSystem>();
+	AddSystem<MotionSystem>();
 
-	EntityHandle entity = world.CreateEntity();
-	entity.AddComponent<sf::CircleShape>(sf::CircleShape(5.0f));
-	entity.AddComponent<sf::Transform>(sf::Transform());
+	// 2. Init World(systems)
+	InitWorld();
+
+	// 3. Create GameObjects
+
 }
 
 void GameScene::Update()
 {
-	world.Update(Framework::Game::DeltaTime());
+	sf::Time deltaTime = Basic::Game::DeltaTime();
+
+	UpdateWorld(deltaTime);
 }
 
 void GameScene::OnExit()
@@ -32,5 +38,5 @@ void GameScene::UpdateEvents(const sf::Event& event)
 
 void GameScene::Render(sf::RenderTarget& target)
 {
-	world.Render(target);
+	RenderWorld(target);
 }

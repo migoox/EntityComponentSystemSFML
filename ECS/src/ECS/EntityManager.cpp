@@ -1,8 +1,8 @@
 #include "EntityManager.h"
 
-EntityManager EntityManager::s_Instance;
+Basic::EntityManager Basic::EntityManager::s_Instance;
 
-EntityManager::EntityManager()
+Basic::EntityManager::EntityManager()
 {
 	for (size_t entity = MAX_ENTITIES; entity > 0; entity--)
 	{
@@ -20,46 +20,46 @@ EntityManager::EntityManager()
 	}
 }
 
-Entity EntityManager::ICreateEntity()
+Basic::Entity Basic::EntityManager::ICreateEntity()
 {
-	Entity entity = m_AvailableEntites.top();
+	Basic::Entity entity = m_AvailableEntites.top();
 	m_AvailableEntites.pop();
 	m_EntitiesCount++;
 	return entity;
 }
 
-void EntityManager::IDestroyEntity(Entity entity)
+void Basic::EntityManager::IDestroyEntity(Entity entity)
 {
 	m_AvailableEntites.push(entity);
 	m_EntitiesCount--;
 }
 
-Entity EntityManager::IEntitiesCount()
+Basic::Entity Basic::EntityManager::IEntitiesCount()
 {
 	return m_EntitiesCount;
 }
 
-Signature& EntityManager::IEntitySignature(Entity entity)
+Basic::Signature& Basic::EntityManager::IEntitySignature(Entity entity)
 {
 	return m_EntitySignatures[entity];
 }
 
-Entity EntityManager::CreateEntity()
+Basic::Entity Basic::EntityManager::CreateEntity()
 {
 	return s_Instance.ICreateEntity();
 }
 
-void EntityManager::DestroyEntity(Entity entity)
+void Basic::EntityManager::DestroyEntity(Entity entity)
 {
 	s_Instance.IDestroyEntity(entity);
 }
 
-Entity EntityManager::EntitiesCount()
+Basic::Entity Basic::EntityManager::EntitiesCount()
 {
 	return s_Instance.IEntitiesCount();
 }
 
-Signature& EntityManager::EntitySignature(Entity entity)
+Basic::Signature& Basic::EntityManager::EntitySignature(Entity entity)
 {
 	return s_Instance.IEntitySignature(entity);
 }

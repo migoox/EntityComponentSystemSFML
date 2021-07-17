@@ -36,9 +36,6 @@
     <ClCompile Include="src\ECS\World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\EntityHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -77,13 +74,10 @@
     <ClInclude Include="src\ECS\System.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\EntityHandle.h">
+    <ClInclude Include="src\ECS\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\ComponentHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ECS\ECS.h">
+    <ClInclude Include="src\ECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

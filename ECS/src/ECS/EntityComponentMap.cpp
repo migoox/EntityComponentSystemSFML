@@ -1,6 +1,7 @@
 #include "EntityComponentMap.h"
 
-void EntityComponentMap::AddEntity(Entity entity)
+
+void Basic::EntityComponentMap::AddEntity(Entity entity)
 {
 	m_EntityToArrayIndexMap[entity] = m_Size;
 	m_ArrayIndexToEntityMap[m_Size] = entity;
@@ -8,7 +9,7 @@ void EntityComponentMap::AddEntity(Entity entity)
 	m_Size++;
 }
 
-void EntityComponentMap::RemoveEntity(Entity removedEntity)
+void Basic::EntityComponentMap::RemoveEntity(Entity removedEntity)
 {
 	size_t removedArrIndex = m_EntityToArrayIndexMap[removedEntity];
 
@@ -24,22 +25,22 @@ void EntityComponentMap::RemoveEntity(Entity removedEntity)
 	m_Size--;
 }
 
-Entity EntityComponentMap::ToEntity(size_t arrayIndex)
+Basic::Entity Basic::EntityComponentMap::ToEntity(size_t arrayIndex)
 {
 	return m_ArrayIndexToEntityMap[arrayIndex];
 }
 
-size_t EntityComponentMap::ToArrIndex(Entity entity)
+size_t Basic::EntityComponentMap::ToArrIndex(Entity entity)
 {
 	return m_EntityToArrayIndexMap[entity];
 }
 
-bool EntityComponentMap::IsContain(Entity entity)
+bool Basic::EntityComponentMap::IsContain(Entity entity)
 {
 	return m_EntityToArrayIndexMap.find(entity) != m_EntityToArrayIndexMap.end();
 }
 
-void EntityComponentMap::Clear()
+void Basic::EntityComponentMap::Clear()
 {
 	m_ArrayIndexToEntityMap.clear();
 	m_EntityToArrayIndexMap.clear();
