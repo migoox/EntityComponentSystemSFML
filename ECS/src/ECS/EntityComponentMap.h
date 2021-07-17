@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include "ECS.h"
+#include "ECSModules.h"
 
 class EntityComponentMap
 {
@@ -18,6 +18,8 @@ public:
 
 	Entity ToEntity(size_t arrayIndex);
 	size_t ToArrIndex(Entity entity);
+
+	bool IsContain(Entity entity);
 
 	void Clear();
 };

@@ -34,6 +34,11 @@ size_t EntityComponentMap::ToArrIndex(Entity entity)
 	return m_EntityToArrayIndexMap[entity];
 }
 
+bool EntityComponentMap::IsContain(Entity entity)
+{
+	return m_EntityToArrayIndexMap.find(entity) != m_EntityToArrayIndexMap.end();
+}
+
 void EntityComponentMap::Clear()
 {
 	m_ArrayIndexToEntityMap.clear();

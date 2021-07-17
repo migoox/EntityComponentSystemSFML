@@ -1,8 +1,8 @@
 #include "Game.h"
 
-Framework::Scene* Framework::Game::_CurrentScene;
-sf::Time Framework::Game::_DeltaTime;
-Framework::Game* Framework::Game::_Instance;
+Framework::Scene* Framework::Game::s_CurrentScene;
+sf::Time Framework::Game::s_DeltaTime;
+Framework::Game Framework::Game::s_Instance;
 
 void Framework::Game::InitWindow()
 {
@@ -37,7 +37,7 @@ void Framework::Game::InitWindow()
 	m_Window.create(sf::VideoMode(800, 600), "Game");
 }
 
-void Framework::Game::ReloadWindow()
+void Framework::Game::IReloadWindow()
 {
 
 }
@@ -48,7 +48,7 @@ void Framework::Game::UpdateWindowEvents()
 	if (m_Event.type == sf::Event::Closed)
 		m_Window.close();
 
-	_CurrentScene->UpdateEvents(m_Event);
+	s_CurrentScene->UpdateEvents(m_Event);
 }
 
 void Framework::Game::Update()
@@ -60,36 +60,25 @@ void Framework::Game::Update()
 void Framework::Game::Render()
 {
 	// render current scene
-	_CurrentScene->Render();
+	s_CurrentScene->Render(m_Window);
 }
 
 Framework::Game::Game()
 {
 	// init window
 	InitWindow();
-
-	// set start scene, program won't run without active scene
-	SetScene(new GameScene(&m_Window));
-
-	// setting singleton 
-	_Instance = this;
 }
 
-Framework::Game::~Game()
-{
-
-}
-
-void Framework::Game::SetScene(Scene* scene)
+void Framework::Game::ISetScene(Scene* scene)
 {
 	// setting current scene
-	_CurrentScene = scene;
+	s_CurrentScene = scene;
 	
 	// launching scene
-	LaunchState(_CurrentScene);
+	LaunchState(s_CurrentScene);
 }
 
-void Framework::Game::Run()
+void Framework::Game::IRun()
 {
 	// start counting
 	m_Timer.restart();
@@ -102,7 +91,7 @@ void Framework::Game::Run()
 		}
 
 		// update delta time between frames
-		_DeltaTime = m_Timer.restart();
+		s_DeltaTime = m_Timer.restart();
 
 		// check sfml events
 		while (m_Window.pollEvent(m_Event))
@@ -124,7 +113,22 @@ void Framework::Game::Run()
 	}
 }
 
-Framework::Game* Framework::Game::GetInstance()
+void Framework::Game::ReloadWindow()
 {
-	return _Instance;
+	s_Instance.IReloadWindow();
+}
+
+void Framework::Game::SetScene(Scene* scene)
+{
+	s_Instance.ISetScene(scene);
+}
+
+void Framework::Game::Run()
+{
+	s_Instance.IRun();
+}
+
+const sf::Time& Framework::Game::DeltaTime()
+{
+	return s_DeltaTime;
 }

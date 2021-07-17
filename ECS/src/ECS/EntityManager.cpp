@@ -3,40 +3,63 @@
 EntityManager EntityManager::s_Instance;
 
 EntityManager::EntityManager()
-	: m_EntitiesCount(0)
 {
-	for (Entity i = 0; i < MAX_ENTITIES; i++)
+	for (size_t entity = MAX_ENTITIES; entity > 0; entity--)
 	{
-		m_AvailableEntitiesIDs.push(i);
+		m_AvailableEntites.push(entity - 1);
+	}
+
+	for (size_t entity = MAX_ENTITIES; entity > 0; entity--)
+	{
+		Signature& signature = m_EntitySignatures[entity - 1];
+
+		for (size_t i = 0; i < MAX_COMPONENTS; i++)
+		{
+			signature[i] = 0;
+		}
 	}
 }
 
-Entity EntityManager::ICreate()
+Entity EntityManager::ICreateEntity()
 {
-	Entity newEntity = m_AvailableEntitiesIDs.front();
-	m_AvailableEntitiesIDs.pop();
+	Entity entity = m_AvailableEntites.top();
+	m_AvailableEntites.pop();
 	m_EntitiesCount++;
-	
-	return newEntity;
+	return entity;
 }
 
-void EntityManager::IDestroy(Entity entity)
+void EntityManager::IDestroyEntity(Entity entity)
 {
-	m_AvailableEntitiesIDs.push(entity);
+	m_AvailableEntites.push(entity);
 	m_EntitiesCount--;
 }
 
-Entity EntityManager::Create()
+Entity EntityManager::IEntitiesCount()
 {
-	return Instance().ICreate();
+	return m_EntitiesCount;
 }
 
-void EntityManager::Destroy(Entity entity)
+Signature& EntityManager::IEntitySignature(Entity entity)
 {
-	Instance().IDestroy(entity);
+	return m_EntitySignatures[entity];
 }
 
-EntityManager& EntityManager::Instance()
+Entity EntityManager::CreateEntity()
 {
-	return s_Instance;
+	return s_Instance.ICreateEntity();
+}
+
+void EntityManager::DestroyEntity(Entity entity)
+{
+	s_Instance.IDestroyEntity(entity);
+}
+
+Entity EntityManager::EntitiesCount()
+{
+	return s_Instance.IEntitiesCount();
+}
+
+Signature& EntityManager::EntitySignature(Entity entity)
+{
+	return s_Instance.IEntitySignature(entity);
 }

@@ -1,60 +1,99 @@
 #pragma once
-#include <array>
-#include "ECS.h"
-#include "EntityComponentMap.h"
+#include "ComponentArray.h"
+#include <memory>
+#include <unordered_map>
+#include <iostream>
 
-class BaseComponentManager
-{
-public:
-	BaseComponentManager() = default;
-	virtual ~BaseComponentManager() = default;
-	BaseComponentManager(const BaseComponentManager&) = default;
-	BaseComponentManager(BaseComponentManager&&) = default;
-	BaseComponentManager& operator=(const BaseComponentManager&) = default;
-	BaseComponentManager& operator=(BaseComponentManager&&) = default;
-};
-
-template <typename ComponentType>
-class ComponentManager : public BaseComponentManager
+class ComponentManager
 {
 private:
-	size_t m_Size = 0;
-	std::array<ComponentType, MAX_ENTITIES> m_Data{};
-	EntityComponentMap m_ECMap;
+	std::unordered_map<const char*, ComponentID> m_ComponentIDs;
+
+	std::unordered_map<const char*, std::shared_ptr<BaseComponentArray>> m_ComponentArrays;
+
+	ComponentID m_NextComponentID = 0;
+
+private:
 
 public:
+	template <typename ComponentType>
+	void RegisterComponent()
+	{
+		const char* name = typeid(ComponentType).name();
+
+		// id assignment
+		m_ComponentIDs[name] = m_NextComponentID;
+		m_NextComponentID++;
+
+		// creating array
+		m_ComponentArrays[name] = std::make_shared<ComponentArray<ComponentType>>();
+	}
+
+	template <typename ComponentType>
+	std::shared_ptr<ComponentArray<ComponentType>> GetComponentArray()
+	{
+		const char* name = typeid(ComponentType).name();
+
+		return std::static_pointer_cast<ComponentArray<ComponentType>>(m_ComponentArrays[name]);
+	}
+
+	template <typename ComponentType>
+	ComponentID GetComponentID()
+	{
+		const char* name = typeid(ComponentType).name();
+
+		return m_ComponentIDs[name];
+	}
+
+	template <typename ComponentType>
 	ComponentType& AddComponent(Entity entity, const ComponentType& component)
 	{
-		m_Data[m_Size] = component;
+		const char* name = typeid(ComponentType).name();
 
-		m_ECMap.AddEntity(entity);
+		if (m_ComponentIDs.find(name) == m_ComponentIDs.end())
+		{
+			RegisterComponent<ComponentType>();
+		}
 
-		return m_Data[m_Size++];
+		EntityManager::EntitySignature(entity).set(m_ComponentIDs[name]);
+
+		return GetComponentArray<ComponentType>()->AddComponent(entity, component);
 	}
 
-	void DestroyComponent(Entity entity)
+	template <typename ComponentType>
+	void RemoveComponent(Entity entity)
 	{
-		m_Data[m_ECMap.ToArrIndex(entity)] = std::move(m_Data[m_Size]);
+		const char* name = typeid(ComponentType).name();
 
-		m_ECMap.RemoveEntity();
+		EntityManager::EntitySignature(entity).reset(m_ComponentIDs[name]);
 
-		m_Size--;
+		GetComponentArray<ComponentType>()->RemoveComponent(entity);
 	}
 
+	template <typename ComponentType>
 	ComponentType& GetComponent(Entity entity)
 	{
-		size_t arrIndex = m_ECMap.ToArrIndex(entity);
-
-		return m_Data[arrIndex];
+		return GetComponentArray<ComponentType>()->GetComponent(entity);
 	}
 
-	ComponentType* Data()
+	template <typename ComponentType>
+	ComponentType* ArrayData()
 	{
-		return m_Data.data();
+		return GetComponentArray<ComponentType>()->Data();
 	}
 
-	size_t Size()
+	void EntityDestroyed(Entity entity)
 	{
-		return m_Size;
+		for (auto mapElement : m_ComponentArrays)
+		{
+			mapElement.second->EntityDestroyed(entity);
+
+			Signature& signature = EntityManager::EntitySignature(entity);
+
+			for (size_t i = 0; i < MAX_COMPONENTS; i++)
+			{
+				signature[i] = 0;
+			}
+		}
 	}
 };

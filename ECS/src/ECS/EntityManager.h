@@ -1,27 +1,34 @@
 #pragma once
-#include "ECS.h"
-#include <queue>
+#include <stack>
+#include <array>
+#include "ECSModules.h"
+
 class EntityManager
 {
 private:
-	EntityManager();
+	std::stack<Entity> m_AvailableEntites{};
 
-	Entity m_EntitiesCount;
+	std::array<Signature, MAX_ENTITIES> m_EntitySignatures{};
 
-	std::queue<Entity> m_AvailableEntitiesIDs;
+	Entity m_EntitiesCount = 0;
 
 	static EntityManager s_Instance;
 
-	Entity ICreate();
-	void IDestroy(Entity entity);
+private:
+	EntityManager();
 
+	Entity ICreateEntity();
+	void IDestroyEntity(Entity entity);
+
+	Entity IEntitiesCount();
+
+	Signature& IEntitySignature(Entity entity);
 public:
-	EntityManager(const EntityManager&) = delete;
 
-	static Entity Create();
-	static void Destroy(Entity entity);
+	static Entity CreateEntity();
+	static void DestroyEntity(Entity entity);
 
-	Entity& operator=(const EntityManager&) = delete;
+	static Entity EntitiesCount();
 
-	static EntityManager& Instance();
+	static Signature& EntitySignature(Entity entity);
 };

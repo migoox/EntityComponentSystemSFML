@@ -1,46 +1,52 @@
 #pragma once
 #include <fstream>
-
+#include <SFML/Graphics.hpp>
+#include "Scenes/Scene.h"
 #include "StateSystem/StateMachine.h"
-
-#include "Scenes/GameScene.h"
 
 // fixes scaling to 4k
 #ifdef USING_WINDOWS
 SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 #endif
 
+// singleton Game Class
 namespace Framework {
 	class Game : public StateMachine
 	{
 	private:
-		sf::RenderWindow m_Window;
 		sf::Event m_Event;
 		sf::Clock m_Timer;
 
-		static Scene* _CurrentScene;
+		sf::RenderWindow m_Window;
 
-		static sf::Time _DeltaTime;
+		static Scene* s_CurrentScene;
 
-		static Game* _Instance;
+		static sf::Time s_DeltaTime;
+
+		static Game s_Instance;
 
 	private:
+		// Constructors & Destructor
+		Game();
+
 		void InitWindow();
 		void UpdateWindowEvents();
 		void Update();
 		void Render();
 
-	public:
-		// Constructors & Destructor
-		Game();
-		~Game();
-
 		// Functionality
-		void ReloadWindow();
+		void IReloadWindow();
 
-		void SetScene(Scene* scene);
-		void Run();
+		void ISetScene(Scene* scene);
+		void IRun();
 
-		static Game *GetInstance();
+	public:
+		static void ReloadWindow();
+
+		static void SetScene(Scene* scene);
+
+		static void Run();
+
+		static const sf::Time& DeltaTime();
 	};
 }

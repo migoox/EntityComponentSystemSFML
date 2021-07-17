@@ -88,8 +88,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ECS\ComponentManager.cpp" />
     <ClCompile Include="src\ECS\EntityComponentMap.cpp" />
+    <ClCompile Include="src\ECS\EntityHandle.cpp" />
     <ClCompile Include="src\ECS\EntityManager.cpp" />
     <ClCompile Include="src\ECS\World.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -98,11 +98,15 @@
     <ClCompile Include="src\StateSystem\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\ComponentArray.h" />
+    <ClInclude Include="src\ECS\ComponentHandle.h" />
     <ClInclude Include="src\ECS\ComponentManager.h" />
     <ClInclude Include="src\ECS\ECS.h" />
-    <ClInclude Include="src\ECS\EntityManager.h" />
+    <ClInclude Include="src\ECS\ECSModules.h" />
     <ClInclude Include="src\ECS\EntityComponentMap.h" />
-    <ClInclude Include="src\ECS\GameObject.h" />
+    <ClInclude Include="src\ECS\EntityHandle.h" />
+    <ClInclude Include="src\ECS\EntityManager.h" />
+    <ClInclude Include="src\ECS\System.h" />
     <ClInclude Include="src\ECS\World.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
