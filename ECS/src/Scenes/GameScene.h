@@ -2,6 +2,7 @@
 #include "../Game.h"
 #include "../ECS.h"
 #include <memory>
+#include <iostream>
 
 using Basic::GameObject;
 using Basic::SignatureType;
@@ -19,11 +20,6 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 		AddToSignature<sf::CircleShape>();
-	}
-
-	void Update(const sf::Time& deltaTime) override
-	{
-
 	}
 
 	void Render(sf::RenderTarget& target) override
@@ -51,6 +47,7 @@ private:
 		circleShape.setRadius(15.0f);
 		circleShape.setOrigin(15.0f, 15.0f);
 		circleShape.setPosition(float(rand() % windowSize.x), float(rand() % windowSize.y));
+		std::cout << "add\n";
 	}
 
 	void DestroyBall()
@@ -59,8 +56,8 @@ private:
 		{
 			Entity entity = *m_Entities.begin();
 			GameObject gO = m_ParentWorld->GetGameObject(entity);
-			std::cout << "delete\n";
 			gO.Destroy();
+			std::cout << "delete\n";
 		}
 	}
 
@@ -88,11 +85,6 @@ public:
 			AddBall();
 		}
 	}
-
-	void Render(sf::RenderTarget& target) override
-	{
-
-	}
 };
 
 class MotionSystem : public ECSSystem
@@ -117,11 +109,6 @@ public:
 			currentStep = 20.f * currentStep;
 			circleShape.move(currentStep);
 		}
-	}
-
-	void Render(sf::RenderTarget& target) override
-	{
-
 	}
 };
 

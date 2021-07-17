@@ -2,7 +2,6 @@
 #include "ComponentArray.h"
 #include <memory>
 #include <unordered_map>
-#include <iostream>
 
 namespace Basic
 {
@@ -93,7 +92,6 @@ namespace Basic
 
 		void EntityDestroyed(Entity entity)
 		{
-			std::cout << "CM: entity destroyed\n";
 			for (auto mapElement : m_ComponentArrays)
 			{
 				mapElement.second->EntityDestroyed(entity);

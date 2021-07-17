@@ -1,6 +1,5 @@
 #pragma once
 #include <set>
-#include <iostream>
 
 #include "EntityManager.h"
 #include "SFML/Graphics.hpp"
@@ -51,11 +50,11 @@ namespace Basic {
 				m_SignatureType = type;
 		}
 
-		virtual void Init() = 0;
+		virtual void Init() {};
 
-		virtual void Update(const sf::Time& deltaTime) = 0;
+		virtual void Update(const sf::Time& deltaTime) {};
 
-		virtual void Render(sf::RenderTarget& target) = 0;
+		virtual void Render(sf::RenderTarget& target) {};
 
 		void RegisterWorld(World* world)
 		{
@@ -109,7 +108,6 @@ namespace Basic {
 		{
 			if (m_Entities.size() > 0)
 			{
-				std::cout << "unregister\n";
 				auto it = m_Entities.begin();
 				for (auto& element : m_Entities)
 				{
