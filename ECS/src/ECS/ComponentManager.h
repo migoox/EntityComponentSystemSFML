@@ -14,8 +14,6 @@ private:
 	ComponentID m_NextComponentID = 0;
 
 private:
-
-public:
 	template <typename ComponentType>
 	void RegisterComponent()
 	{
@@ -27,6 +25,18 @@ public:
 
 		// creating array
 		m_ComponentArrays[name] = std::make_shared<ComponentArray<ComponentType>>();
+	}
+
+public:
+	template <typename ComponentType>
+	void TryToRegisterComponent()
+	{
+		const char* name = typeid(ComponentType).name();
+
+		if (m_ComponentIDs.find(name) == m_ComponentIDs.end())
+		{
+			RegisterComponent<ComponentType>();
+		}
 	}
 
 	template <typename ComponentType>
@@ -50,10 +60,7 @@ public:
 	{
 		const char* name = typeid(ComponentType).name();
 
-		if (m_ComponentIDs.find(name) == m_ComponentIDs.end())
-		{
-			RegisterComponent<ComponentType>();
-		}
+		TryToRegisterComponent<ComponentType>();
 
 		EntityManager::EntitySignature(entity).set(m_ComponentIDs[name]);
 

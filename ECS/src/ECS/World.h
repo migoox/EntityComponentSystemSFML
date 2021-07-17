@@ -36,9 +36,9 @@ public:
 
 	// Component Manager Mask
 	template <typename ComponentType>
-	void RegisterComponent()
+	void TryToRegisterComponent()
 	{
-		m_ComponentManager->RegisterComponent<ComponentType>();
+		m_ComponentManager->TryToRegisterComponent<ComponentType>();
 	}
 
 	template <typename ComponentType>
@@ -87,6 +87,8 @@ public:
 template<typename ComponentType>
 inline void System::AddToSignature()
 {
+	m_ParentWorld->TryToRegisterComponent<ComponentType>();
+
 	ComponentID id = m_ParentWorld->GetComponentID<ComponentType>();
 	m_Signature.set(id);
 }

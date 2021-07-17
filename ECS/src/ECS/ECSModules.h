@@ -3,7 +3,7 @@
 
 using Entity = std::uint32_t;
 
-const Entity MAX_ENTITIES = 5120;
+const Entity MAX_ENTITIES = 1024;
 
 using ComponentID = std::uint8_t;
 
