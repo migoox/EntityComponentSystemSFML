@@ -38,7 +38,7 @@ namespace Basic {
 			if (m_Size > 1)
 			{
 				size_t arrIndex = m_ECMap.ToArrIndex(entity);
-				m_ComponentArray[arrIndex] = std::move(m_ComponentArray[m_Size]);
+				m_ComponentArray[arrIndex] = m_ComponentArray[m_Size - 1];
 			}
 			m_ECMap.RemoveEntity(entity);
 

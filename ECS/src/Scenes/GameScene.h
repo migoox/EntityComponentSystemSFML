@@ -19,6 +19,7 @@ public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
+		AddToSignature<sf::Transformable>();
 		AddToSignature<sf::CircleShape>();
 	}
 
@@ -27,7 +28,9 @@ public:
 		for (auto& it : m_Entities)
 		{
 			auto& shape = m_ParentWorld->GetComponent<sf::CircleShape>(it);
-			target.draw(shape);
+			auto& transform = m_ParentWorld->GetComponent<sf::Transformable>(it);
+			
+			target.draw(shape, sf::RenderStates(transform.getTransform()));
 		}
 	}
 };
@@ -41,13 +44,17 @@ private:
 
 		GameObject gameObject = m_ParentWorld->CreateEntity();
 
+		auto& transform = gameObject.AddComponent<sf::Transformable>(sf::Transformable());
 		auto& circleShape = gameObject.AddComponent<sf::CircleShape>(sf::CircleShape());
 
 		circleShape.setFillColor(sf::Color(float(rand() % 255), float(rand() % 255), float(rand() % 255)));
 		circleShape.setRadius(15.0f);
 		circleShape.setOrigin(15.0f, 15.0f);
-		circleShape.setPosition(float(rand() % windowSize.x), float(rand() % windowSize.y));
-		std::cout << "add\n";
+
+		transform.setPosition(float(rand() % windowSize.x) / 2 + windowSize.x / 4, 
+			float(rand() % windowSize.y) / 2 + windowSize.y / 4);
+
+		std::cout << "add: " << gameObject.ThisEntity << "\n";
 	}
 
 	void DestroyBall()
@@ -57,32 +64,48 @@ private:
 			Entity entity = *m_Entities.begin();
 			GameObject gO = m_ParentWorld->GetGameObject(entity);
 			gO.Destroy();
-			std::cout << "delete\n";
+			std::cout << "deleted: "<<entity<<"\n";
 		}
 	}
+
+	bool deleteClicked = false;
+	bool addClicked = false;
 
 public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<sf::CircleShape>();
+		AddToSignature<sf::Transformable>();
 
 		// add balls
-		for (size_t i = 0; i < 30; i++)
+		/*for (size_t i = 0; i < 30; i++)
 		{
 			AddBall();
-		}
+		}*/
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			DestroyBall();
+			if(!deleteClicked)
+				DestroyBall();
+			deleteClicked = true;
 		}
+		else
+		{
+			deleteClicked = false;
+		}
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			AddBall();
+			if(!addClicked)
+				AddBall();
+			addClicked = true;
+		}
+		else
+		{
+			addClicked = false;
 		}
 	}
 };
@@ -95,19 +118,19 @@ public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<sf::CircleShape>();
+		AddToSignature<sf::Transformable>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
 		for (auto& element : m_Entities)
 		{
-			auto& circleShape = m_ParentWorld->GetComponent<sf::CircleShape>(element);
+			auto& transform = m_ParentWorld->GetComponent<sf::Transformable>(element);
 
 			sf::Vector2f currentStep = sf::Vector2f(deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f, deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f);
 
 			currentStep = 20.f * currentStep;
-			circleShape.move(currentStep);
+			transform.move(currentStep);
 		}
 	}
 };
