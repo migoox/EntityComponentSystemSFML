@@ -9,9 +9,9 @@ void GameScene::OnEnter()
 	srand((unsigned)time(NULL));
 
 	// 1. Add systems
-	AddSystem<RendererSystem>();
 	AddSystem<InputSystem>();
 	AddSystem<MotionSystem>();
+	AddSystem<RendererSystem>();
 
 	// 2. Init World(systems)
 	InitWorld();

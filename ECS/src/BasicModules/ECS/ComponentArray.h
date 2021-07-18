@@ -3,6 +3,7 @@
 #include "EntityComponentMap.h"
 
 #include <iostream>
+#include <functional>
 
 namespace Basic {
 	class BaseComponentArray
@@ -25,9 +26,9 @@ namespace Basic {
 	public:
 		ComponentType& AddComponent(Entity entity, const ComponentType& component)
 		{
+			// check if entity is not assigned
 			if (m_ECMap.IsContain(entity))
 			{
-				std::cout << "hello\n";
 				return m_ComponentArray[m_ECMap.ToArrIndex(entity)];
 			}
 
@@ -61,8 +62,15 @@ namespace Basic {
 			}
 		}
 
+		Entity GetEntityByComponentArrayIndex(size_t index)
+		{
+			return m_ECMap.ToEntity(index);
+		}
+
 		ComponentType* Data()
 		{
+			if (m_Size == 0)
+				return nullptr;
 			return m_ComponentArray.data();
 		}
 

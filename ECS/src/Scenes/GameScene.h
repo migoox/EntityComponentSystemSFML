@@ -1,155 +1,34 @@
 #pragma once
-#include "../Game.h"
-#include "../ECS.h"
-#include <memory>
 #include <iostream>
+#include <memory>
+
+#include "../BasicModules/ECS.h"
+#include "../BasicModules/Components.h"
+#include "../BasicModules/Systems.h"
+#include "../BasicModules/Game.h"
+#include "../BasicModules/ResourceManager/ResourceManager.h"
+
+// include external systems
+#include "../ExternalSystems/InputSystem.h"
+#include "../ExternalSystems/MotionSystem.h"
+
+
+using ECSWorld = Basic::World;
+using ECSSystem = Basic::System;
 
 using Basic::GameObject;
 using Basic::SignatureType;
 using Basic::Entity;
+using Basic::ResourceManager;
 using Basic::Game;
-using ECSWorld = Basic::World;
-using ECSSystem = Basic::System;
+using Basic::Scene;
 
-#include "../Components/Transform.h"
-#include "../Components/RigidBody.h"
-#include "../Components/CircleShape.h"
-
-using Basic::Transform;
-using Basic::RigidBody;
-using Basic::CircleShape;
-
-class RendererSystem : public ECSSystem
+class GameScene : public Scene
 {
 private:
 
 public:
-	void Init() override
-	{
-		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<Transform>();
-		AddToSignature<CircleShape>();
-	}
-
-	void Render(sf::RenderTarget& target) override
-	{
-		for (auto& it : m_Entities)
-		{
-			auto& shape = m_ParentWorld->GetComponent<CircleShape>(it);
-			auto& transform = m_ParentWorld->GetComponent<Transform>(it);
-			
-			target.draw(shape, sf::RenderStates(transform.getTransform()));
-		}
-	}
-};
-
-class InputSystem : public ECSSystem
-{
-private:
-	void AddBall()
-	{
-		sf::Vector2u windowSize = Game::WindowSize();
-
-		GameObject gameObject = m_ParentWorld->CreateEntity();
-
-		auto& transform = gameObject.AddComponent<Transform>(Transform());
-		auto& circleShape = gameObject.AddComponent<CircleShape>(CircleShape());
-
-		circleShape.setFillColor(sf::Color(float(rand() % 255), float(rand() % 255), float(rand() % 255)));
-		circleShape.setRadius(15.0f);
-		circleShape.setOrigin(15.0f, 15.0f);
-
-		transform.setPosition(float(rand() % windowSize.x) / 2 + windowSize.x / 4, 
-			float(rand() % windowSize.y) / 2 + windowSize.y / 4);
-
-		std::cout << "add: " << gameObject.ThisEntity << "\n";
-	}
-
-	void DestroyBall()
-	{
-		if (m_Entities.size() > 0)
-		{
-			Entity entity = *m_Entities.begin();
-			GameObject gO = m_ParentWorld->GetGameObject(entity);
-			gO.Destroy();
-			std::cout << "deleted: "<<entity<<"\n";
-		}
-	}
-
-	bool deleteClicked = false;
-	bool addClicked = false;
-
-public:
-	void Init() override
-	{
-		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<Transform>();
-
-		// add balls
-		/*for (size_t i = 0; i < 30; i++)
-		{
-			AddBall();
-		}*/
-	}
-
-	void Update(const sf::Time& deltaTime) override
-	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			if(!deleteClicked)
-				DestroyBall();
-			deleteClicked = true;
-		}
-		else
-		{
-			deleteClicked = false;
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			if(!addClicked)
-				AddBall();
-			addClicked = true;
-		}
-		else
-		{
-			addClicked = false;
-		}
-	}
-};
-
-class MotionSystem : public ECSSystem
-{
-private:
-
-public:
-	void Init() override
-	{
-		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<Transform>();
-	}
-
-	void Update(const sf::Time& deltaTime) override
-	{
-		for (auto& element : m_Entities)
-		{
-			auto& transform = m_ParentWorld->GetComponent<Transform>(element);
-
-			sf::Vector2f currentStep = sf::Vector2f(deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f, deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f);
-
-			currentStep = 20.f * currentStep;
-			transform.move(currentStep);
-		}
-	}
-};
-
-
-class GameScene : public Basic::Scene
-{
-private:
-
-public:
-	using Basic::Scene::Scene;
+	using Scene::Scene;
 	~GameScene();
 
 	void OnEnter() override;

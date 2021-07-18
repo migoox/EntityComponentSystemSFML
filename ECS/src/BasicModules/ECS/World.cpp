@@ -35,7 +35,12 @@ void Basic::World::AddSystem(std::shared_ptr<System> system)
 
 Basic::GameObject Basic::World::CreateEntity()
 {
-	return { EntityManager::CreateEntity(), this };
+	GameObject gameObject = { EntityManager::CreateEntity(), this };
+
+	// transform component is always added
+	gameObject.AddComponent<Transform>(Transform());
+
+	return gameObject;
 }
 
 void Basic::World::DestroyEntity(Entity entity)
@@ -53,4 +58,10 @@ void Basic::World::DestroyEntity(Entity entity)
 Basic::GameObject Basic::World::GetGameObject(Entity entity)
 {
 	return {entity, this};
+}
+
+void Basic::System::RegisterWorld(Basic::World* world)
+{
+	m_ParentWorld = world;
+	m_ComponentManager = world->GetComponentManagerPtr();
 }

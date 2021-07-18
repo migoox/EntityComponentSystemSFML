@@ -1,8 +1,10 @@
 #pragma once
 #include <set>
+#include <SFML/Graphics.hpp>
 
 #include "EntityManager.h"
-#include "SFML/Graphics.hpp"
+#include "ComponentManager.h"
+
 
 namespace Basic {
 	class World;
@@ -25,6 +27,8 @@ namespace Basic {
 
 		World* m_ParentWorld;
 
+		ComponentManager* m_ComponentManager;
+
 	protected:
 		template <typename ComponentType>
 		void AddToSignature();
@@ -35,6 +39,7 @@ namespace Basic {
 	public:
 		System()
 		{
+			m_ComponentManager = nullptr;
 			m_ParentWorld = nullptr;
 			m_SignatureType = SignatureType::Inclusive;
 		}
@@ -56,10 +61,7 @@ namespace Basic {
 
 		virtual void Render(sf::RenderTarget& target) {};
 
-		void RegisterWorld(World* world)
-		{
-			m_ParentWorld = world;
-		}
+		void RegisterWorld(World* world);
 
 		void TryToRegisterEntity(Entity entity)
 		{

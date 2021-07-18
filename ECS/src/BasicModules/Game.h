@@ -1,7 +1,7 @@
 #pragma once
 #include <fstream>
 #include <SFML/Graphics.hpp>
-#include "Scenes/Scene.h"
+#include "Scene.h"
 #include "StateSystem/StateMachine.h"
 
 // fixes scaling to 4k

@@ -1,4 +1,5 @@
 #pragma once
+#include "../Components/Transform.h"
 #include "ComponentArray.h"
 #include <memory>
 #include <unordered_map>
@@ -29,6 +30,15 @@ namespace Basic
 		}
 
 	public:
+		template <typename ComponentType>
+		bool IsRemovableComponent()
+		{
+			const char* name = typeid(ComponentType).name();
+			if (name == "class sf::Transformable")
+				return false;
+			return true;
+		}
+
 		template <typename ComponentType>
 		void TryToRegisterComponent()
 		{
@@ -85,9 +95,23 @@ namespace Basic
 		}
 
 		template <typename ComponentType>
+		Entity GetEntityByComponentArrayIndex(size_t index)
+		{
+			return GetComponentArray<ComponentType>()->GetEntityByComponentArrayIndex(index);
+		}
+
+		template <typename ComponentType>
 		ComponentType* ArrayData()
 		{
+			TryToRegisterComponent<ComponentType>();
 			return GetComponentArray<ComponentType>()->Data();
+		}
+
+		template <typename ComponentType>
+		size_t Size()
+		{
+			TryToRegisterComponent<ComponentType>();
+			return GetComponentArray<ComponentType>()->Size();
 		}
 
 		void EntityDestroyed(Entity entity)

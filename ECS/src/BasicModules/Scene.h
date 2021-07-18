@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <list>
 
-#include "../StateSystem/State.h"
-#include "../ECS.h"
+#include "StateSystem/State.h"
+#include "ECS.h"
 
 
 namespace Basic {

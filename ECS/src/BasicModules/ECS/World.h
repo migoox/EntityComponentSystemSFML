@@ -1,8 +1,7 @@
 #pragma once
 #include <memory>
-
 #include "System.h"
-#include "ComponentManager.h"
+#include "ComponentHandle.h"
 
 namespace Basic {
 	struct GameObject;
@@ -38,6 +37,10 @@ namespace Basic {
 		GameObject GetGameObject(Entity entity);
 
 		// Component Manager Mask
+		ComponentManager* GetComponentManagerPtr()
+		{
+			return m_ComponentManager.get();
+		}
 		template <typename ComponentType>
 		void TryToRegisterComponent()
 		{
@@ -66,6 +69,9 @@ namespace Basic {
 		template <typename ComponentType>
 		void RemoveComponent(Entity entity)
 		{
+			if (!m_ComponentManager->IsRemovableComponent<ComponentType>())
+				return;
+
 			m_ComponentManager->RemoveComponent<ComponentType>(entity);
 
 			for (auto& system : m_Systems)
@@ -78,6 +84,12 @@ namespace Basic {
 		ComponentType& GetComponent(Entity entity)
 		{
 			return m_ComponentManager->GetComponentArray<ComponentType>()->GetComponent(entity);
+		}
+
+		template <typename ComponentType>
+		ComponentHandle<ComponentType> GetComponentHandle(Entity entity)
+		{
+			return { entity, this, *m_ComponentManager->GetComponentArray<ComponentType>()->GetComponent(entity) };
 		}
 
 		template <typename ComponentType>

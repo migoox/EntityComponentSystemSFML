@@ -28,7 +28,7 @@ namespace Basic {
 		template <typename ComponentType>
 		ComponentType& GetComponent()
 		{
-			return WorldPtr->GetComponent<ComponentType>();
+			return WorldPtr->GetComponent<ComponentType>(ThisEntity);
 		}
 	};
 } // end of Basic
