@@ -14,13 +14,16 @@ void Basic::EntityComponentMap::RemoveEntity(Entity removedEntity)
 	size_t removedArrIndex = m_EntityToArrayIndexMap[removedEntity];
 
 	size_t lastArrIndex = m_Size - 1;
-	Entity lastEntity = m_EntityToArrayIndexMap[lastArrIndex];
+	Entity lastEntity = m_ArrayIndexToEntityMap[lastArrIndex];
 
-	m_ArrayIndexToEntityMap[removedArrIndex] = lastEntity;
-	m_EntityToArrayIndexMap[lastEntity] = removedArrIndex;
+	if (m_EntityToArrayIndexMap[removedEntity] != lastArrIndex)
+	{
+		m_ArrayIndexToEntityMap[removedArrIndex] = lastEntity;
+		m_EntityToArrayIndexMap[lastEntity] = removedArrIndex;
+	}
 
 	m_ArrayIndexToEntityMap.erase(lastArrIndex);
-	m_ArrayIndexToEntityMap.erase(removedEntity);
+	m_EntityToArrayIndexMap.erase(removedEntity);
 
 	m_Size--;
 }

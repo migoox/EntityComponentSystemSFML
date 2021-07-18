@@ -11,6 +11,14 @@ using Basic::Game;
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
+#include "../Components/Transform.h"
+#include "../Components/RigidBody.h"
+#include "../Components/CircleShape.h"
+
+using Basic::Transform;
+using Basic::RigidBody;
+using Basic::CircleShape;
+
 class RendererSystem : public ECSSystem
 {
 private:
@@ -19,16 +27,16 @@ public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<sf::Transformable>();
-		AddToSignature<sf::CircleShape>();
+		AddToSignature<Transform>();
+		AddToSignature<CircleShape>();
 	}
 
 	void Render(sf::RenderTarget& target) override
 	{
 		for (auto& it : m_Entities)
 		{
-			auto& shape = m_ParentWorld->GetComponent<sf::CircleShape>(it);
-			auto& transform = m_ParentWorld->GetComponent<sf::Transformable>(it);
+			auto& shape = m_ParentWorld->GetComponent<CircleShape>(it);
+			auto& transform = m_ParentWorld->GetComponent<Transform>(it);
 			
 			target.draw(shape, sf::RenderStates(transform.getTransform()));
 		}
@@ -44,8 +52,8 @@ private:
 
 		GameObject gameObject = m_ParentWorld->CreateEntity();
 
-		auto& transform = gameObject.AddComponent<sf::Transformable>(sf::Transformable());
-		auto& circleShape = gameObject.AddComponent<sf::CircleShape>(sf::CircleShape());
+		auto& transform = gameObject.AddComponent<Transform>(Transform());
+		auto& circleShape = gameObject.AddComponent<CircleShape>(CircleShape());
 
 		circleShape.setFillColor(sf::Color(float(rand() % 255), float(rand() % 255), float(rand() % 255)));
 		circleShape.setRadius(15.0f);
@@ -75,7 +83,7 @@ public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<sf::Transformable>();
+		AddToSignature<Transform>();
 
 		// add balls
 		/*for (size_t i = 0; i < 30; i++)
@@ -118,14 +126,14 @@ public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<sf::Transformable>();
+		AddToSignature<Transform>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
 		for (auto& element : m_Entities)
 		{
-			auto& transform = m_ParentWorld->GetComponent<sf::Transformable>(element);
+			auto& transform = m_ParentWorld->GetComponent<Transform>(element);
 
 			sf::Vector2f currentStep = sf::Vector2f(deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f, deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f);
 

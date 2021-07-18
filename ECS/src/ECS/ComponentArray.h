@@ -2,6 +2,8 @@
 #include "EntityManager.h"
 #include "EntityComponentMap.h"
 
+#include <iostream>
+
 namespace Basic {
 	class BaseComponentArray
 	{
@@ -23,6 +25,12 @@ namespace Basic {
 	public:
 		ComponentType& AddComponent(Entity entity, const ComponentType& component)
 		{
+			if (m_ECMap.IsContain(entity))
+			{
+				std::cout << "hello\n";
+				return m_ComponentArray[m_ECMap.ToArrIndex(entity)];
+			}
+
 			// copying component to array
 			m_ComponentArray[m_Size] = component;
 

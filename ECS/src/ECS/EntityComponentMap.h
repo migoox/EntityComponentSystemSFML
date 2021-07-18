@@ -22,5 +22,6 @@ namespace Basic {
 		bool IsContain(Entity entity);
 
 		void Clear();
+
 	};
 } // end of Basic
