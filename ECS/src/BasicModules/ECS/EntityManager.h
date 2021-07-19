@@ -11,6 +11,10 @@ namespace Basic {
 
 		std::array<Signature, MAX_ENTITIES> m_EntitySignatures{};
 
+		std::bitset<MAX_ENTITIES> m_EntityVisibility;
+
+		std::bitset<MAX_ENTITIES> m_EntityActivity;
+
 		Entity m_EntitiesCount = 0;
 
 		static EntityManager s_Instance;
@@ -24,6 +28,13 @@ namespace Basic {
 		Entity IEntitiesCount();
 
 		Signature& IEntitySignature(Entity entity);
+
+		bool IGetVisibililty(Entity entity);
+		void ISetVisibililty(Entity entity, bool visibility);
+
+		bool IGetActivity(Entity entity);
+		void ISetActivity(Entity entity, bool activity);
+
 	public:
 
 		static Entity CreateEntity();
@@ -32,5 +43,11 @@ namespace Basic {
 		static Entity EntitiesCount();
 
 		static Signature& EntitySignature(Entity entity);
+
+		static bool GetVisibililty(Entity entity);
+		static void SetVisibililty(Entity entity, bool visibility);
+
+		static bool GetActivity(Entity entity);
+		static void SetActivity(Entity entity, bool activity);
 	};
 } // end of Basic

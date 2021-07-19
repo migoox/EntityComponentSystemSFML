@@ -13,6 +13,26 @@ namespace Basic {
 			WorldPtr->DestroyEntity(ThisEntity);
 		}
 
+		bool IsVisible()
+		{
+			return EntityManager::GetVisibililty(ThisEntity);
+		}
+
+		void SetVisibility(bool visibility)
+		{
+			EntityManager::SetVisibililty(ThisEntity, visibility);
+		}
+
+		bool IsActive()
+		{
+			return EntityManager::GetActivity(ThisEntity);
+		}
+
+		void SetActivity(bool activity)
+		{
+			EntityManager::SetActivity(ThisEntity, activity);
+		}
+
 		template <typename ComponentType>
 		ComponentType& AddComponent(ComponentType&& component)
 		{

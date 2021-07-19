@@ -11,8 +11,8 @@ namespace Basic {
 
 	enum class SignatureType
 	{
-		Inclusive,
-		Constitutive
+		Inclusive, // (entity's signature & system's signature) == system's signature
+		Constitutive // exactly the same signatures
 	};
 
 	class System
@@ -70,36 +70,22 @@ namespace Basic {
 			if (m_SignatureType == SignatureType::Inclusive)
 			{
 				/*
-				ex. ENTITY contains Transform, RigidBody and Collider,
-				SYSTEM has Transform and Collider
-				System will add entity
+					ex. ENTITY contains Transform, RigidBody and Collider,
+					SYSTEM has Transform and Collider
+					System will add entity
 
-				ex2. ENTITY contains Transform, RigidBody, Shape,
-				SYSTEM has Transform and Collider
-				System won't add entity
+					ex2. ENTITY contains Transform, RigidBody, Shape,
+					SYSTEM has Transform and Collider
+					System won't add entity
 				*/
 
-				bool match = true;
-				for (size_t i = 0; i < MAX_COMPONENTS; i++)
-				{
-					if (m_Signature[i] == 1)
-					{
-						if (entitySignature[i] != 1)
-						{
-							match = false;
-							break;
-						}
-					}
-				}
-				if (match)
-				{
+				if (m_Signature == (m_Signature & entitySignature)) // logical operator AND
 					m_Entities.insert(entity);
-				}
 			}
 			else
 			{
 				/*
-				Entity contains the same components as system
+					Entity contains the same components as system
 				*/
 				if (m_Signature == entitySignature)
 					m_Entities.insert(entity);

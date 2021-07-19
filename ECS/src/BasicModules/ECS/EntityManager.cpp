@@ -13,11 +13,12 @@ Basic::EntityManager::EntityManager()
 	{
 		Signature& signature = m_EntitySignatures[entity - 1];
 
-		for (size_t i = 0; i < MAX_COMPONENTS; i++)
-		{
-			signature[i] = 0;
-		}
+		signature.reset();
+		
 	}
+
+	m_EntityVisibility.set();
+	m_EntityActivity.set();
 }
 
 Basic::Entity Basic::EntityManager::ICreateEntity()
@@ -44,6 +45,26 @@ Basic::Signature& Basic::EntityManager::IEntitySignature(Entity entity)
 	return m_EntitySignatures[entity];
 }
 
+bool Basic::EntityManager::IGetVisibililty(Entity entity)
+{
+	return m_EntityVisibility[entity];
+}
+
+void Basic::EntityManager::ISetVisibililty(Entity entity, bool visibility)
+{
+	m_EntityVisibility[entity] = visibility;
+}
+
+bool Basic::EntityManager::IGetActivity(Entity entity)
+{
+	return m_EntityVisibility[entity];
+}
+
+void Basic::EntityManager::ISetActivity(Entity entity, bool activity)
+{
+	m_EntityVisibility[entity] = activity;
+}
+
 Basic::Entity Basic::EntityManager::CreateEntity()
 {
 	return s_Instance.ICreateEntity();
@@ -62,4 +83,24 @@ Basic::Entity Basic::EntityManager::EntitiesCount()
 Basic::Signature& Basic::EntityManager::EntitySignature(Entity entity)
 {
 	return s_Instance.IEntitySignature(entity);
+}
+
+bool Basic::EntityManager::GetVisibililty(Entity entity)
+{
+	return s_Instance.IGetVisibililty(entity);
+}
+
+void Basic::EntityManager::SetVisibililty(Entity entity, bool visibility)
+{
+	s_Instance.ISetVisibililty(entity, visibility);
+}
+
+bool Basic::EntityManager::GetActivity(Entity entity)
+{
+	return s_Instance.IGetActivity(entity);
+}
+
+void Basic::EntityManager::SetActivity(Entity entity, bool activity)
+{
+	s_Instance.ISetActivity(entity, activity);
 }
