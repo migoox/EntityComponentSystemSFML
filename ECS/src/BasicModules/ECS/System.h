@@ -1,16 +1,14 @@
 #pragma once
 #include <set>
+#include <deque>
+#include <algorithm>
 #include <SFML/Graphics.hpp>
 
 #include "EntityManager.h"
 #include "ComponentManager.h"
-
+#include "GameObject.h"
 
 namespace Basic {
-	struct GameObject;
-
-	class World;
-
 	class System
 	{
 	protected: 
@@ -22,8 +20,7 @@ namespace Basic {
 		};
 
 	protected:
-		std::set<Entity> m_Entities;
-		std::set<GameObject> m_GameObjects;
+		std::deque<GameObject> m_GameObjects;
 
 		Signature m_Signature;
 
@@ -32,6 +29,8 @@ namespace Basic {
 		ComponentManager* m_ComponentManager;
 
 	protected:
+		// transform is added to system's signature by default
+
 		// implementation in World.h since there is whole World class needed
 		template <typename ComponentType>
 		void AddToSignature();
@@ -43,6 +42,7 @@ namespace Basic {
 	private:
 		// it is not allowed to change signature type(way of filtring) directly
 		SignatureType m_SignatureType;
+
 
 	public:
 		System()
@@ -59,7 +59,7 @@ namespace Basic {
 
 		void SetSignatureType(SignatureType type)
 		{
-			if (m_Entities.size() == 0)
+			if (m_GameObjects.size() == 0)
 				m_SignatureType = type;
 		}
 
@@ -72,6 +72,8 @@ namespace Basic {
 		void RegisterWorld(World* world);
 
 		void TryToRegisterEntity(Entity entity);
+
+		void UpdateRegistration(Entity entity);
 
 		void TryToUnregisterEntity(Entity entity);
 	};

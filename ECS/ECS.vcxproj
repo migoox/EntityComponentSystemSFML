@@ -88,8 +88,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\BasicModules\ECS\EntityComponentMap.cpp" />
+    <ClCompile Include="src\BasicModules\ECS\EntityMap.cpp" />
     <ClCompile Include="src\BasicModules\ECS\EntityManager.cpp" />
+    <ClCompile Include="src\BasicModules\ECS\System.cpp" />
     <ClCompile Include="src\BasicModules\ECS\World.cpp" />
     <ClCompile Include="src\BasicModules\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -112,7 +113,7 @@
     <ClInclude Include="src\BasicModules\ECS\ComponentManager.h" />
     <ClInclude Include="src\BasicModules\ECS.h" />
     <ClInclude Include="src\BasicModules\ECS\ECSModules.h" />
-    <ClInclude Include="src\BasicModules\ECS\EntityComponentMap.h" />
+    <ClInclude Include="src\BasicModules\ECS\EntityMap.h" />
     <ClInclude Include="src\BasicModules\ECS\GameObject.h" />
     <ClInclude Include="src\BasicModules\ECS\EntityManager.h" />
     <ClInclude Include="src\BasicModules\ECS\System.h" />

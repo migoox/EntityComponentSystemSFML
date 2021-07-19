@@ -41,12 +41,11 @@ private:
 
 	void DestroyBall()
 	{
-		if (m_Entities.size() > 0)
+		if (m_GameObjects.size() > 0)
 		{
-			Entity entity = *m_Entities.begin();
-			GameObject gO = m_ParentWorld->GetGameObject(entity);
+			GameObject gO = *m_GameObjects.begin();
 			gO.Destroy();
-			std::cout << "deleted: " << entity << "\n";
+			std::cout << "deleted: " << gO.ThisEntity << "\n";
 		}
 	}
 

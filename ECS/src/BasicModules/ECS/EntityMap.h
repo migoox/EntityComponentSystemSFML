@@ -2,7 +2,7 @@
 #include <map>
 #include "ECSModules.h"
 namespace Basic {
-	class EntityComponentMap
+	class EntityMap
 	{
 	private:
 		std::map<Entity, size_t> m_EntityToArrayIndexMap{};
@@ -11,7 +11,7 @@ namespace Basic {
 		size_t m_Size = 0;
 
 	public:
-		EntityComponentMap() = default;
+		EntityMap() = default;
 
 		void AddEntity(Entity entity);
 		void RemoveEntity(Entity entity);

@@ -1,6 +1,6 @@
 #pragma once
 #include "EntityManager.h"
-#include "EntityComponentMap.h"
+#include "EntityMap.h"
 
 #include <iostream>
 #include <functional>
@@ -19,7 +19,7 @@ namespace Basic {
 	private:
 		std::array<ComponentType, MAX_ENTITIES> m_ComponentArray;
 
-		EntityComponentMap m_ECMap;
+		EntityMap m_ECMap;
 
 		size_t m_Size = 0;
 

@@ -30,13 +30,16 @@
     <ClCompile Include="src\BasicModules\ECS\EntityManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BasicModules\ECS\EntityComponentMap.cpp">
+    <ClCompile Include="src\BasicModules\ECS\EntityMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\BasicModules\ECS\World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\BasicModules\ResourceManager\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\ECS\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,7 +71,7 @@
     <ClInclude Include="src\BasicModules\ECS\ComponentArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\ECS\EntityComponentMap.h">
+    <ClInclude Include="src\BasicModules\ECS\EntityMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\ECS\World.h">

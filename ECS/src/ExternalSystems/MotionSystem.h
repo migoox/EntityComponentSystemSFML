@@ -25,17 +25,15 @@ public:
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		for (auto& element : m_Entities)
+		for (auto& gameObject : m_GameObjects)
 		{
-			GameObject gameObject = m_ParentWorld->GetGameObject(element);
-
 			if (gameObject.IsActive())
 			{
 				auto& transform = gameObject.GetTransform();
 
 				sf::Vector2f currentStep = sf::Vector2f(deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f, deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f);
 
-				currentStep = 20.f * currentStep;
+				currentStep = 350.f * currentStep;
 				transform.move(currentStep);
 			}
 		}

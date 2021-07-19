@@ -1,19 +1,17 @@
 #pragma once
 #include "ECSModules.h"
-#include "World.h"
+#include "EntityManager.h"
+#include "../Components/Transform.h"
 
 namespace Basic {
+	class World;
+
 	struct GameObject
 	{
 		Entity ThisEntity;
 		World* WorldPtr;
 
-		void Destroy()
-		{
-			WorldPtr->DestroyEntity(ThisEntity);
-		}
-
-		bool IsVisible()
+		bool IsVisible() const
 		{
 			return EntityManager::GetVisibililty(ThisEntity);
 		}
@@ -23,7 +21,7 @@ namespace Basic {
 			EntityManager::SetVisibililty(ThisEntity, visibility);
 		}
 
-		bool IsActive()
+		bool IsActive() const
 		{
 			return EntityManager::GetActivity(ThisEntity);
 		}
@@ -33,27 +31,34 @@ namespace Basic {
 			EntityManager::SetActivity(ThisEntity, activity);
 		}
 
-		Transform& GetTransform()
+		bool operator<(const GameObject& rhs) const noexcept
 		{
-			return WorldPtr->GetComponent<Transform>(ThisEntity);
+			return ThisEntity < rhs.ThisEntity;
 		}
 
-		template <typename ComponentType>
-		ComponentType& AddComponent(ComponentType&& component)
+		bool operator==(const GameObject& rhs) const noexcept
 		{
-			return WorldPtr->AddComponent<ComponentType>(ThisEntity, component);
+			return ThisEntity == rhs.ThisEntity;
 		}
 
-		template <typename ComponentType>
-		void RemoveComponent()
+		bool operator!=(const GameObject& rhs) const noexcept
 		{
-			WorldPtr->RemoveComponent<ComponentType>();
+			return ThisEntity != rhs.ThisEntity;
 		}
 
+		// functions underneath are defined in World.h under World class
+
+		void Destroy();
+
+		Transform& GetTransform() const;
+
 		template <typename ComponentType>
-		ComponentType& GetComponent()
-		{
-			return WorldPtr->GetComponent<ComponentType>(ThisEntity);
-		}
+		ComponentType& AddComponent(ComponentType&& component);
+
+		template <typename ComponentType>
+		void RemoveComponent();
+
+		template <typename ComponentType>
+		ComponentType& GetComponent();
 	};
 } // end of Basic

@@ -28,11 +28,22 @@ namespace Basic {
 
 
 		// Entity Manager Mask
-		GameObject CreateEntity();
+		GameObject CreateEntity()
+		{
+			GameObject gameObject = { EntityManager::CreateEntity(), this };
+
+			// transform component is always added
+			gameObject.AddComponent<Transform>(Transform());
+
+			return gameObject;
+		}
 
 		void DestroyEntity(Entity entity);
 
-		GameObject GetGameObject(Entity entity);
+		GameObject GetGameObject(Entity entity)
+		{
+			return { entity, this };
+		}
 
 		// Component Manager Mask
 		ComponentManager* GetComponentManagerPtr()
@@ -74,7 +85,7 @@ namespace Basic {
 
 			for (auto& system : m_Systems)
 			{
-				system->TryToRegisterEntity(entity);
+				system->UpdateRegistration(entity);
 			}
 		}
 
@@ -105,5 +116,33 @@ namespace Basic {
 	{
 		ComponentID id = m_ParentWorld->GetComponentID<ComponentType>();
 		m_Signature.reset(id);
+	}
+
+	inline Transform& GameObject::GetTransform() const 
+	{
+		return WorldPtr->GetComponent<Transform>(ThisEntity);
+	}
+
+	template <typename ComponentType>
+	inline ComponentType& GameObject::AddComponent(ComponentType&& component)
+	{
+		return WorldPtr->AddComponent<ComponentType>(ThisEntity, component);
+	}
+
+	template <typename ComponentType>
+	inline void GameObject::RemoveComponent()
+	{
+		WorldPtr->RemoveComponent<ComponentType>();
+	}
+
+	template <typename ComponentType>
+	inline ComponentType& GameObject::GetComponent()
+	{
+		return WorldPtr->GetComponent<ComponentType>(ThisEntity);
+	}
+
+	inline void GameObject::Destroy()
+	{
+		WorldPtr->DestroyEntity(ThisEntity);
 	}
 } // end of Basic
