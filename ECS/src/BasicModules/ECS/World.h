@@ -11,10 +11,13 @@ namespace Basic {
 
 		std::unique_ptr<ComponentManager> m_ComponentManager;
 
+		std::unique_ptr<EventBus> m_EventBus;
+
 	public:
 		World()
 		{
 			m_ComponentManager = std::make_unique<ComponentManager>();
+			m_EventBus = std::make_unique<EventBus>();
 		}
 
 		void InitSystems();
@@ -23,9 +26,18 @@ namespace Basic {
 
 		void Render(sf::RenderTarget& target);
 
+
+		ComponentManager* GetComponentManager()
+		{
+			return m_ComponentManager.get();
+		}
+		EventBus* GetEventBus()
+		{
+			return m_EventBus.get();
+		}
+
 		// System
 		void AddSystem(std::shared_ptr<System> system);
-
 
 		// Entity Manager Mask
 		GameObject CreateEntity()
@@ -46,10 +58,6 @@ namespace Basic {
 		}
 
 		// Component Manager Mask
-		ComponentManager* GetComponentManagerPtr()
-		{
-			return m_ComponentManager.get();
-		}
 		template <typename ComponentType>
 		void TryToRegisterComponent()
 		{

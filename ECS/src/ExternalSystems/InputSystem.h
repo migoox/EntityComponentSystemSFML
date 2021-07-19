@@ -3,6 +3,9 @@
 #include "../BasicModules/Game.h"
 #include "../BasicModules/ResourceManager/ResourceManager.h"
 #include "../BasicModules/Components.h"
+#include "../BasicModules/Random.h"
+
+#include "MotionSystem.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
@@ -11,6 +14,7 @@ using Basic::GameObject;
 using Basic::Entity;
 using Basic::Game;
 using Basic::ResourceManager;
+using Basic::Random;
 
 class InputSystem : public ECSSystem
 {
@@ -33,10 +37,10 @@ private:
 
 		circleShape.setOrigin(15.0f, 15.0f);
 
-		transform.setPosition(float(rand() % windowSize.x) / 2 + windowSize.x / 4,
-			float(rand() % windowSize.y) / 2 + windowSize.y / 4);
+		transform.setPosition(float(Random::Float() * windowSize.x) / 2 + windowSize.x / 4,
+			float(Random::Float() * windowSize.y) / 2 + windowSize.y / 4);
 
-		std::cout << "add: " << gameObject.ThisEntity << "\n";
+		std::cout << "added: " << gameObject.ThisEntity << "\n";
 	}
 
 	void DestroyBall()
@@ -83,6 +87,16 @@ public:
 		else
 		{
 			addClicked = false;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
+		{
+			std::cout << "Calling event....\n";
+
+			m_EventBus->Call<TestEvent>(TestEvent(5));
+
+			std::cout << "Event was called!\n";
+
 		}
 	}
 };

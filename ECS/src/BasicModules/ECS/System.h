@@ -7,6 +7,7 @@
 #include "EntityManager.h"
 #include "ComponentManager.h"
 #include "GameObject.h"
+#include "../EventSystem/EventBus.h"
 
 namespace Basic {
 	class System
@@ -26,6 +27,8 @@ namespace Basic {
 
 		World* m_ParentWorld;
 
+		EventBus* m_EventBus;
+
 		ComponentManager* m_ComponentManager;
 
 	protected:
@@ -42,7 +45,6 @@ namespace Basic {
 	private:
 		// it is not allowed to change signature type(way of filtring) directly
 		SignatureType m_SignatureType;
-
 
 	public:
 		System()

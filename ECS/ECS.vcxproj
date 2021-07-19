@@ -93,6 +93,7 @@
     <ClCompile Include="src\BasicModules\ECS\System.cpp" />
     <ClCompile Include="src\BasicModules\ECS\World.cpp" />
     <ClCompile Include="src\BasicModules\Game.cpp" />
+    <ClCompile Include="src\BasicModules\Random.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\BasicModules\ResourceManager\ResourceManager.cpp" />
     <ClCompile Include="src\Scenes\GameScene.cpp" />
@@ -106,6 +107,10 @@
     <ClInclude Include="src\BasicModules\Components\RigidBody.h" />
     <ClInclude Include="src\BasicModules\Components\Sprite.h" />
     <ClInclude Include="src\BasicModules\Components\Transform.h" />
+    <ClInclude Include="src\BasicModules\EventSystem\Event.h" />
+    <ClInclude Include="src\BasicModules\EventSystem\EventBus.h" />
+    <ClInclude Include="src\BasicModules\EventSystem\Listeners.h" />
+    <ClInclude Include="src\BasicModules\Random.h" />
     <ClInclude Include="src\BasicModules\Systems.h" />
     <ClInclude Include="src\BasicModules\Systems\RendererSystem.h" />
     <ClInclude Include="src\BasicModules\Components.h" />

@@ -47,7 +47,8 @@ void Basic::World::DestroyEntity(Entity entity)
 void Basic::System::RegisterWorld(Basic::World* world)
 {
 	m_ParentWorld = world;
-	m_ComponentManager = world->GetComponentManagerPtr();
+	m_ComponentManager = world->GetComponentManager();
+	m_EventBus = world->GetEventBus();
 }
 
 
