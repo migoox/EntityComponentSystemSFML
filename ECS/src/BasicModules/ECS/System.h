@@ -7,21 +7,23 @@
 
 
 namespace Basic {
-	class World;
+	struct GameObject;
 
-	enum class SignatureType
-	{
-		Inclusive, // (entity's signature & system's signature) == system's signature
-		Constitutive // exactly the same signatures
-	};
+	class World;
 
 	class System
 	{
-	private:
-		SignatureType m_SignatureType;
+	protected: 
+		// way of filtring entities
+		enum class SignatureType
+		{
+			Inclusive, // (entity's signature & system's signature) == system's signature
+			Constitutive // exactly the same signatures
+		};
 
 	protected:
 		std::set<Entity> m_Entities;
+		std::set<GameObject> m_GameObjects;
 
 		Signature m_Signature;
 
@@ -30,11 +32,17 @@ namespace Basic {
 		ComponentManager* m_ComponentManager;
 
 	protected:
+		// implementation in World.h since there is whole World class needed
 		template <typename ComponentType>
 		void AddToSignature();
 
+		// implementation in World.h since there is whole World class needed
 		template <typename ComponentType>
 		void RemoveFromSignature();
+
+	private:
+		// it is not allowed to change signature type(way of filtring) directly
+		SignatureType m_SignatureType;
 
 	public:
 		System()
@@ -63,48 +71,8 @@ namespace Basic {
 
 		void RegisterWorld(World* world);
 
-		void TryToRegisterEntity(Entity entity)
-		{
-			Signature entitySignature = EntityManager::EntitySignature(entity);
+		void TryToRegisterEntity(Entity entity);
 
-			if (m_SignatureType == SignatureType::Inclusive)
-			{
-				/*
-					ex. ENTITY contains Transform, RigidBody and Collider,
-					SYSTEM has Transform and Collider
-					System will add entity
-
-					ex2. ENTITY contains Transform, RigidBody, Shape,
-					SYSTEM has Transform and Collider
-					System won't add entity
-				*/
-
-				if (m_Signature == (m_Signature & entitySignature)) // logical operator AND
-					m_Entities.insert(entity);
-			}
-			else
-			{
-				/*
-					Entity contains the same components as system
-				*/
-				if (m_Signature == entitySignature)
-					m_Entities.insert(entity);
-			}
-		}
-
-		void TryToUnregisterEntity(Entity entity)
-		{
-			if (m_Entities.size() > 0)
-			{
-				auto it = m_Entities.begin();
-				for (auto& element : m_Entities)
-				{
-					if (element == entity)
-						break;
-					it++;
-				}
-				m_Entities.erase(it);
-			}
-		}
+		void TryToUnregisterEntity(Entity entity);
 	};
 } // end of Basic

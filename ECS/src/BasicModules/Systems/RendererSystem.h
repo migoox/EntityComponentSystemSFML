@@ -6,7 +6,6 @@ using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
 using Basic::GameObject;
-using Basic::SignatureType;
 using Basic::Entity;
 
 class RendererSystem : public ECSSystem
@@ -28,11 +27,14 @@ public:
 		{
 			for (size_t i = 0; i < m_ComponentManager->Size<ConvexShape>(); i++)
 			{
-				Entity entity = m_ComponentManager->GetEntityByComponentArrayIndex<ConvexShape>(i);
+				GameObject gameObject = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<ConvexShape>(i));
 
-				auto& transform = m_ComponentManager->GetComponent<Transform>(entity);
+				if (gameObject.IsVisible() && gameObject.IsActive())
+				{
+					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
 
-				target.draw(*convexShapeArr, transform.getTransform());
+					target.draw(*convexShapeArr, transform.getTransform());
+				}
 				convexShapeArr++;
 			}
 		}
@@ -43,11 +45,14 @@ public:
 		{
 			for (size_t i = 0; i < m_ComponentManager->Size<RectangleShape>(); i++)
 			{
-				Entity entity = m_ComponentManager->GetEntityByComponentArrayIndex<RectangleShape>(i);
+				GameObject gameObject = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<RectangleShape>(i));
 
-				auto& transform = m_ComponentManager->GetComponent<Transform>(entity);
+				if (gameObject.IsVisible() && gameObject.IsActive())
+				{
+					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
 
-				target.draw(*rectShapeArr, transform.getTransform());
+					target.draw(*rectShapeArr, transform.getTransform());
+				}
 				rectShapeArr++;
 			}
 		}
@@ -58,11 +63,14 @@ public:
 		{
 			for (size_t i = 0; i < m_ComponentManager->Size<CircleShape>(); i++)
 			{
-				Entity entity = m_ComponentManager->GetEntityByComponentArrayIndex<CircleShape>(i);
+				GameObject gameObject = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<CircleShape>(i));
 
-				auto& transform = m_ComponentManager->GetComponent<Transform>(entity);
+				if (gameObject.IsVisible() && gameObject.IsActive())
+				{
+					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
 
-				target.draw(*circleShapeArr, transform.getTransform());
+					target.draw(*circleShapeArr, transform.getTransform());
+				}
 				circleShapeArr++;
 			}
 		}
@@ -73,11 +81,14 @@ public:
 		{
 			for (size_t i = 0; i < m_ComponentManager->Size<Sprite>(); i++)
 			{
-				Entity entity = m_ComponentManager->GetEntityByComponentArrayIndex<Sprite>(i);
+				GameObject gameObject = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Sprite>(i));
 
-				auto& transform = m_ComponentManager->GetComponent<Transform>(entity);
+				if (gameObject.IsVisible() && gameObject.IsActive())
+				{
+					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
 
-				target.draw(*spriteArr, transform.getTransform());
+					target.draw(*spriteArr, transform.getTransform());
+				}
 				spriteArr++;
 			}
 		}

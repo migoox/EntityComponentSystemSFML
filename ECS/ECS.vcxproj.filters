@@ -95,9 +95,6 @@
     <ClInclude Include="src\BasicModules\Components\Collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\ECS\ComponentHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\BasicModules\Components\RectangleShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>

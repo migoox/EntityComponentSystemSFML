@@ -22,9 +22,9 @@ namespace Basic {
 			m_CurrentWorld = &m_Worlds.back();
 		}
 
-		void InitWorld()
+		void InitWorldSystems()
 		{
-			m_CurrentWorld->Init();
+			m_CurrentWorld->InitSystems();
 		}
 
 		GameObject& Instantiate(GameObject& gameObject)

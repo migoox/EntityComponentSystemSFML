@@ -1,10 +1,8 @@
 #pragma once
 #include <memory>
 #include "System.h"
-#include "ComponentHandle.h"
 
 namespace Basic {
-	struct GameObject;
 
 	class World
 	{
@@ -19,7 +17,7 @@ namespace Basic {
 			m_ComponentManager = std::make_unique<ComponentManager>();
 		}
 
-		void Init();
+		void InitSystems();
 
 		void Update(const sf::Time& deltaTime);
 
@@ -84,12 +82,6 @@ namespace Basic {
 		ComponentType& GetComponent(Entity entity)
 		{
 			return m_ComponentManager->GetComponentArray<ComponentType>()->GetComponent(entity);
-		}
-
-		template <typename ComponentType>
-		ComponentHandle<ComponentType> GetComponentHandle(Entity entity)
-		{
-			return { entity, this, *m_ComponentManager->GetComponentArray<ComponentType>()->GetComponent(entity) };
 		}
 
 		template <typename ComponentType>

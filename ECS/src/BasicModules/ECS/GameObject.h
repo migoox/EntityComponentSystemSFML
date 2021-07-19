@@ -33,6 +33,11 @@ namespace Basic {
 			EntityManager::SetActivity(ThisEntity, activity);
 		}
 
+		Transform& GetTransform()
+		{
+			return WorldPtr->GetComponent<Transform>(ThisEntity);
+		}
+
 		template <typename ComponentType>
 		ComponentType& AddComponent(ComponentType&& component)
 		{

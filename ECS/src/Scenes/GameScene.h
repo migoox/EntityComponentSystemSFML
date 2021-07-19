@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 
+// basic modules
 #include "../BasicModules/ECS.h"
 #include "../BasicModules/Components.h"
 #include "../BasicModules/Systems.h"
@@ -17,7 +18,6 @@ using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
 using Basic::GameObject;
-using Basic::SignatureType;
 using Basic::Entity;
 using Basic::ResourceManager;
 using Basic::Game;

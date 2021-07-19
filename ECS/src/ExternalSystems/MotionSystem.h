@@ -8,7 +8,6 @@ using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
 using Basic::GameObject;
-using Basic::SignatureType;
 using Basic::Entity;
 using Basic::Game;
 using Basic::ResourceManager;
@@ -28,12 +27,17 @@ public:
 	{
 		for (auto& element : m_Entities)
 		{
-			auto& transform = m_ParentWorld->GetComponent<Transform>(element);
+			GameObject gameObject = m_ParentWorld->GetGameObject(element);
 
-			sf::Vector2f currentStep = sf::Vector2f(deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f, deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f);
+			if (gameObject.IsActive())
+			{
+				auto& transform = gameObject.GetTransform();
 
-			currentStep = 20.f * currentStep;
-			transform.move(currentStep);
+				sf::Vector2f currentStep = sf::Vector2f(deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f, deltaTime.asSeconds() * float(rand() % 100 - 50) / 100.0f);
+
+				currentStep = 20.f * currentStep;
+				transform.move(currentStep);
+			}
 		}
 	}
 };

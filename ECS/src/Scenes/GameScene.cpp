@@ -13,8 +13,8 @@ void GameScene::OnEnter()
 	AddSystem<MotionSystem>();
 	AddSystem<RendererSystem>();
 
-	// 2. Init World(systems)
-	InitWorld();
+	// 2. Init World Systems
+	InitWorldSystems();
 
 	// 3. Create GameObjects
 
@@ -22,7 +22,7 @@ void GameScene::OnEnter()
 
 void GameScene::Update()
 {
-	sf::Time deltaTime = Basic::Game::DeltaTime();
+	sf::Time deltaTime = Game::DeltaTime();
 
 	UpdateWorld(deltaTime);
 }

@@ -8,7 +8,6 @@ using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
 using Basic::GameObject;
-using Basic::SignatureType;
 using Basic::Entity;
 using Basic::Game;
 using Basic::ResourceManager;
