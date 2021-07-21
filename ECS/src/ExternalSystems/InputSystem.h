@@ -61,13 +61,15 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 		AddToSignature<Transform>();
+		AddToSignature<Animator>();
+		AddToSignature<Sprite>();
 
-		m_Texture = ResourceManager::TextureAcquire("resources/enemy.png");
+		//m_Texture = ResourceManager::TextureAcquire("resources/enemy.png");
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
 			if (!deleteClicked)
 				DestroyBall();
@@ -97,6 +99,20 @@ public:
 
 			std::cout << "Event was called!\n";
 
+		}*/
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			if (!addClicked)
+			{
+				for (auto& gameObject : m_GameObjects)
+					gameObject.GetComponent<Animator>().PlayOnce("second");
+			}
+			addClicked = true;
+		}
+		else
+		{
+			addClicked = false;
 		}
 	}
 };

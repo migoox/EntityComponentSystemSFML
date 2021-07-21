@@ -1,7 +1,7 @@
 #pragma once
 #include "ECSModules.h"
 #include "EntityManager.h"
-#include "../Components/Transform.h"
+#include "../OtherComponents/Transform.h"
 
 namespace Basic {
 	class World;

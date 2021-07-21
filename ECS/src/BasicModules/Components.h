@@ -1,14 +1,21 @@
 #pragma once
-#include "Components/Transform.h"
-#include "Components/RigidBody.h"
-#include "Components/CircleShape.h"
-#include "Components/RectangleShape.h"
-#include "Components/ConvexShape.h"
-#include "Components/Sprite.h"
-
+#include "OtherComponents/Transform.h"
 using Basic::Transform;
-using Basic::RigidBody;
+
+#include "VisualComponents/CircleShape.h"
+#include "VisualComponents/RectangleShape.h"
+#include "VisualComponents/ConvexShape.h"
+#include "VisualComponents/Sprite.h"
 using Basic::CircleShape;
 using Basic::RectangleShape;
 using Basic::ConvexShape;
 using Basic::Sprite;
+
+#include "PhysicalComponents/RigidBody.h"
+#include "PhysicalComponents/Collider.h"
+using Basic::RigidBody;
+
+
+#include "Animation/Animator.h"
+using Basic::Animator;
+using Basic::Animation;

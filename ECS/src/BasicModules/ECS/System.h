@@ -78,5 +78,11 @@ namespace Basic {
 		void UpdateRegistration(Entity entity);
 
 		void TryToUnregisterEntity(Entity entity);
+
+		GameObject& Instantiate(GameObject& gameObject);
+
+		GameObject Instantiate();
+
+		void Destroy(GameObject& gameObject);
 	};
 } // end of Basic

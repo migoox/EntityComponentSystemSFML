@@ -104,7 +104,7 @@ void Basic::Game::IRun()
 		Update();
 
 		// clear window
-		m_Window.clear();
+		m_Window.clear(sf::Color::White);
 
 		// render stuff
 		Render();

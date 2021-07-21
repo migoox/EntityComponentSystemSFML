@@ -12,6 +12,7 @@
 // include external systems
 #include "../ExternalSystems/InputSystem.h"
 #include "../ExternalSystems/MotionSystem.h"
+#include "../ExternalSystems/PlayerSystem.h"
 
 
 using ECSWorld = Basic::World;

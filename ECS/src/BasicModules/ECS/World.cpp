@@ -51,5 +51,19 @@ void Basic::System::RegisterWorld(Basic::World* world)
 	m_EventBus = world->GetEventBus();
 }
 
+Basic::GameObject& Basic::System::Instantiate(GameObject& gameObject)
+{
+	gameObject = m_ParentWorld->CreateEntity();
+	return gameObject;
+}
 
+Basic::GameObject Basic::System::Instantiate()
+{
+	return m_ParentWorld->CreateEntity();
+}
+
+void Basic::System::Destroy(GameObject& gameObject)
+{
+	gameObject.Destroy();
+}
 

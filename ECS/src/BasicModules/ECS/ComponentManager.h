@@ -1,5 +1,5 @@
 #pragma once
-#include "../Components/Transform.h"
+#include "../OtherComponents/Transform.h"
 #include "ComponentArray.h"
 #include <memory>
 #include <unordered_map>

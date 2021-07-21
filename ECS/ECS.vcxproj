@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BasicModules\Animation\Animator.cpp" />
     <ClCompile Include="src\BasicModules\ECS\EntityMap.cpp" />
     <ClCompile Include="src\BasicModules\ECS\EntityManager.cpp" />
     <ClCompile Include="src\BasicModules\ECS\System.cpp" />
@@ -100,18 +101,21 @@
     <ClCompile Include="src\BasicModules\StateSystem\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BasicModules\Components\CircleShape.h" />
-    <ClInclude Include="src\BasicModules\Components\Collider.h" />
-    <ClInclude Include="src\BasicModules\Components\ConvexShape.h" />
-    <ClInclude Include="src\BasicModules\Components\RectangleShape.h" />
-    <ClInclude Include="src\BasicModules\Components\RigidBody.h" />
-    <ClInclude Include="src\BasicModules\Components\Sprite.h" />
-    <ClInclude Include="src\BasicModules\Components\Transform.h" />
+    <ClInclude Include="src\BasicModules\Animation\Animation.h" />
+    <ClInclude Include="src\BasicModules\Animation\Animator.h" />
+    <ClInclude Include="src\BasicModules\VisualComponents\CircleShape.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\Collider.h" />
+    <ClInclude Include="src\BasicModules\VisualComponents\ConvexShape.h" />
+    <ClInclude Include="src\BasicModules\VisualComponents\RectangleShape.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\RigidBody.h" />
+    <ClInclude Include="src\BasicModules\VisualComponents\Sprite.h" />
+    <ClInclude Include="src\BasicModules\OtherComponents\Transform.h" />
     <ClInclude Include="src\BasicModules\EventSystem\Event.h" />
     <ClInclude Include="src\BasicModules\EventSystem\EventBus.h" />
     <ClInclude Include="src\BasicModules\EventSystem\Listeners.h" />
     <ClInclude Include="src\BasicModules\Random.h" />
     <ClInclude Include="src\BasicModules\Systems.h" />
+    <ClInclude Include="src\BasicModules\Systems\AnimatorSystem.h" />
     <ClInclude Include="src\BasicModules\Systems\RendererSystem.h" />
     <ClInclude Include="src\BasicModules\Components.h" />
     <ClInclude Include="src\BasicModules\ECS\ComponentArray.h" />
@@ -125,6 +129,7 @@
     <ClInclude Include="src\BasicModules\ECS\World.h" />
     <ClInclude Include="src\BasicModules\Game.h" />
     <ClInclude Include="src\BasicModules\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="src\ExternalSystems\PlayerSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />
     <ClInclude Include="src\BasicModules\StateSystem\State.h" />
