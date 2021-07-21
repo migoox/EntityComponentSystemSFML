@@ -14,6 +14,9 @@
 #include "../ExternalSystems/MotionSystem.h"
 #include "../ExternalSystems/PlayerSystem.h"
 
+// include external components
+#include "../ExternalComponents/Joystick.h"
+#include "../ExternalComponents/Stats.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;

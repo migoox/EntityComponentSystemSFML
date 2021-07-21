@@ -14,88 +14,66 @@ using Basic::Game;
 using Basic::ResourceManager;
 using Basic::Random;
 
+// include external components
+#include "../ExternalComponents/Joystick.h"
+#include "../ExternalComponents/Stats.h"
+
 class PlayerSystem : public ECSSystem
 {
 private:
-	bool m_WalkUp;
-	bool m_WalkDown;
-	bool m_WalkLeft;
-	bool m_WalkRight;
-
-	bool m_Kick;
-
-	float m_PlayerVelocity = 200.0f;
-
-private: 
-	void UpdateInput()
-	{
-		m_WalkUp = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-		m_WalkDown = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
-		m_WalkLeft = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-		m_WalkRight = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
-
-		m_Kick = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
-	}
 
 public:
 	void Init() override
 	{
-		SetSignatureType(SignatureType::Constitutive);
+		SetSignatureType(SignatureType::Constitutive); 
 
 		AddToSignature<Transform>();
 		AddToSignature<Animator>();
 		AddToSignature<Sprite>();
 		AddToSignature<RigidBody>();
+		AddToSignature<Stats>();
+		AddToSignature<Joystick>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		UpdateInput();
 
 		for (auto& gameObject : m_GameObjects)
 		{
-			auto& transform = gameObject.GetComponent<Transform>();
+			// get Components
+			auto& transform = gameObject.GetTransform();
 			auto& animator = gameObject.GetComponent<Animator>();
 			auto& rigidBody = gameObject.GetComponent<RigidBody>();
+			auto& joystick = gameObject.GetComponent<Joystick>();
+			auto& stats = gameObject.GetComponent<Stats>();
 
-			// game logic 
+			// give player velocity
 			rigidBody.Velocity = sf::Vector2f(0.f, 0.f);
 
-			if (m_WalkRight)
-				rigidBody.Velocity.x += m_PlayerVelocity;
-			if (m_WalkLeft)
-				rigidBody.Velocity.x += -m_PlayerVelocity;
-			if (m_WalkUp)
-				rigidBody.Velocity.y += -m_PlayerVelocity;
-			if (m_WalkDown)
-				rigidBody.Velocity.y += m_PlayerVelocity;
+			if (joystick.WalkRightBtnPressed)
+				rigidBody.Velocity.x += stats.WalkVelocity;
+			if (joystick.WalkLeftBtnPressed)
+				rigidBody.Velocity.x += -stats.WalkVelocity;
+			if (joystick.WalkUpBtnPressed)
+				rigidBody.Velocity.y += -stats.WalkVelocity;
+			if (joystick.WalkDownBtnPressed)
+				rigidBody.Velocity.y += stats.WalkVelocity;
 
 			// set player horizontal direction
 			if (rigidBody.Velocity.x > 0.f)
-			{
-				transform.setScale(-std::abs(transform.getScale().x), 
-					transform.getScale().y);
-			}
+				transform.setScale(-std::abs(transform.getScale().x), transform.getScale().y);
 			else
-			{
-				transform.setScale(std::abs(transform.getScale().x), 
-					transform.getScale().y);
-			}
-
-			// move player using velocity
-			transform.move(rigidBody.Velocity * deltaTime.asSeconds());
+				transform.setScale(std::abs(transform.getScale().x), transform.getScale().y);
 
 			// animations
-			if (m_Kick)
+			if (rigidBody.Velocity.x == 0.f && rigidBody.Velocity.y == 0.f)
 			{
-				animator.PlayOnce("KICK");
-			}
-			else if (rigidBody.Velocity.x == 0.f && rigidBody.Velocity.y == 0.f)
-			{
+				// if player doesn't move play idle
 				animator.Play("IDLE");
 			}
 			else
 			{
+				// if player moves choose correct animation
 				if (rigidBody.Velocity.x != 0.f)
 					animator.Play("HORIZONTAL_WALK");
 				else if (rigidBody.Velocity.y > 0.f)

@@ -5,8 +5,6 @@
 #include "../BasicModules/Components.h"
 #include "../BasicModules/Random.h"
 
-#include "MotionSystem.h"
-
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
@@ -16,103 +14,31 @@ using Basic::Game;
 using Basic::ResourceManager;
 using Basic::Random;
 
+// include external components
+#include "../ExternalComponents/Joystick.h"
+#include "../ExternalComponents/Stats.h"
+
 class InputSystem : public ECSSystem
 {
 private:
-	std::shared_ptr<sf::Texture> m_Texture;
-
-private:
-	void AddBall()
-	{
-		sf::Vector2u windowSize = Game::WindowSize();
-
-		GameObject gameObject = m_ParentWorld->CreateEntity();
-
-		// transform is added by default
-		auto& transform = gameObject.GetComponent<Transform>();
-
-		auto& circleShape = gameObject.AddComponent<Sprite>(Sprite());
-
-		circleShape.setTexture(*m_Texture);
-
-		circleShape.setOrigin(15.0f, 15.0f);
-
-		transform.setPosition(float(Random::Float() * windowSize.x) / 2 + windowSize.x / 4,
-			float(Random::Float() * windowSize.y) / 2 + windowSize.y / 4);
-
-		std::cout << "added: " << gameObject.ThisEntity << "\n";
-	}
-
-	void DestroyBall()
-	{
-		if (m_GameObjects.size() > 0)
-		{
-			GameObject gO = *m_GameObjects.begin();
-			gO.Destroy();
-			std::cout << "deleted: " << gO.ThisEntity << "\n";
-		}
-	}
-
-	bool deleteClicked = false;
-	bool addClicked = false;
 
 public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<Transform>();
-		AddToSignature<Animator>();
-		AddToSignature<Sprite>();
-
-		//m_Texture = ResourceManager::TextureAcquire("resources/enemy.png");
+		AddToSignature<Joystick>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		for (auto& gameObject : m_GameObjects)
 		{
-			if (!deleteClicked)
-				DestroyBall();
-			deleteClicked = true;
-		}
-		else
-		{
-			deleteClicked = false;
-		}
+			auto& joystick = gameObject.GetComponent<Joystick>();
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			if (!addClicked)
-				AddBall();
-			addClicked = true;
-		}
-		else
-		{
-			addClicked = false;
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
-		{
-			std::cout << "Calling event....\n";
-
-			m_EventBus->Call<TestEvent>(TestEvent(5));
-
-			std::cout << "Event was called!\n";
-
-		}*/
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			if (!addClicked)
-			{
-				for (auto& gameObject : m_GameObjects)
-					gameObject.GetComponent<Animator>().PlayOnce("second");
-			}
-			addClicked = true;
-		}
-		else
-		{
-			addClicked = false;
+			joystick.WalkUpBtnPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+			joystick.WalkDownBtnPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+			joystick.WalkLeftBtnPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+			joystick.WalkRightBtnPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
 		}
 	}
 };

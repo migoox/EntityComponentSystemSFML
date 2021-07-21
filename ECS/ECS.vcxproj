@@ -129,6 +129,8 @@
     <ClInclude Include="src\BasicModules\ECS\World.h" />
     <ClInclude Include="src\BasicModules\Game.h" />
     <ClInclude Include="src\BasicModules\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="src\ExternalComponents\Joystick.h" />
+    <ClInclude Include="src\ExternalComponents\Stats.h" />
     <ClInclude Include="src\ExternalSystems\PlayerSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />
