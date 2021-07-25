@@ -10,6 +10,7 @@ using ECSSystem = Basic::System;
 
 using Basic::GameObject;
 using Basic::Entity;
+using Basic::CollisionPoints;
 
 class CollisionDetectionSystem : public ECSSystem
 {
@@ -18,41 +19,110 @@ private:
 public:
 	void Init() override
 	{
-		SetSignatureType(SignatureType::Inclusive);
-
-		AddToSignature<CircleCollider>();
+		SetSignatureType(SignatureType::Constitutive);
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		/*auto& object1 = m_GameObjects[0]; // blue
-		auto& collider1 = object1.GetComponent<CircleCollider>();
-		auto& object2 = m_GameObjects[1]; // red
-		auto& collider2 = object2.GetComponent<CircleCollider>();
+		bool collision = false;
 
-		auto collPoints = collider1.TestCollision(object1.GetTransform(),
-			collider2,
-			object2.GetTransform());
+		auto circles = m_ComponentManager->ArrayData<CircleCollider>();
+		size_t circleCount = m_ComponentManager->Size<CircleCollider>();
 
-		if (collPoints.HasCollision)
-			std::cout << "COLLISION DETECTED: " << deltaTime.asSeconds() << "\n";*/
+		auto planes = m_ComponentManager->ArrayData<PlaneCollider>();
+		size_t planeCount = m_ComponentManager->Size<PlaneCollider>();
 
-		GameObject circleBlue = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<CircleCollider>(0));
-		GameObject circleRed = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<CircleCollider>(1));
-
-		GameObject plane = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<PlaneCollider>(0));
-
-		auto& circleColl1 = circleBlue.GetComponent<CircleCollider>();
-		auto& circleColl2 = circleRed.GetComponent<CircleCollider>();
-		auto& planeColl = plane.GetComponent<PlaneCollider>();
-
-		if (circleColl1.TestCollision(circleBlue.GetTransform(), planeColl, plane.GetTransform()).HasCollision)
+		// circle vs circle
+		for (size_t i = 0; i < circleCount; i++)
 		{
-			std::cout << "Collision with plane" << deltaTime.asSeconds() << "\n";
+			for (size_t j = i + 1; j < circleCount; j++)
+			{
+				GameObject firstGameObject = m_ParentWorld->GetGameObject(
+					m_ComponentManager->GetEntityByComponentArrayIndex<CircleCollider>(i));
+				GameObject secondGameObject = m_ParentWorld->GetGameObject(
+					m_ComponentManager->GetEntityByComponentArrayIndex<CircleCollider>(j));
+
+				if (firstGameObject.IsActive() && secondGameObject.IsActive())
+				{
+					auto& first = circles[i];
+					auto& second = circles[j];
+					auto& transFirst = firstGameObject.GetTransform();
+					auto& transSecond = secondGameObject.GetTransform();
+
+					CollisionPoints collPoints = first.TestCollision(transFirst, second, transSecond);
+
+					if (collPoints.HasCollision)
+						collision = true;
+				}
+			}
 		}
-		if (circleColl1.TestCollision(circleBlue.GetTransform(), circleColl2, circleRed.GetTransform()).HasCollision)
+
+		// circle vs plane
+		for (size_t i = 0; i < circleCount; i++)
 		{
-			//std::cout << "Collision with circle" << deltaTime.asSeconds() << "\n";
+			for (size_t j = 0; j < planeCount; j++)
+			{
+				GameObject firstGameObject = m_ParentWorld->GetGameObject(
+					m_ComponentManager->GetEntityByComponentArrayIndex<CircleCollider>(i));
+				GameObject secondGameObject = m_ParentWorld->GetGameObject(
+					m_ComponentManager->GetEntityByComponentArrayIndex<PlaneCollider>(j));
+
+				if (firstGameObject.IsActive() && secondGameObject.IsActive())
+				{
+					auto& first = circles[i];
+					auto& second = planes[j];
+					auto& transFirst = firstGameObject.GetTransform();
+					auto& transSecond = secondGameObject.GetTransform();
+
+					CollisionPoints collPoints = first.TestCollision(transFirst, second, transSecond);
+
+					if (collPoints.HasCollision)
+						collision = true;
+				}
+			}
 		}
+		
+
+		// circle vs rectangle 
+
+		// circle vs convex
+
+		// plane vs plane
+		for (size_t i = 0; i < planeCount; i++)
+		{
+			for (size_t j = i + 1; j < planeCount; j++)
+			{
+				GameObject firstGameObject = m_ParentWorld->GetGameObject(
+					m_ComponentManager->GetEntityByComponentArrayIndex<PlaneCollider>(i));
+				GameObject secondGameObject = m_ParentWorld->GetGameObject(
+					m_ComponentManager->GetEntityByComponentArrayIndex<PlaneCollider>(j));
+
+				if (firstGameObject.IsActive() && secondGameObject.IsActive())
+				{
+					auto& first = planes[i];
+					auto& second = planes[j];
+					auto& transFirst = firstGameObject.GetTransform();
+					auto& transSecond = secondGameObject.GetTransform();
+
+					CollisionPoints collPoints = first.TestCollision(transFirst, second, transSecond);
+
+					if (collPoints.HasCollision)
+						collision = true;
+				}
+			}
+		}
+
+		// plane vs rectangle
+
+		// plane vs convex
+
+		// rectangle vs rectangle
+
+		// rectangle vs convex
+
+		// convex vs convex
+
+		if (collision)
+			std::cout << "COLLISION DETECTED" << deltaTime.asSeconds() << std::endl;
 	}
 };

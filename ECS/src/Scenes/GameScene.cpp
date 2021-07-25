@@ -50,8 +50,8 @@ void GameScene::OnEnter()
 	circleShape2.setOrigin(100.0f, 100.0f);
 
 	circle.AddComponent<CircleCollider>(CircleCollider(100.0f));
-	circle.GetTransform().setPosition(sf::Vector2f(400.f, 300.f));
-	circle.SetVisibility(false);
+	circle.GetTransform().setPosition(sf::Vector2f(500.f, 300.f));
+	circle.SetActivity(false);
 
 	GameObject plane = Instantiate();
 

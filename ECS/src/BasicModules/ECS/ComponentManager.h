@@ -33,7 +33,7 @@ namespace Basic
 		template <typename ComponentType>
 		bool IsRemovableComponent()
 		{
-			const char* name = typeid(ComponentType).name();
+			std::string name = typeid(ComponentType).name();
 			if (name == "class sf::Transformable")
 				return false;
 			return true;
@@ -81,6 +81,9 @@ namespace Basic
 		template <typename ComponentType>
 		void RemoveComponent(Entity entity)
 		{
+			if (!IsRemovableComponent<ComponentType>())
+				return;
+
 			const char* name = typeid(ComponentType).name();
 
 			EntityManager::EntitySignature(entity).reset(m_ComponentIDs[name]);
@@ -92,6 +95,12 @@ namespace Basic
 		ComponentType& GetComponent(Entity entity)
 		{
 			return GetComponentArray<ComponentType>()->GetComponent(entity);
+		}
+
+		template <typename ComponentType>
+		ComponentType* GetComponentPtr(Entity entity)
+		{
+			return &GetComponentArray<ComponentType>()->GetComponent(entity);
 		}
 
 		template <typename ComponentType>
