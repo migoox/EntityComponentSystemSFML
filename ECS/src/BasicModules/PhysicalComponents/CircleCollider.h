@@ -1,7 +1,7 @@
 #pragma once
 #include "ColliderItem.h"
 #include "../Physics/CollisionDetectionAlgorithms.h"
-
+#include <iostream>
 namespace Basic {
 	struct CircleCollider : public ColliderItem
 	{
@@ -12,6 +12,11 @@ namespace Basic {
 
 		CircleCollider(float radius) : Radius(radius) { }
 		CircleCollider(float radius, sf::Vector2f center) : Radius(radius), Center(center) { }
+
+		void Print() override
+		{
+			std::cout << Radius << std::endl;
+		}
 
 		CollisionPoints TestCollision(
 			const Transform& transform,

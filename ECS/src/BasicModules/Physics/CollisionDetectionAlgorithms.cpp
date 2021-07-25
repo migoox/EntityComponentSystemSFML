@@ -110,8 +110,6 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	sf::Vector2f ShadowVector = CenterPlaneVector + PointACenterVector;
 
 	sf::Vector2f ShadowVectorNormalized = MathFunctions::NormalizeVector(ShadowVector);
-	sf::Vector2f ABNormalized = MathFunctions::NormalizeVector(sf::Vector2f(pointB.x - pointA.x, pointB.y - pointA.y));
-	//sf::Vector2f CenterToShadowCenterVector = MathFunctions::DistanceFromLine(center, pointA, pointB);
 
 
 	sf::VertexArray arr1(sf::Lines, 2);
@@ -136,23 +134,29 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	Game::TempDraw2(arr2);
 	Game::TempDraw3(arr3);
 
-
-
-
 	CollisionPoints collPoints; // default parameters
 	collPoints.HasCollision = false;
 
-	if (MathFunctions::VectorDistance(CenterPlaneVector) < circle->Radius)
+	if (MathFunctions::Distance(center, pointA) <= circle->Radius ||
+		MathFunctions::Distance(center, pointB) <= circle->Radius) // one of the points of edge is inside the circle
 	{
-		if (MathFunctions::VectorDistance(ShadowVector) < plane->Distance)
+		collPoints.HasCollision = true;
+	}
+	else
+	{
+		if (MathFunctions::VectorDistance(CenterPlaneVector) <= circle->Radius)
 		{
-			if (true)
+			if (MathFunctions::VectorDistance(ShadowVector) <= plane->Distance)
 			{
-				collPoints.HasCollision = true;
+				sf::Vector2f ABVector = sf::Vector2f(pointB.x - pointA.x, pointB.y - pointA.y);
+
+				if (ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
+				{
+					collPoints.HasCollision = true;
+				}
 			}
 		}
 	}
-
 	return collPoints;
 }
 

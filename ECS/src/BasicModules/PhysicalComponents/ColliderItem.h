@@ -19,6 +19,8 @@ namespace Basic {
 
 	struct ColliderItem
 	{
+		virtual void Print() {};
+
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const ColliderItem* circleCollider,
