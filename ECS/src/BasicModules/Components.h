@@ -18,9 +18,11 @@ using Basic::Sprite;
 #include "PhysicalComponents/RigidBody.h"
 #include "PhysicalComponents/CircleCollider.h"
 #include "PhysicalComponents/PlaneCollider.h"
+#include "PhysicalComponents/Collider.h"
 using Basic::RigidBody;
 using Basic::CircleCollider;
 using Basic::PlaneCollider;
+using Basic::Collider;
 
 
 #include "Animation/Animator.h"

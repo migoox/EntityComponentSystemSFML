@@ -55,11 +55,11 @@ float Basic::MathFunctions::IsUnderLine(sf::Vector2f point, sf::Vector2f lineA, 
 }
 
 Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoints(
-	const CircleCollider& circle1, const Transform& transform1, 
-	const CircleCollider& circle2, const Transform& transform2)
+	const CircleCollider* circle1, const Transform& transform1, 
+	const CircleCollider* circle2, const Transform& transform2)
 {
-	sf::Vector2f globalPosition1 = circle1.Center + transform1.getPosition();
-	sf::Vector2f globalPosition2 = circle2.Center + transform2.getPosition();
+	sf::Vector2f globalPosition1 = circle1->Center + transform1.getPosition();
+	sf::Vector2f globalPosition2 = circle2->Center + transform2.getPosition();
 
 	float distanceBetweenCenters = sqrt(pow(globalPosition1.x - globalPosition2.x, 2) +
 		pow(globalPosition1.y - globalPosition2.y, 2));
@@ -67,22 +67,22 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoint
 	CollisionPoints collPoints; // default parameters
 	collPoints.HasCollision = false;
 
-	if (distanceBetweenCenters < circle1.Radius + circle2.Radius)
+	if (distanceBetweenCenters < circle1->Radius + circle2->Radius)
 	{
 		// collision
 		collPoints.HasCollision = true;
-		collPoints.Depth = circle1.Radius + circle2.Radius - distanceBetweenCenters;
+		collPoints.Depth = circle1->Radius + circle2->Radius - distanceBetweenCenters;
 		collPoints.Normal = (globalPosition2 - globalPosition1) / distanceBetweenCenters;
-		collPoints.A = globalPosition1 + circle1.Radius * collPoints.Normal;
-		collPoints.B = globalPosition2 + circle2.Radius * (-collPoints.Normal);
+		collPoints.A = globalPosition1 + circle1->Radius * collPoints.Normal;
+		collPoints.B = globalPosition2 + circle2->Radius * (-collPoints.Normal);
 	}
 
 	return collPoints;
 }
 
 Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints(
-	const CircleCollider& circle, const Transform& circleTransform, 
-	const PlaneCollider& plane, const Transform& planeTransform)
+	const CircleCollider* circle, const Transform& circleTransform, 
+	const PlaneCollider* plane, const Transform& planeTransform)
 {
 	float pi = 3.141592653f;
 
@@ -91,16 +91,16 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	sf::Vector2f pointB;
 	sf::Vector2f center;
 
-	pointA = plane.Plane + planeTransform.getPosition();
+	pointA = plane->Plane + planeTransform.getPosition();
 
-	pointB.x = plane.Plane.x + std::cos(planeTransform.getRotation() * pi / 180.0f) * plane.Distance + planeTransform.getPosition().x;
-	pointB.y = plane.Plane.y + std::sin(planeTransform.getRotation() * pi / 180.0f) * plane.Distance + planeTransform.getPosition().y;
+	pointB.x = plane->Plane.x + std::cos(planeTransform.getRotation() * pi / 180.0f) * plane->Distance + planeTransform.getPosition().x;
+	pointB.y = plane->Plane.y + std::sin(planeTransform.getRotation() * pi / 180.0f) * plane->Distance + planeTransform.getPosition().y;
 
-	center = circle.Center + circleTransform.getPosition();
+	center = circle->Center + circleTransform.getPosition();
 
 	// counting vectors
 	sf::Vector2f CenterPlaneVector = sf::Vector2f(pointB.y - pointA.y, -(pointB.x - pointA.x)) 
-		/ plane.Distance * MathFunctions::DistanceFromLine(center, pointA, pointB);
+		/ plane->Distance * MathFunctions::DistanceFromLine(center, pointA, pointB);
 
 	if (MathFunctions::IsUnderLine(center, pointA, pointB))
 		CenterPlaneVector = (-1.0f) * CenterPlaneVector;
@@ -142,9 +142,9 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	CollisionPoints collPoints; // default parameters
 	collPoints.HasCollision = false;
 
-	if (MathFunctions::VectorDistance(CenterPlaneVector) < circle.Radius)
+	if (MathFunctions::VectorDistance(CenterPlaneVector) < circle->Radius)
 	{
-		if (MathFunctions::VectorDistance(ShadowVector) < plane.Distance)
+		if (MathFunctions::VectorDistance(ShadowVector) < plane->Distance)
 		{
 			if (true)
 			{
@@ -157,8 +157,8 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 }
 
 Basic::CollisionPoints Basic::CollisionDetection::FindPlaneCircleCollisionPoints(
-	const PlaneCollider& plane, const Transform& planeTransform, 
-	const CircleCollider& circle, const Transform& circleTransform)
+	const PlaneCollider* plane, const Transform& planeTransform, 
+	const CircleCollider* circle, const Transform& circleTransform)
 {
 	return CollisionPoints();
 }

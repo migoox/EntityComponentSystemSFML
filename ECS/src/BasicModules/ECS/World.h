@@ -71,9 +71,9 @@ namespace Basic {
 		}
 
 		template <typename ComponentType>
-		ComponentType& AddComponent(Entity entity, const ComponentType& component)
+		ComponentType& AddComponent(Entity entity, ComponentType&& component)
 		{
-			ComponentType& result = m_ComponentManager->AddComponent<ComponentType>(entity, component);
+			ComponentType& result = m_ComponentManager->AddComponent<ComponentType>(entity, std::move(component));
 
 			for (auto& system : m_Systems)
 			{
@@ -134,7 +134,7 @@ namespace Basic {
 	template <typename ComponentType>
 	inline ComponentType& GameObject::AddComponent(ComponentType&& component)
 	{
-		return WorldPtr->AddComponent<ComponentType>(ThisEntity, component);
+		return WorldPtr->AddComponent<ComponentType>(ThisEntity, std::move(component));
 	}
 
 	template <typename ComponentType>

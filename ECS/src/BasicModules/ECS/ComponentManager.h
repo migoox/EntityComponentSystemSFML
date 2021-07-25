@@ -67,7 +67,7 @@ namespace Basic
 		}
 
 		template <typename ComponentType>
-		ComponentType& AddComponent(Entity entity, const ComponentType& component)
+		ComponentType& AddComponent(Entity entity, ComponentType&& component)
 		{
 			const char* name = typeid(ComponentType).name();
 
@@ -75,7 +75,7 @@ namespace Basic
 
 			EntityManager::EntitySignature(entity).set(m_ComponentIDs[name]);
 
-			return GetComponentArray<ComponentType>()->AddComponent(entity, component);
+			return GetComponentArray<ComponentType>()->AddComponent(entity, std::move(component));
 		}
 
 		template <typename ComponentType>

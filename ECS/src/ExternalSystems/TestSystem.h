@@ -25,14 +25,9 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 
-		AddToSignature<CircleCollider>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		auto& circle = m_GameObjects[0];
-
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-			circle.GetTransform().setPosition(Game::MouseWorldPosition());
 	}
 };

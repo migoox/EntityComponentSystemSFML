@@ -1,31 +1,40 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include "../OtherComponents/Transform.h"
+#include "CircleCollider.h"
 namespace Basic {
-	struct CollisionPoints
-	{
-		sf::Vector2f A;
-		sf::Vector2f B;
-		sf::Vector2f Normal;
-		float Depth = 0.0f;
-		bool HasCollision = false;
-	};
-
-	struct PlaneCollider;
-	struct CircleCollider;
-	struct RectangleCollider;
-	struct ConvexCollider;
-
 	struct Collider
 	{
-		virtual CollisionPoints TestCollision(
-			const Transform& transform,
-			const CircleCollider& circleCollider,
-			const Transform& circleTransform) const = 0;
+		ColliderItem* Item;
+		Collider()
+		{
+			Item = nullptr;
+		}
 
-		virtual CollisionPoints TestCollision(
-			const Transform& transform,
-			const PlaneCollider& planeCollider,
-			const Transform& planeTransform) const = 0;
+		Collider(ColliderItem* item) : Item(item) { }
+
+		Collider(const Collider& other) = default;
+		Collider& operator=(const Collider& other) = default;
+		Collider(Collider&& other)
+		{
+
+			Item = other.Item;
+			other.Item = nullptr;
+		}
+		Collider& operator=(Collider&& other)
+		{
+
+			Item = other.Item;
+			other.Item = nullptr;
+
+			return *this;
+		}
+
+		~Collider()
+		{
+			if (Item != nullptr)
+			{
+				std::cout << "delete\n";
+				delete Item;
+			}
+		}
 	};
 }

@@ -24,7 +24,7 @@ namespace Basic {
 		size_t m_Size = 0;
 
 	public:
-		ComponentType& AddComponent(Entity entity, const ComponentType& component)
+		ComponentType& AddComponent(Entity entity, ComponentType&& component)
 		{
 			// check if entity is not assigned
 			if (m_ECMap.IsContain(entity))
@@ -33,7 +33,7 @@ namespace Basic {
 			}
 
 			// copying component to array
-			m_ComponentArray[m_Size] = component;
+			m_ComponentArray[m_Size] = std::move(component);
 
 			// updating entity -> arrIndex and arrIndex -> entity system
 			m_ECMap.AddEntity(entity);

@@ -106,6 +106,7 @@
     <ClInclude Include="src\BasicModules\Animation\Animation.h" />
     <ClInclude Include="src\BasicModules\Animation\Animator.h" />
     <ClInclude Include="src\BasicModules\PhysicalComponents\CircleCollider.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\ColliderItem.h" />
     <ClInclude Include="src\BasicModules\PhysicalComponents\PlaneCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h" />
     <ClInclude Include="src\BasicModules\Systems\CollisionDetectionSystem.h" />

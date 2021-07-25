@@ -1,9 +1,9 @@
 #pragma once
-#include "Collider.h"
+#include "ColliderItem.h"
 #include "../Physics/CollisionDetectionAlgorithms.h"
 
 namespace Basic {
-	struct CircleCollider : public Collider
+	struct CircleCollider : public ColliderItem
 	{
 		sf::Vector2f Center; // relative to game object's tranform
 		float Radius = 0.0f;
@@ -15,21 +15,29 @@ namespace Basic {
 
 		CollisionPoints TestCollision(
 			const Transform& transform,
-			const CircleCollider& circleCollider,
+			const ColliderItem* collider,
+			const Transform& colliderTransform) const override
+		{
+			return collider->TestCollision(colliderTransform, this, transform);
+		}
+
+		CollisionPoints TestCollision(
+			const Transform& transform,
+			const CircleCollider* circleCollider,
 			const Transform& circleTransform) const override
 		{
 			return CollisionDetection::FindCircleCircleCollisionPoints(
-				*this, transform, 
+				this, transform, 
 				circleCollider, circleTransform);
 		}
 
 		CollisionPoints TestCollision(
 			const Transform& transform,
-			const PlaneCollider& planeCollider,
+			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const override
 		{
 			return CollisionDetection::FindCirclePlaneCollisionPoints(
-				*this, transform,
+				this, transform,
 				planeCollider, planeTransform);
 		}
 	};

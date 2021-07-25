@@ -1,7 +1,7 @@
 #pragma once
 #include <math.h>
 
-#include "../PhysicalComponents/Collider.h"
+#include "../PhysicalComponents/ColliderItem.h"
 
 namespace Basic {
 	namespace MathFunctions {
@@ -14,16 +14,16 @@ namespace Basic {
 	}
 	namespace CollisionDetection {
 		CollisionPoints FindCircleCircleCollisionPoints(
-			const CircleCollider& circle1, const Transform& transform1,
-			const CircleCollider& circle2, const Transform& transform2);
+			const CircleCollider* circle1, const Transform& transform1,
+			const CircleCollider* circle2, const Transform& transform2);
 
 		CollisionPoints FindCirclePlaneCollisionPoints(
-			const CircleCollider& circle, const Transform& circleTransform,
-			const PlaneCollider& plane, const Transform& planeTransform);
+			const CircleCollider* circle, const Transform& circleTransform,
+			const PlaneCollider* plane, const Transform& planeTransform);
 
 		CollisionPoints FindPlaneCircleCollisionPoints(
-			const PlaneCollider& plane, const Transform& planeTransform,
-			const CircleCollider& circle, const Transform& circleTransform);
+			const PlaneCollider* plane, const Transform& planeTransform,
+			const CircleCollider* circle, const Transform& circleTransform);
 
 
 	}

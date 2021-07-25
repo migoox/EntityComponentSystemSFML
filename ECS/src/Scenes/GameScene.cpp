@@ -40,7 +40,7 @@ void GameScene::OnEnter()
 	circleShape.setFillColor(sf::Color(0, 0, 255, 225));
 	circleShape.setOrigin(75.0f, 75.0f);
 
-	circle.AddComponent<CircleCollider>(CircleCollider(75.0f));
+	circle.AddComponent<Collider>(new CircleCollider(100.0f));
 	circle.GetTransform().setPosition(sf::Vector2f(100.f, 100.f));
 
 	circle = Instantiate();
@@ -49,9 +49,8 @@ void GameScene::OnEnter()
 	circleShape2.setFillColor(sf::Color(255, 0, 0, 225));
 	circleShape2.setOrigin(100.0f, 100.0f);
 
-	circle.AddComponent<CircleCollider>(CircleCollider(100.0f));
+	circle.AddComponent<Collider>(new CircleCollider(100.0f));
 	circle.GetTransform().setPosition(sf::Vector2f(500.f, 300.f));
-	circle.SetActivity(false);
 
 	GameObject plane = Instantiate();
 
@@ -59,7 +58,7 @@ void GameScene::OnEnter()
 
 	auto& verArr = plane.AddComponent<Line>(Line(260.0f, 10.0f, sf::Color::Black));
 
-	plane.AddComponent<PlaneCollider>(PlaneCollider(260.0f));
+	plane.AddComponent<Collider>(new PlaneCollider(260.0f));
 
 	plane.GetTransform().setRotation(-20.0f);
 	plane.GetTransform().setPosition(200.0f, 400.0f);

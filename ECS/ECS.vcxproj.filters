@@ -182,5 +182,8 @@
     <ClInclude Include="src\BasicModules\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\BasicModules\PhysicalComponents\ColliderItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
