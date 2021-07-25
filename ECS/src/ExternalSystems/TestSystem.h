@@ -14,7 +14,9 @@ using Basic::Game;
 using Basic::Event;
 using Basic::ResourceManager;
 
-class MotionSystem : public ECSSystem
+// external systems/components:
+
+class TestSystem : public ECSSystem
 {
 private:
 
@@ -23,18 +25,14 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 
-		AddToSignature<Transform>();
-		AddToSignature<RigidBody>();
+		AddToSignature<CircleCollider>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
-		for (auto& gameObject : m_GameObjects)
-		{
-			auto& transform = gameObject.GetTransform();
-			auto& rigidBody = gameObject.GetComponent<RigidBody>();
+		auto& circle = m_GameObjects[0];
 
-			transform.move(rigidBody.Velocity * deltaTime.asSeconds());
-		}
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			circle.GetTransform().setPosition(Game::MouseWorldPosition());
 	}
 };

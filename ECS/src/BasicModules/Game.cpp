@@ -62,6 +62,9 @@ void Basic::Game::Render()
 {
 	// render current scene
 	s_CurrentScene->Render(m_Window);
+	m_Window.draw(temp1);
+	m_Window.draw(temp2);
+	m_Window.draw(temp3);
 }
 
 Basic::Game::Game()
@@ -114,6 +117,11 @@ void Basic::Game::IRun()
 	}
 }
 
+sf::Vector2f Basic::Game::IMouseWorldPosition()
+{
+	return m_Window.mapPixelToCoords(sf::Mouse::getPosition(m_Window));
+}
+
 void Basic::Game::ReloadWindow()
 {
 	s_Instance.IReloadWindow();
@@ -137,4 +145,9 @@ const sf::Time& Basic::Game::DeltaTime()
 sf::Vector2u Basic::Game::WindowSize()
 {
 	return s_Instance.m_Window.getSize();
+}
+
+sf::Vector2f Basic::Game::MouseWorldPosition()
+{
+	return s_Instance.IMouseWorldPosition();
 }

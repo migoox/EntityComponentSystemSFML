@@ -10,13 +10,9 @@
 #include "../BasicModules/ResourceManager/ResourceManager.h"
 
 // include external systems
-#include "../ExternalSystems/InputSystem.h"
-#include "../ExternalSystems/MotionSystem.h"
-#include "../ExternalSystems/PlayerSystem.h"
 
 // include external components
-#include "../ExternalComponents/Joystick.h"
-#include "../ExternalComponents/Stats.h"
+#include "../ExternalSystems/TestSystem.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;

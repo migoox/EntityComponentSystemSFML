@@ -40,6 +40,8 @@ namespace Basic {
 		void ISetScene(Scene* scene);
 		void IRun();
 
+		sf::Vector2f IMouseWorldPosition();
+
 	public:
 		static void ReloadWindow();
 
@@ -50,5 +52,15 @@ namespace Basic {
 		static const sf::Time& DeltaTime();
 
 		static sf::Vector2u WindowSize();
+
+		static sf::Vector2f MouseWorldPosition();
+
+		sf::VertexArray temp1;
+		sf::VertexArray temp2;
+		sf::VertexArray temp3;
+
+		static void TempDraw1(sf::VertexArray v) { s_Instance.temp1 = v; }
+		static void TempDraw2(sf::VertexArray v) { s_Instance.temp2 = v; }
+		static void TempDraw3(sf::VertexArray v) { s_Instance.temp3 = v; }
 	};
 }

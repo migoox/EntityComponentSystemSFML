@@ -39,6 +39,24 @@ public:
 			}
 		}
 
+		// line
+		auto lineArr = m_ComponentManager->ArrayData<Line>();
+		if (lineArr != nullptr)
+		{
+			for (size_t i = 0; i < m_ComponentManager->Size<Line>(); i++)
+			{
+				GameObject gameObject = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Line>(i));
+
+				if (gameObject.IsVisible() && gameObject.IsActive())
+				{
+					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+
+					target.draw(*lineArr, transform.getTransform());
+				}
+				lineArr++;
+			}
+		}
+
 		// rectangle shape
 		auto rectShapeArr = m_ComponentManager->ArrayData<RectangleShape>();
 		if (rectShapeArr != nullptr)
@@ -72,6 +90,24 @@ public:
 					target.draw(*circleShapeArr, transform.getTransform());
 				}
 				circleShapeArr++;
+			}
+		}
+
+		// vertex array
+		auto vertArrArr = m_ComponentManager->ArrayData<VertexArray>();
+		if (vertArrArr != nullptr)
+		{
+			for (size_t i = 0; i < m_ComponentManager->Size<VertexArray>(); i++)
+			{
+				GameObject gameObject = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<VertexArray>(i));
+
+				if (gameObject.IsVisible() && gameObject.IsActive())
+				{
+					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+
+					target.draw(*vertArrArr, transform.getTransform());
+				}
+				vertArrArr++;
 			}
 		}
 

@@ -48,6 +48,12 @@
     <ClCompile Include="src\BasicModules\Animation\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\VisualComponents\Line.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Game.h">
@@ -125,12 +131,6 @@
     <ClInclude Include="src\BasicModules\Systems.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\InputSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ExternalSystems\MotionSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\BasicModules\EventSystem\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -152,13 +152,34 @@
     <ClInclude Include="src\BasicModules\Systems\AnimatorSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\PlayerSystem.h">
+    <ClInclude Include="src\BasicModules\Systems\PhysicsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalComponents\Stats.h">
+    <ClInclude Include="src\BasicModules\Systems\CollisionDetectionSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalComponents\Joystick.h">
+    <ClInclude Include="src\BasicModules\Systems\CollisionResolvingSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ExternalSystems\TestSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\PhysicalComponents\CircleCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\PhysicalComponents\PlaneCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\VisualComponents\VertexArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\VisualComponents\Line.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

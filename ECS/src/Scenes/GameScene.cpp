@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "../BasicModules/Timer.h"
 
 GameScene::~GameScene()
 {
@@ -7,9 +8,12 @@ GameScene::~GameScene()
 void GameScene::OnEnter()
 {
 	// 1. Add systems (order can be crucial in some cases)
-	AddSystem<InputSystem>();
-	AddSystem<PlayerSystem>();
-	AddSystem<MotionSystem>();
+		// your systems here
+	AddSystem<TestSystem>();
+
+		// default systems
+	AddSystem<PhysicsSystem>();
+	AddSystem<CollisionDetectionSystem>();
 	AddSystem<AnimatorSystem>();
 	AddSystem<RendererSystem>();
 
@@ -17,25 +21,48 @@ void GameScene::OnEnter()
 	InitWorldSystems();
 
 	// 3. Create GameObjects
-	GameObject player = Instantiate(); // Instantiate(player) is also allowed
+	/*GameObject box = Instantiate();
 
-	// adding important components
-	player.AddComponent<Joystick>(Joystick());
-	player.AddComponent<Stats>(Stats());
-	player.AddComponent<RigidBody>(RigidBody());
+	auto& rigidBody = box.AddComponent<RigidBody>(RigidBody());
+	rigidBody.FreezeRotation = true;
+	rigidBody.UseGravity = true;
+	rigidBody.Mass = 50.0f;
 
-	auto& sprite = player.AddComponent<Sprite>(Sprite(*ResourceManager::TextureAcquire("resources/sample.png")));
+	auto& rectShape = box.AddComponent<RectangleShape>(RectangleShape(sf::Vector2f(96.0f, 96.0f)));
+	rectShape.setFillColor(sf::Color::Black);
+	
+	box.GetTransform().setOrigin(48.0f, 48.0f);
+	box.GetTransform().setPosition(Game::WindowSize().x / 2, 48.0f);*/
 
-	// changing transform ( transform is special component, which cannot be added or deleted )
-	player.GetTransform().setOrigin(8, 8);
-	player.GetTransform().setScale(6.0f, 6.0f);
+	GameObject circle = Instantiate();
 
-	// adding animations to our player
-	auto& animator = player.AddComponent<Animator>(Animator(sprite.getTexture()->getSize()));
-	animator.AddAnimation("FRONT_WALK", Animation(sf::Vector2u(0, 0), sf::Vector2u(16, 16), 4, 0.16f));
-	animator.AddAnimation("BACK_WALK", Animation(sf::Vector2u(0, 16), sf::Vector2u(16, 16), 4, 0.16f));
-	animator.AddAnimation("HORIZONTAL_WALK", Animation(sf::Vector2u(0, 32), sf::Vector2u(16, 16), 2, 0.16f));
-	animator.AddAnimation("IDLE", Animation(sf::Vector2u(0, 0), sf::Vector2u(16, 16), 1, 0.5f));
+	auto& circleShape = circle.AddComponent<CircleShape>(CircleShape(75.0f));
+	circleShape.setFillColor(sf::Color(0, 0, 255, 225));
+	circleShape.setOrigin(75.0f, 75.0f);
+
+	circle.AddComponent<CircleCollider>(CircleCollider(75.0f));
+	circle.GetTransform().setPosition(sf::Vector2f(100.f, 100.f));
+
+	circle = Instantiate();
+
+	auto& circleShape2 = circle.AddComponent<CircleShape>(CircleShape(100.0f));
+	circleShape2.setFillColor(sf::Color(255, 0, 0, 225));
+	circleShape2.setOrigin(100.0f, 100.0f);
+
+	circle.AddComponent<CircleCollider>(CircleCollider(100.0f));
+	circle.GetTransform().setPosition(sf::Vector2f(400.f, 300.f));
+	circle.SetVisibility(false);
+
+	GameObject plane = Instantiate();
+
+
+
+	auto& verArr = plane.AddComponent<Line>(Line(260.0f, 10.0f, sf::Color::Black));
+
+	plane.AddComponent<PlaneCollider>(PlaneCollider(260.0f));
+
+	plane.GetTransform().setRotation(-20.0f);
+	plane.GetTransform().setPosition(200.0f, 400.0f);
 }
 
 void GameScene::Update()

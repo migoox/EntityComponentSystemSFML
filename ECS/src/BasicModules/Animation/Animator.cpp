@@ -86,9 +86,9 @@ void Basic::Animator::TempNextFrame()
 
 		// return rectangle to current animation
 		auto& pos = m_AnimationsMap[m_CurrentAnimationName].FirstFramePos;
-		size = m_AnimationsMap[m_CurrentAnimationName].FrameSize;
+		auto& currSize = m_AnimationsMap[m_CurrentAnimationName].FrameSize;
 
-		m_CurrentFrameRect = sf::IntRect(pos.x, pos.y, size.x, size.y);
+		m_CurrentFrameRect = sf::IntRect(pos.x, pos.y, currSize.x, currSize.y);
 	}
 	else
 	{

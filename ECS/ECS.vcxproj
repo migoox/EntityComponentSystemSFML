@@ -94,7 +94,9 @@
     <ClCompile Include="src\BasicModules\ECS\System.cpp" />
     <ClCompile Include="src\BasicModules\ECS\World.cpp" />
     <ClCompile Include="src\BasicModules\Game.cpp" />
+    <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp" />
     <ClCompile Include="src\BasicModules\Random.cpp" />
+    <ClCompile Include="src\BasicModules\VisualComponents\Line.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\BasicModules\ResourceManager\ResourceManager.cpp" />
     <ClCompile Include="src\Scenes\GameScene.cpp" />
@@ -103,9 +105,17 @@
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Animation\Animation.h" />
     <ClInclude Include="src\BasicModules\Animation\Animator.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\CircleCollider.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\PlaneCollider.h" />
+    <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h" />
+    <ClInclude Include="src\BasicModules\Systems\CollisionDetectionSystem.h" />
+    <ClInclude Include="src\BasicModules\Systems\CollisionResolvingSystem.h" />
+    <ClInclude Include="src\BasicModules\Systems\PhysicsSystem.h" />
+    <ClInclude Include="src\BasicModules\Timer.h" />
     <ClInclude Include="src\BasicModules\VisualComponents\CircleShape.h" />
     <ClInclude Include="src\BasicModules\PhysicalComponents\Collider.h" />
     <ClInclude Include="src\BasicModules\VisualComponents\ConvexShape.h" />
+    <ClInclude Include="src\BasicModules\VisualComponents\Line.h" />
     <ClInclude Include="src\BasicModules\VisualComponents\RectangleShape.h" />
     <ClInclude Include="src\BasicModules\PhysicalComponents\RigidBody.h" />
     <ClInclude Include="src\BasicModules\VisualComponents\Sprite.h" />
@@ -129,15 +139,12 @@
     <ClInclude Include="src\BasicModules\ECS\World.h" />
     <ClInclude Include="src\BasicModules\Game.h" />
     <ClInclude Include="src\BasicModules\ResourceManager\ResourceManager.h" />
-    <ClInclude Include="src\ExternalComponents\Joystick.h" />
-    <ClInclude Include="src\ExternalComponents\Stats.h" />
-    <ClInclude Include="src\ExternalSystems\PlayerSystem.h" />
+    <ClInclude Include="src\BasicModules\VisualComponents\VertexArray.h" />
+    <ClInclude Include="src\ExternalSystems\TestSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />
     <ClInclude Include="src\BasicModules\StateSystem\State.h" />
     <ClInclude Include="src\BasicModules\StateSystem\StateMachine.h" />
-    <ClInclude Include="src\ExternalSystems\InputSystem.h" />
-    <ClInclude Include="src\ExternalSystems\MotionSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
