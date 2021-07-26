@@ -10,6 +10,7 @@ namespace Basic {
 		sf::Vector2f Normal;
 		float Depth = 0.0f;
 		bool HasCollision = false;
+		bool Resolvable = true;
 	};
 
 	struct PlaneCollider;
@@ -19,7 +20,8 @@ namespace Basic {
 
 	struct ColliderItem
 	{
-		virtual void Print() {};
+		bool Active = true;
+		bool Resolve = false;
 
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,

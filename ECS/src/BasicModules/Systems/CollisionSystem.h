@@ -12,7 +12,7 @@ using Basic::GameObject;
 using Basic::Entity;
 using Basic::CollisionPoints;
 
-class CollisionDetectionSystem : public ECSSystem
+class CollisionSystem : public ECSSystem
 {
 private:
 
@@ -27,6 +27,7 @@ public:
 	{
 		bool collision = false;
 
+		// collision detection 
 		for (size_t i = 0; i < m_GameObjects.size(); i++)
 		{
 			for (size_t j = i + 1; j < m_GameObjects.size(); j++)
@@ -44,6 +45,8 @@ public:
 
 					if (collider1.Item == nullptr || collider2.Item == nullptr) continue;
 
+					if (!collider1.Item->Active || !collider2.Item->Active) continue;
+
 					CollisionPoints collPoints = collider1.Item->TestCollision(
 						transform1, collider2.Item, transform2);
 
@@ -55,5 +58,7 @@ public:
 
 		if (collision)
 			std::cout << "COLLISION DETECTED" << deltaTime.asSeconds() << std::endl;
+
+		// collision resolving
 	}
 };

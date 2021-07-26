@@ -155,10 +155,7 @@
     <ClInclude Include="src\BasicModules\Systems\PhysicsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Systems\CollisionDetectionSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BasicModules\Systems\CollisionResolvingSystem.h">
+    <ClInclude Include="src\BasicModules\Systems\CollisionSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ExternalSystems\TestSystem.h">

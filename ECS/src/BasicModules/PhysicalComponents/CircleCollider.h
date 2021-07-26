@@ -8,14 +8,14 @@ namespace Basic {
 		sf::Vector2f Center; // relative to game object's tranform
 		float Radius = 0.0f;
 
-		CircleCollider() = default;
+		CircleCollider() { }
 
 		CircleCollider(float radius) : Radius(radius) { }
 		CircleCollider(float radius, sf::Vector2f center) : Radius(radius), Center(center) { }
 
-		void Print() override
+		sf::Vector2f GetGlobalCenter(const Transform& trans) const
 		{
-			std::cout << Radius << std::endl;
+			return Center + trans.getPosition();
 		}
 
 		CollisionPoints TestCollision(

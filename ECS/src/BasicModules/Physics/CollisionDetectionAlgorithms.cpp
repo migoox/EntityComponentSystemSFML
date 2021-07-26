@@ -36,7 +36,7 @@ sf::Vector2f Basic::MathFunctions::NormalizeVector(sf::Vector2f vector)
 
 float Basic::MathFunctions::IsUnderLine(sf::Vector2f point, sf::Vector2f lineA, sf::Vector2f lineB)
 {
-	// counting general linear equation which contain point A and B, p stands for "parameter"
+	// counting general linear equations which contain point A and B, p stands for "parameter"
 	float Ap = lineA.y - lineB.y;
 	float Bp = lineB.x - lineA.x;
 	float Cp = lineA.x * (lineB.y - lineA.y) - lineA.y * (lineB.x - lineA.x);
@@ -58,8 +58,8 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoint
 	const CircleCollider* circle1, const Transform& transform1, 
 	const CircleCollider* circle2, const Transform& transform2)
 {
-	sf::Vector2f globalPosition1 = circle1->Center + transform1.getPosition();
-	sf::Vector2f globalPosition2 = circle2->Center + transform2.getPosition();
+	sf::Vector2f globalPosition1 = circle1->GetGlobalCenter(transform1);
+	sf::Vector2f globalPosition2 = circle2->GetGlobalCenter(transform2);
 
 	float distanceBetweenCenters = sqrt(pow(globalPosition1.x - globalPosition2.x, 2) +
 		pow(globalPosition1.y - globalPosition2.y, 2));
@@ -87,16 +87,9 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	float pi = 3.141592653f;
 
 	// counting points
-	sf::Vector2f pointA;
-	sf::Vector2f pointB;
-	sf::Vector2f center;
-
-	pointA = plane->Plane + planeTransform.getPosition();
-
-	pointB.x = plane->Plane.x + std::cos(planeTransform.getRotation() * pi / 180.0f) * plane->Distance + planeTransform.getPosition().x;
-	pointB.y = plane->Plane.y + std::sin(planeTransform.getRotation() * pi / 180.0f) * plane->Distance + planeTransform.getPosition().y;
-
-	center = circle->Center + circleTransform.getPosition();
+	sf::Vector2f pointA = plane->GetGlobalAPoint(planeTransform);
+	sf::Vector2f pointB = plane->GetGlobalBPoint(planeTransform);
+	sf::Vector2f center = circle->GetGlobalCenter(circleTransform);
 
 	// counting vectors
 	sf::Vector2f CenterPlaneVector = sf::Vector2f(pointB.y - pointA.y, -(pointB.x - pointA.x)) 
@@ -111,31 +104,8 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 
 	sf::Vector2f ShadowVectorNormalized = MathFunctions::NormalizeVector(ShadowVector);
 
-
-	sf::VertexArray arr1(sf::Lines, 2);
-	arr1[0].position = pointA;
-	arr1[1].position = pointA + PointACenterVector;
-	arr1[0].color = sf::Color::Red;
-	arr1[1].color = sf::Color::Green;
-
-	sf::VertexArray arr2(sf::Lines, 2);
-	arr2[0].position = center;
-	arr2[1].position = center + CenterPlaneVector;
-	arr2[0].color = sf::Color::Red;
-	arr2[1].color = sf::Color::Green;
-
-	sf::VertexArray arr3(sf::Lines, 2);
-	arr3[0].position = pointA;
-	arr3[1].position = pointA + ShadowVector;
-	arr3[0].color = sf::Color::Red;
-	arr3[1].color = sf::Color::Green;
-
-	Game::TempDraw1(arr1);
-	Game::TempDraw2(arr2);
-	Game::TempDraw3(arr3);
-
-	CollisionPoints collPoints; // default parameters
-	collPoints.HasCollision = false;
+	// create collision points
+	CollisionPoints collPoints;
 
 	if (MathFunctions::Distance(center, pointA) <= circle->Radius ||
 		MathFunctions::Distance(center, pointB) <= circle->Radius) // one of the points of edge is inside the circle
@@ -153,6 +123,18 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 				if (ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
 				{
 					collPoints.HasCollision = true;
+					collPoints.Depth = plane->Distance;
+					collPoints.A = center + CenterPlaneVector;
+					collPoints.B = center + CenterPlaneVector / MathFunctions::VectorDistance(CenterPlaneVector) * circle->Radius;
+					collPoints.Normal = sf::Vector2f(collPoints.A.x - collPoints.B.x, 
+						collPoints.A.y - collPoints.B.y) / collPoints.Depth;
+
+					sf::VertexArray arr(sf::Points, 2);
+					arr[0].position = collPoints.A;
+					arr[1].position = collPoints.B;
+					arr[0].color = sf::Color::Red;
+						arr[1].color = sf::Color::Red;
+					Game::TempDraw1(arr);
 				}
 			}
 		}
@@ -160,9 +142,120 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	return collPoints;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPlaneCircleCollisionPoints(
-	const PlaneCollider* plane, const Transform& planeTransform, 
-	const CircleCollider* circle, const Transform& circleTransform)
+Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
+	const PlaneCollider* plane1, const Transform& plane1Transform, 
+	const PlaneCollider* plane2, const Transform& plane2Transform)
 {
-	return CollisionPoints();
+	float pi = 3.141592653f;
+
+	// counting points
+	sf::Vector2f pointA1 = plane1->GetGlobalAPoint(plane1Transform);
+	sf::Vector2f pointB1 = plane1->GetGlobalBPoint(plane1Transform);
+	sf::Vector2f pointA2 = plane2->GetGlobalAPoint(plane2Transform);
+	sf::Vector2f pointB2 = plane2->GetGlobalBPoint(plane2Transform);
+
+	// creating collision points
+	CollisionPoints collPoints;
+	collPoints.Resolvable = false; // since that, it is not necessary to count collision points
+
+	if (pointA1.x == pointB1.x && pointA2.x == pointB2.x) // no intersection (both are vertical)
+	{
+		collPoints.HasCollision = false;
+	}
+	else
+	{
+		if (pointA1.x == pointB1.x) // first one isn't a function
+		{
+			// counting parameters for second line
+			float a2 = (pointB2.y - pointA2.y) / (pointB2.x - pointA2.x);
+			float b2 = pointA2.y - a2 * pointA2.x;
+
+			// counting intersection point
+			float intersectionX = pointA1.x;
+
+			sf::Vector2f intersectionPoint = sf::Vector2f(intersectionX, intersectionX * a2 + b2);
+
+			// collision condition
+			if (intersectionPoint.y >= pointA1.y && intersectionPoint.y <= pointB1.y ||
+				intersectionPoint.y <= pointA1.y && intersectionPoint.y >= pointB1.y)
+			{
+				if (intersectionPoint.x >= pointA2.x && intersectionPoint.x <= pointB2.x ||
+					intersectionPoint.x <= pointA2.x && intersectionPoint.x >= pointB2.x)
+				{
+					if (intersectionPoint.y >= pointA2.y && intersectionPoint.y <= pointB2.y ||
+						intersectionPoint.y <= pointA2.y && intersectionPoint.y >= pointB2.y)
+					{
+						collPoints.HasCollision = true;
+					}
+				}
+			}
+		}
+		else if (pointA2.x == pointB2.x) // second one isn't a function
+		{
+			// counting parameters for second line
+			float a1 = (pointB1.y - pointA1.y) / (pointB1.x - pointA1.x);
+			float b1 = pointA1.y - a1 * pointA1.x;
+
+			// counting intersection point
+			float intersectionX = pointA2.x;
+
+			sf::Vector2f intersectionPoint = sf::Vector2f(intersectionX, intersectionX * a1 + b1);
+
+			// collision condition
+			if (intersectionPoint.y >= pointA2.y && intersectionPoint.y <= pointB2.y ||
+				intersectionPoint.y <= pointA2.y && intersectionPoint.y >= pointB2.y)
+			{
+				if (intersectionPoint.x >= pointA1.x && intersectionPoint.x <= pointB1.x ||
+					intersectionPoint.x <= pointA1.x && intersectionPoint.x >= pointB1.x)
+				{
+					if (intersectionPoint.y >= pointA1.y && intersectionPoint.y <= pointB1.y ||
+						intersectionPoint.y <= pointA1.y && intersectionPoint.y >= pointB1.y)
+					{
+						collPoints.HasCollision = true;
+					}
+				}
+			}
+		}
+		else
+		{
+			// counting direction parameters
+			float a1 = (pointB1.y - pointA1.y) / (pointB1.x - pointA1.x);
+			float a2 = (pointB2.y - pointA2.y) / (pointB2.x - pointA2.x);
+
+			if (a1 == a2) // no intersection (they are in parallel to each other) 
+			{
+				collPoints.HasCollision = false;
+			}
+			else // line functions are intersecting with each other
+			{
+				float b1 = pointA1.y - a1 * pointA1.x;
+				float b2 = pointA2.y - a2 * pointA2.x;
+
+				// counting intersection point
+				float intersectionX = (b1 - b2) / (a2 - a1);
+				sf::Vector2f intersectionPoint = sf::Vector2f(intersectionX, intersectionX * a1 + b1);
+
+				// collision condition
+				if (intersectionPoint.x >= pointA2.x && intersectionPoint.x <= pointB2.x ||
+					intersectionPoint.x <= pointA2.x && intersectionPoint.x >= pointB2.x)
+				{
+					if (intersectionPoint.y >= pointA2.y && intersectionPoint.y <= pointB2.y ||
+						intersectionPoint.y <= pointA2.y && intersectionPoint.y >= pointB2.y)
+					{
+						if (intersectionPoint.x >= pointA1.x && intersectionPoint.x <= pointB1.x ||
+							intersectionPoint.x <= pointA1.x && intersectionPoint.x >= pointB1.x)
+						{
+							if (intersectionPoint.y >= pointA1.y && intersectionPoint.y <= pointB1.y ||
+								intersectionPoint.y <= pointA1.y && intersectionPoint.y >= pointB1.y)
+							{
+								collPoints.HasCollision = true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return collPoints;
 }

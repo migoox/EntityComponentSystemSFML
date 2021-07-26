@@ -13,7 +13,7 @@ void GameScene::OnEnter()
 
 		// default systems
 	AddSystem<PhysicsSystem>();
-	AddSystem<CollisionDetectionSystem>();
+	AddSystem<CollisionSystem>();
 	AddSystem<AnimatorSystem>();
 	AddSystem<RendererSystem>();
 
@@ -51,14 +51,20 @@ void GameScene::OnEnter()
 
 	circle.AddComponent<Collider>(new CircleCollider(100.0f));
 	circle.GetTransform().setPosition(sf::Vector2f(600.f, 300.f));
+	
+
 	GameObject plane = Instantiate();
 
-	auto& verArr = plane.AddComponent<Line>(Line(260.0f, 10.0f, sf::Color::Black));
+	auto& line = plane.AddComponent<Line>(Line(260.0f, 10.0f, sf::Color::Black));
+	line.setOrigin(130.0f, 0.0f);
 
 	plane.AddComponent<Collider>(new PlaneCollider(260.0f));
 
-	plane.GetTransform().setRotation(-20.0f);
+	plane.GetTransform().setRotation(20.0f);
 	plane.GetTransform().setPosition(200.0f, 400.0f);
+
+	plane = Instantiate();
+
 }
 
 void GameScene::Update()

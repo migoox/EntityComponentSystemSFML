@@ -21,9 +21,9 @@ namespace Basic {
 			const CircleCollider* circle, const Transform& circleTransform,
 			const PlaneCollider* plane, const Transform& planeTransform);
 
-		CollisionPoints FindPlaneCircleCollisionPoints(
-			const PlaneCollider* plane, const Transform& planeTransform,
-			const CircleCollider* circle, const Transform& circleTransform);
+		CollisionPoints FindPlanePlaneCollisionPoints(
+			const PlaneCollider* plane1, const Transform& plane1Transform,
+			const PlaneCollider* plane2, const Transform& plane2Transform);
 
 
 	}
