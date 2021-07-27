@@ -46,6 +46,11 @@ namespace Basic {
 			return ThisEntity != rhs.ThisEntity;
 		}
 
+		Signature GetSignature() const
+		{
+			return EntityManager::EntitySignature(ThisEntity);
+		}
+
 		// functions underneath are defined in World.h under World class
 
 		void Destroy();
@@ -60,5 +65,8 @@ namespace Basic {
 
 		template <typename ComponentType>
 		ComponentType& GetComponent();
+
+		template <typename ComponentType>
+		bool HasComponent();
 	};
 } // end of Basic

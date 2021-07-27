@@ -104,41 +104,74 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 
 	sf::Vector2f ShadowVectorNormalized = MathFunctions::NormalizeVector(ShadowVector);
 
+	sf::Vector2f ABVector = sf::Vector2f(pointB.x - pointA.x, pointB.y - pointA.y);
+
 	// create collision points
 	CollisionPoints collPoints;
 
-	if (MathFunctions::Distance(center, pointA) <= circle->Radius ||
-		MathFunctions::Distance(center, pointB) <= circle->Radius) // one of the points of edge is inside the circle
+	if (MathFunctions::Distance(center, pointA) <= circle->Radius) // one of the points of edge is inside the circle
 	{
 		collPoints.HasCollision = true;
+
+		// counting collision points
+		if (MathFunctions::VectorDistance(ShadowVector) >= plane->Distance ||
+			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
+		{
+			collPoints.Depth = circle->Radius - MathFunctions::Distance(center, pointA);
+			collPoints.B = pointA;
+			collPoints.Normal = sf::Vector2f(center.x - pointA.x, center.y - pointA.y) 
+				/ MathFunctions::Distance(center, pointA);
+			collPoints.A = pointA + collPoints.Normal * collPoints.Depth;
+		}
+		else // if circle is inside
+		{
+			collPoints.Depth = MathFunctions::VectorDistance(CenterPlaneVector);
+			collPoints.A = center + CenterPlaneVector;
+			collPoints.B = center + CenterPlaneVector / collPoints.Depth * circle->Radius;
+			collPoints.Normal = sf::Vector2f(collPoints.A.x - collPoints.B.x,
+				collPoints.A.y - collPoints.B.y) / collPoints.Depth;
+		}
 	}
-	else
+	else if (MathFunctions::Distance(center, pointB) <= circle->Radius) // one of the points of edge is inside the circle
+	{
+		collPoints.HasCollision = true;
+
+		// counting collision points
+		if (MathFunctions::VectorDistance(ShadowVector) >= plane->Distance ||
+			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
+		{
+			collPoints.Depth = circle->Radius - MathFunctions::Distance(center, pointB);
+			collPoints.B = pointB;
+			collPoints.Normal = sf::Vector2f(center.x - pointB.x, center.y - pointB.y) 
+				/ MathFunctions::Distance(center, pointB);
+			collPoints.A = pointB + collPoints.Normal * collPoints.Depth;
+		}
+		else
+		{
+			collPoints.Depth = MathFunctions::VectorDistance(CenterPlaneVector);
+			collPoints.A = center + CenterPlaneVector;
+			collPoints.B = center + CenterPlaneVector / collPoints.Depth * circle->Radius;
+			collPoints.Normal = sf::Vector2f(collPoints.A.x - collPoints.B.x,
+				collPoints.A.y - collPoints.B.y) / collPoints.Depth;
+		}
+	}
+	else // if circle collides with the line (not with it's points)
 	{
 		if (MathFunctions::VectorDistance(CenterPlaneVector) <= circle->Radius)
 		{
-			if (MathFunctions::VectorDistance(ShadowVector) <= plane->Distance)
+			if (MathFunctions::VectorDistance(ShadowVector) <= plane->Distance &&
+				ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
 			{
-				sf::Vector2f ABVector = sf::Vector2f(pointB.x - pointA.x, pointB.y - pointA.y);
-
-				if (ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
-				{
-					collPoints.HasCollision = true;
-					collPoints.Depth = plane->Distance;
-					collPoints.A = center + CenterPlaneVector;
-					collPoints.B = center + CenterPlaneVector / MathFunctions::VectorDistance(CenterPlaneVector) * circle->Radius;
-					collPoints.Normal = sf::Vector2f(collPoints.A.x - collPoints.B.x, 
-						collPoints.A.y - collPoints.B.y) / collPoints.Depth;
-
-					sf::VertexArray arr(sf::Points, 2);
-					arr[0].position = collPoints.A;
-					arr[1].position = collPoints.B;
-					arr[0].color = sf::Color::Red;
-						arr[1].color = sf::Color::Red;
-					Game::TempDraw1(arr);
-				}
+				collPoints.HasCollision = true;
+				collPoints.Depth = MathFunctions::VectorDistance(CenterPlaneVector);
+				collPoints.A = center + CenterPlaneVector;
+				collPoints.B = center + CenterPlaneVector / collPoints.Depth * circle->Radius;
+				collPoints.Normal = sf::Vector2f(collPoints.A.x - collPoints.B.x, 
+					collPoints.A.y - collPoints.B.y) / collPoints.Depth;
 			}
 		}
 	}
+
 	return collPoints;
 }
 

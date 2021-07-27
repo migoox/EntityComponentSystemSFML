@@ -108,6 +108,8 @@
     <ClInclude Include="src\BasicModules\PhysicalComponents\CircleCollider.h" />
     <ClInclude Include="src\BasicModules\PhysicalComponents\ColliderItem.h" />
     <ClInclude Include="src\BasicModules\PhysicalComponents\PlaneCollider.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\PositionSolver.h" />
+    <ClInclude Include="src\BasicModules\PhysicalComponents\Solver.h" />
     <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h" />
     <ClInclude Include="src\BasicModules\Systems\CollisionSystem.h" />
     <ClInclude Include="src\BasicModules\Systems\PhysicsSystem.h" />

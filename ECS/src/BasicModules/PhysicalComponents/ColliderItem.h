@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "../OtherComponents/Transform.h"
+#include "../ECS/GameObject.h"
 
 namespace Basic {
 	struct CollisionPoints
@@ -20,8 +21,11 @@ namespace Basic {
 
 	struct ColliderItem
 	{
+		bool CollisionTriggered = false;
+
 		bool Active = true;
-		bool Resolve = false;
+		bool Solve = true;
+		bool Solid = true;
 
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
@@ -37,5 +41,14 @@ namespace Basic {
 			const Transform& transform,
 			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const = 0;
+	};
+
+	struct CollisionInfo
+	{
+		CollisionInfo(GameObject objA, GameObject objB, CollisionPoints points)
+			: ObjectA(objA), ObjectB(objB), Points(points) { }
+		GameObject ObjectA;
+		GameObject ObjectB;
+		CollisionPoints Points;
 	};
 }

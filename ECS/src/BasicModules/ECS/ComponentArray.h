@@ -8,9 +8,26 @@
 namespace Basic {
 	class BaseComponentArray
 	{
+	private:
+		size_t m_ComponentID = 0;
+
 	public:
 		virtual ~BaseComponentArray() = default;
 		virtual void EntityDestroyed(Entity entity) = 0;
+
+		size_t& ComponentID()
+		{
+			return m_ComponentID;
+		}
+
+		bool EntityHasThisComponent(Entity entity)
+		{
+			Signature entitySignature = EntityManager::EntitySignature(entity);
+			Signature componentSignature;
+			componentSignature.set(m_ComponentID);
+
+			return componentSignature == (componentSignature & entitySignature);
+		}
 	};
 
 	template <typename ComponentType>
@@ -56,7 +73,7 @@ namespace Basic {
 
 		void EntityDestroyed(Entity entity) override
 		{
-			if (m_ECMap.IsContain(entity))
+			if (EntityHasThisComponent(entity))
 			{
 				RemoveComponent(entity);
 			}

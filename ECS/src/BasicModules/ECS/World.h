@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "System.h"
+#include "GameObject.h"
 
 namespace Basic {
 
@@ -108,6 +109,12 @@ namespace Basic {
 		{
 			return m_ComponentManager->GetComponentArray<ComponentType>()->Data();
 		}
+
+		template <typename ComponentType>
+		bool EntityHasThisComponent(Entity entity)
+		{
+			return m_ComponentManager->EntityHasThisComponent<ComponentType>(entity);
+		}
 	};
 
 	template<typename ComponentType>
@@ -147,6 +154,12 @@ namespace Basic {
 	inline ComponentType& GameObject::GetComponent()
 	{
 		return WorldPtr->GetComponent<ComponentType>(ThisEntity);
+	}
+
+	template<typename ComponentType>
+	inline bool GameObject::HasComponent()
+	{
+		return WorldPtr->EntityHasThisComponent<ComponentType>(ThisEntity);
 	}
 
 	inline void GameObject::Destroy()

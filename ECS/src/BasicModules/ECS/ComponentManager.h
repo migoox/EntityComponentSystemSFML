@@ -23,10 +23,12 @@ namespace Basic
 
 			// id assignment
 			m_ComponentIDs[name] = m_NextComponentID;
-			m_NextComponentID++;
 
 			// creating array
 			m_ComponentArrays[name] = std::make_shared<ComponentArray<ComponentType>>();
+			m_ComponentArrays[name]->ComponentID() = m_NextComponentID;
+
+			m_NextComponentID++;
 		}
 
 	public:
@@ -131,11 +133,16 @@ namespace Basic
 
 				Signature& signature = EntityManager::EntitySignature(entity);
 
-				for (size_t i = 0; i < MAX_COMPONENTS; i++)
-				{
-					signature[i] = 0;
-				}
+				signature.reset();
 			}
+		}
+
+		template <typename ComponentType>
+		bool EntityHasThisComponent(Entity entity)
+		{
+			const char* name = typeid(ComponentType).name();
+			
+			return m_ComponentArrays[name]->EntityHasThisComponent();
 		}
 	};
 } // end of Basic
