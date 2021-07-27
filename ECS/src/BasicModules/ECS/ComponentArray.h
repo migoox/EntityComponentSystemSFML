@@ -44,15 +44,15 @@ namespace Basic {
 		ComponentType& AddComponent(Entity entity, ComponentType&& component)
 		{
 			// check if entity is not assigned
-			if (EntityHasThisComponent(entity))
+			if (m_ECMap.IsContain(entity))
 			{
 				return m_ComponentArray[m_ECMap.ToArrIndex(entity)];
 			}
 
-			// move component to array
+			// copying component to array
 			m_ComponentArray[m_Size] = std::move(component);
 
-			// updating entity -> arrIndex and arrIndex -> entity maps
+			// updating entity -> arrIndex and arrIndex -> entity system
 			m_ECMap.AddEntity(entity);
 
 			// returning component reference and increasing m_Size by one
