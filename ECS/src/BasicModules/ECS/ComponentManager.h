@@ -75,9 +75,11 @@ namespace Basic
 
 			TryToRegisterComponent<ComponentType>();
 
+			ComponentType& result = GetComponentArray<ComponentType>()->AddComponent(entity, std::move(component));		
+
 			EntityManager::EntitySignature(entity).set(m_ComponentIDs[name]);
 
-			return GetComponentArray<ComponentType>()->AddComponent(entity, std::move(component));
+			return result;
 		}
 
 		template <typename ComponentType>

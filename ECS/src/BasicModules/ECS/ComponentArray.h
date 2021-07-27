@@ -44,7 +44,7 @@ namespace Basic {
 		ComponentType& AddComponent(Entity entity, ComponentType&& component)
 		{
 			// check if entity is not assigned
-			if (m_ECMap.IsContain(entity))
+			if (EntityHasThisComponent(entity))
 			{
 				return m_ComponentArray[m_ECMap.ToArrIndex(entity)];
 			}

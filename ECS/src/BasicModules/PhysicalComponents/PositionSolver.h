@@ -7,7 +7,7 @@ namespace Basic {
 	private:
 		void SetSignature() override
 		{
-			AddToSignature<Collider>();
+			//AddToSignature<Collider>();
 		}
 
 	public:
