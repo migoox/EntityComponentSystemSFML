@@ -7,7 +7,8 @@ namespace Basic {
 	private:
 		void SetSignature() override
 		{
-			//AddToSignature<Collider>();
+			// all collisions will be solved
+			AddToSignature<Collider>();
 		}
 
 	public:
@@ -30,19 +31,20 @@ namespace Basic {
 				if (!colliderA.Item->Solid && !colliderB.Item->Solid)
 				{
 					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal / 2.0f;
-					collision.ObjectA.GetTransform().move(fixer);
-					collision.ObjectB.GetTransform().move(-fixer);
+
+					collision.ObjectA.GetTransform().move(-fixer);
+					collision.ObjectB.GetTransform().move(fixer);
 
 				}
 				else if (!colliderA.Item->Solid)
 				{
 					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal;
-					collision.ObjectA.GetTransform().move(fixer);
+					collision.ObjectA.GetTransform().move(-fixer);
 				}
 				else if (!colliderB.Item->Solid)
 				{
 					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal;
-					collision.ObjectB.GetTransform().move(-fixer);
+					collision.ObjectB.GetTransform().move(fixer);
 				}
 			}
 		}

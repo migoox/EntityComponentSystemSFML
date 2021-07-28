@@ -21,7 +21,7 @@ namespace Basic {
 		};
 
 	protected:
-		std::deque<GameObject> m_GameObjects;
+		std::vector<GameObject> m_GameObjects;
 
 		Signature m_Signature;
 
@@ -66,6 +66,8 @@ namespace Basic {
 		}
 
 		virtual void Init() {};
+
+		virtual void OnStart() {};
 
 		virtual void Update(const sf::Time& deltaTime) {};
 

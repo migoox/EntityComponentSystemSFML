@@ -18,6 +18,13 @@ namespace Basic {
 			return Center + trans.getPosition();
 		}
 
+		bool ContainsGlobalPoint(const sf::Vector2f globalPoint, const Transform& trans)
+		{
+			sf::Vector2f globalCenter = GetGlobalCenter(trans);
+
+			return Radius >= MathFunctions::Distance(globalPoint, globalCenter);
+		}
+
 		CollisionPoints TestCollision(
 			const Transform& transform,
 			const ColliderItem* collider,

@@ -3,6 +3,9 @@
 #include "ColliderItem.h"
 #include "../ECS/World.h"
 
+// components
+#include "Collider.h"
+
 namespace Basic {
 	class Solver 
 	{
@@ -22,6 +25,7 @@ namespace Basic {
 			m_Signature.set(id);
 		}
 
+		// it always will check in "inclusive" way
 		bool HasProperSignature(const GameObject& gameObject)
 		{
 			return m_Signature == (m_Signature & gameObject.GetSignature());

@@ -188,5 +188,17 @@
     <ClInclude Include="src\BasicModules\PhysicalComponents\PositionSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\BasicModules\PhysicalComponents\ImpulseSolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ExternalComponents\Selectable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ExternalSystems\SelectionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ExternalSystems\MotionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

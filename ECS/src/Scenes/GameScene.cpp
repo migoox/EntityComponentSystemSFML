@@ -9,7 +9,8 @@ void GameScene::OnEnter()
 {
 	// 1. Add systems (order can be crucial in some cases)
 		// your systems here
-	AddSystem<TestSystem>();
+	AddSystem<SelectionSystem>();
+	AddSystem<MotionSystem>();
 
 		// default systems
 	AddSystem<PhysicsSystem>();
@@ -23,56 +24,114 @@ void GameScene::OnEnter()
 	// 3. Create GameObjects
 
 	// first
-	GameObject circle = Instantiate();
 
-	auto& circleShape = circle.AddComponent<CircleShape>(CircleShape(75.0f));
-	circleShape.setFillColor(sf::Color(0, 0, 255, 225));
-	circleShape.setOrigin(75.0f, 75.0f);
+	Collider* collider;
+	RigidBody* rigidBody;
+	for (size_t i = 0; i < 100; i++)
+	{
+		GameObject circle = Instantiate();
 
-	Collider* collider = &circle.AddComponent<Collider>(new CircleCollider(75.0f));
-	collider->Item->Solid = false;
+		auto& circleShape = circle.AddComponent<CircleShape>(CircleShape(10.0f));
+		circleShape.setOrigin(10.0f, 10.0f);
 
+		collider = &circle.AddComponent<Collider>(new CircleCollider(10.0f));
+		collider->Item->Solid = false;
 
-	circle.GetTransform().setPosition(sf::Vector2f(100.f, 100.f));
+		rigidBody = &circle.AddComponent<RigidBody>(RigidBody());
+		rigidBody->UseGravity = false;
 
-	// second
-	circle = Instantiate();
+		circle.GetTransform().setPosition(sf::Vector2f(rand() % 800, rand() % 600));
 
-	auto& circleShape2 = circle.AddComponent<CircleShape>(CircleShape(100.0f));
-	circleShape2.setFillColor(sf::Color(255, 0, 0, 225));
-	circleShape2.setOrigin(100.0f, 100.0f);
+		circle.AddComponent<Selectable>(Selectable());
+	}
 
-	collider = &circle.AddComponent<Collider>(new CircleCollider(100.0f));
-	collider->Item->Solid = false;
-
-	circle.GetTransform().setPosition(sf::Vector2f(600.f, 300.f));
-
-	// third
-	circle = Instantiate();
-
-	auto& circleShape3 = circle.AddComponent<CircleShape>(CircleShape(125.0f));
-	circleShape3.setFillColor(sf::Color(0, 255, 0, 225));
-	circleShape3.setOrigin(125.0f, 125.0f);
-
-	collider = &circle.AddComponent<Collider>(new CircleCollider(125.0f));
-	collider->Item->Solid = false;
-
-	circle.GetTransform().setPosition(sf::Vector2f(500.f, 400.f));
-
-	// plane
+	// left wall
 	auto plane = Instantiate();
-	auto& line = plane.AddComponent<Line>(Line(500.0f, 1.0f, sf::Color::Black));
-	line.setOrigin(250.0f, 0.0f);
+	auto& line = plane.AddComponent<Line>(Line(600.0f, 6.0f, sf::Color::Black));
+	line.setOrigin(300.0f, 0.0f);
 
-	collider = &plane.AddComponent<Collider>(new PlaneCollider(500.0f));
-	collider->Item->Solid = false;
+	collider = &plane.AddComponent<Collider>(new PlaneCollider(600.0f));
+	collider->Item->Solid = true;
 
-	plane.GetTransform().setRotation(30.0f);
-	plane.GetTransform().setPosition(sf::Vector2f(300.f, 400.0f));
+	rigidBody = &plane.AddComponent<RigidBody>(RigidBody());
+	rigidBody->UseGravity = false;
+	rigidBody->FreezeXAxisMovement = true;
+	rigidBody->FreezeYAxisMovement = true;
+	rigidBody->FreezeRotation = true;
+
+	plane.GetTransform().setRotation(-90.0f);
+	plane.GetTransform().setPosition(sf::Vector2f(0.f, 300.0f));
+
+	// right wall
+	plane = Instantiate();
+	auto& line2 = plane.AddComponent<Line>(Line(600.0f, 6.0f, sf::Color::Black));
+	line2.setOrigin(300.0f, 0.0f);
+
+	collider = &plane.AddComponent<Collider>(new PlaneCollider(600.0f));
+	collider->Item->Solid = true;
+
+	rigidBody = &plane.AddComponent<RigidBody>(RigidBody());
+	rigidBody->UseGravity = false;
+	rigidBody->FreezeXAxisMovement = true;
+	rigidBody->FreezeYAxisMovement = true;
+	rigidBody->FreezeRotation = true;
+
+	plane.GetTransform().setRotation(90.0f);
+	plane.GetTransform().setPosition(sf::Vector2f(800.f, 300.0f));
+
+	// bottom
+	plane = Instantiate();
+	auto& line3 = plane.AddComponent<Line>(Line(800.0f, 6.0f, sf::Color::Black));
+	line3.setOrigin(400.0f, 0.0f);
+
+	collider = &plane.AddComponent<Collider>(new PlaneCollider(800.0f));
+	collider->Item->Solid = true;
+
+	rigidBody = &plane.AddComponent<RigidBody>(RigidBody());
+	rigidBody->UseGravity = true;
+	rigidBody->FreezeXAxisMovement = true;
+	rigidBody->FreezeYAxisMovement = true;
+	rigidBody->FreezeRotation = true;
+
+	plane.GetTransform().setPosition(sf::Vector2f(400.0f, 600.0f));
+
+	// top
+	plane = Instantiate();
+	auto& line4 = plane.AddComponent<Line>(Line(800.0f, 6.0f, sf::Color::Black));
+	line4.setOrigin(400.0f, 0.0f);
+
+	collider = &plane.AddComponent<Collider>(new PlaneCollider(800.0f));
+	collider->Item->Solid = true;
+
+	rigidBody = &plane.AddComponent<RigidBody>(RigidBody());
+	rigidBody->UseGravity = false;
+	rigidBody->FreezeXAxisMovement = true;
+	rigidBody->FreezeYAxisMovement = true;
+	rigidBody->FreezeRotation = true;
+
+	plane.GetTransform().setPosition(sf::Vector2f(400.f, 0.0f));
+
+
+	plane = Instantiate();
+	auto& line5 = plane.AddComponent<Line>(Line(300.0f, 6.0f, sf::Color::Black));
+	line5.setOrigin(150.0f, 0.0f);
+
+	collider = &plane.AddComponent<Collider>(new PlaneCollider(300.0f));
+	collider->Item->Solid = true;
+
+	rigidBody = &plane.AddComponent<RigidBody>(RigidBody());
+	rigidBody->UseGravity = false;
+	rigidBody->FreezeXAxisMovement = true;
+	rigidBody->FreezeYAxisMovement = true;
+	rigidBody->FreezeRotation = true;
+
+	plane.GetTransform().setRotation(60.0f);
+	plane.GetTransform().setPosition(sf::Vector2f(400.f, 300.0f));
 }
 
 void GameScene::Update()
 {
+	Timer timer;
 	const sf::Time& deltaTime = Game::DeltaTime();
 
 	UpdateWorld(deltaTime);

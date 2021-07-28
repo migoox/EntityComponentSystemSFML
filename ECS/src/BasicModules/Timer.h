@@ -12,12 +12,16 @@ struct Timer
 	{
 		start = std::chrono::high_resolution_clock::now();
 	}
-	~Timer()
+	float CurrentTimeDuration()
 	{
 		end = std::chrono::high_resolution_clock::now();
 		duration = end - start;
 
-		float ms = duration.count() * 1000.0f;
+		return duration.count() * 1000.0f;
+	}
+	~Timer()
+	{
+		float ms = CurrentTimeDuration();
 		std::cout << "Timer took " << ms << " ms.\n";
 	}
 };

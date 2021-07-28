@@ -43,10 +43,10 @@ namespace Basic {
 		// Entity Manager Mask
 		GameObject CreateEntity()
 		{
-			GameObject gameObject = { EntityManager::CreateEntity(), this };
+			GameObject gameObject(EntityManager::CreateEntity(), this);
 
 			// transform component is always added
-			gameObject.AddComponent<Transform>(Transform());
+			gameObject.TransformPtr = &gameObject.AddComponent<Transform>(Transform());
 
 			return gameObject;
 		}
@@ -55,7 +55,7 @@ namespace Basic {
 
 		GameObject GetGameObject(Entity entity)
 		{
-			return { entity, this };
+			return GameObject(entity, this, &GetComponent<Transform>(entity));
 		}
 
 		// Component Manager Mask
@@ -135,7 +135,12 @@ namespace Basic {
 
 	inline Transform& GameObject::GetTransform() const 
 	{
-		return WorldPtr->GetComponent<Transform>(ThisEntity);
+		if (TransformPtr == nullptr)
+			return WorldPtr->GetComponent<Transform>(ThisEntity);
+		else
+		{
+			return *TransformPtr;
+		}
 	}
 
 	template <typename ComponentType>

@@ -7,6 +7,11 @@ void Basic::World::InitSystems()
 	{
 		system->Init();
 	}
+
+	for (auto& system : m_Systems)
+	{
+		system->OnStart();
+	}
 }
 
 void Basic::World::Update(const sf::Time& deltaTime)

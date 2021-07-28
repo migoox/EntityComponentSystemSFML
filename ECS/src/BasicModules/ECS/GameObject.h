@@ -8,8 +8,15 @@ namespace Basic {
 
 	struct GameObject
 	{
-		Entity ThisEntity;
-		World* WorldPtr;
+	public:
+		Entity ThisEntity = 0;
+		World* WorldPtr = nullptr;
+
+		Transform* TransformPtr = nullptr;
+
+		GameObject() = default;
+		GameObject(Entity entity, World* worldPtr) : ThisEntity(entity), WorldPtr(worldPtr), TransformPtr(nullptr) { }
+		GameObject(Entity entity, World* worldPtr, Transform* trans) : ThisEntity(entity), WorldPtr(worldPtr), TransformPtr(trans) { }
 
 		bool IsVisible() const
 		{

@@ -1,7 +1,7 @@
 #pragma once
 #include "../ECS.h"
 #include "../Components.h"
-
+#include "../Game.h"
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
@@ -28,19 +28,37 @@ public:
 			auto& rigidBody = gameObject.GetComponent<RigidBody>();
 
 			// update acceleration
-			rigidBody.Acceleration = rigidBody.Force / rigidBody.Mass;
+			if(!rigidBody.FreezeXAxisMovement)
+				rigidBody.Acceleration.x = rigidBody.Force.x / rigidBody.Mass;
+
+			if (!rigidBody.FreezeYAxisMovement)
+				rigidBody.Acceleration.y = rigidBody.Force.y / rigidBody.Mass;
 
 			// create resultant acceleration (gravity + acceleration stored in rigidbody)
 			sf::Vector2f resultantAcceleration = rigidBody.Acceleration;
 
 			if (rigidBody.UseGravity)
-				resultantAcceleration += GravityAcceleration;
+			{
+				if (!rigidBody.FreezeXAxisMovement)
+					resultantAcceleration.x += GravityAcceleration.x;
+
+				if (!rigidBody.FreezeYAxisMovement)
+					resultantAcceleration.y += GravityAcceleration.y;
+			}
 
 			// update velocity
-			rigidBody.Velocity += resultantAcceleration * deltaTime.asSeconds();
+			if (!rigidBody.FreezeXAxisMovement)
+				rigidBody.Velocity.x += resultantAcceleration.x * deltaTime.asSeconds();
+
+			if (!rigidBody.FreezeYAxisMovement)
+				rigidBody.Velocity.y += resultantAcceleration.y * deltaTime.asSeconds();
 
 			// move rigidBody
-			gameObject.GetTransform().move(rigidBody.Velocity * deltaTime.asSeconds());
+			if (!rigidBody.FreezeXAxisMovement)
+				gameObject.GetTransform().move(rigidBody.Velocity.x * deltaTime.asSeconds(), 0.0f);
+
+			if (!rigidBody.FreezeYAxisMovement)
+				gameObject.GetTransform().move(0.0f, rigidBody.Velocity.y * deltaTime.asSeconds());
 		}
 	}
 };

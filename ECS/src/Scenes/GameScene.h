@@ -12,7 +12,8 @@
 // include external systems
 
 // include external components
-#include "../ExternalSystems/TestSystem.h"
+#include "../ExternalSystems/SelectionSystem.h"
+#include "../ExternalSystems/MotionSystem.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;

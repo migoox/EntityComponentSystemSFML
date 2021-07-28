@@ -50,8 +50,8 @@ namespace Basic {
 			const CircleCollider* circleCollider,
 			const Transform& circleTransform) const override
 		{
-			return CollisionDetection::FindCirclePlaneCollisionPoints(
-				circleCollider, circleTransform, this, transform);
+			return CollisionDetection::FindPlaneCircleCollisionPoints(
+				this, transform, circleCollider, circleTransform);
 		}
 
 		CollisionPoints TestCollision(
