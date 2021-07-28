@@ -1,6 +1,6 @@
 #pragma once
 #include "ColliderItem.h"
-#include "../Physics/CollisionDetectionAlgorithms.h"
+#include "../CollisionDetectionAlgorithms.h"
 
 namespace Basic {
 	struct CircleCollider : public ColliderItem

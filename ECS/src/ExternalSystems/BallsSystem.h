@@ -1,7 +1,7 @@
 #pragma once
 #include "../BasicModules/ECS.h"
 #include "../BasicModules/Game.h"
-#include "../BasicModules/ResourceManager/ResourceManager.h"
+#include "../BasicModules/Tools/ResourceManager.h"
 #include "../BasicModules/Components.h"
 #include "../BasicModules/EventSystem/Event.h"
 
@@ -17,6 +17,8 @@ using Basic::ColliderItem;
 
 // external systems/components:
 #include "../ExternalComponents/Ball.h"
+
+using namespace Basic::Components;
 
 class BallsSystem : public ECSSystem
 {

@@ -51,6 +51,7 @@ namespace Basic {
 		{
 			m_ComponentManager = nullptr;
 			m_ParentWorld = nullptr;
+			m_EventBus = nullptr;
 			m_SignatureType = SignatureType::Inclusive;
 		}
 		virtual ~System() = default;

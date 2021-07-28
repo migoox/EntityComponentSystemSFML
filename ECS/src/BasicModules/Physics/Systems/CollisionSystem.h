@@ -1,9 +1,9 @@
 #pragma once
-#include "../ECS.h"
-#include "../Components.h"
-#include "../PhysicalComponents/PositionSolver.h"
-#include "../PhysicalComponents/ImpulseSolver.h"
-#include "../Timer.h"
+#include "../../ECS.h"
+#include "../../Components.h"
+#include "../../Physics/Solvers/PositionSolver.h"
+#include "../../Physics/Solvers/ImpulseSolver.h"
+#include "../../Tools/Timer.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;

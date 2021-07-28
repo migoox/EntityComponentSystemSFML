@@ -6,7 +6,7 @@
 #include "../BasicModules/Components.h"
 #include "../BasicModules/Systems.h"
 #include "../BasicModules/Game.h"
-#include "../BasicModules/ResourceManager/ResourceManager.h"
+#include "../BasicModules/Tools/ResourceManager.h"
 
 // include external systems
 #include "../ExternalSystems/BallsSystem.h"
@@ -23,6 +23,8 @@ using Basic::Entity;
 using Basic::ResourceManager;
 using Basic::Game;
 using Basic::Scene;
+
+using namespace Basic::Components;
 
 class GameScene : public Scene
 {

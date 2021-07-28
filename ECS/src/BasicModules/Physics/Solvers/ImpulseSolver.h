@@ -2,8 +2,8 @@
 #include "Solver.h"
 
 // components
-#include "Collider.h"
-#include "RigidBody.h"
+#include "../Components/Collider.h"
+#include "../Components/RigidBody.h"
 
 namespace Basic {
 	class ImpulseSolver : public Solver

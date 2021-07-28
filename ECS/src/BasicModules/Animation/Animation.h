@@ -9,7 +9,7 @@ namespace Basic {
 		int FramesCount;
 		float FrameDuration;
 
-		Animation() {} 
+		Animation() = default;
 
 		Animation(sf::Vector2u firstFramePos, sf::Vector2u frameSize, int framesCount, float frameDuration)
 			: FirstFramePos(firstFramePos), FrameSize(frameSize), 

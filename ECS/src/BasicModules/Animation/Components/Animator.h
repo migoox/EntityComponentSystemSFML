@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 
-#include "Animation.h"
+#include "../Animation.h"
 
 namespace Basic {
 	class Animator

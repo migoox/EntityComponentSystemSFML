@@ -2,7 +2,7 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include "Scene.h"
-#include "StateSystem/StateMachine.h"
+#include "StateMachine/StateMachine.h"
 
 // fixes scaling to 4k
 #ifdef USING_WINDOWS

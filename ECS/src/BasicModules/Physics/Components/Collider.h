@@ -1,5 +1,6 @@
 #pragma once
-#include "CircleCollider.h"
+#include "../Colliders/ColliderItem.h"
+
 namespace Basic {
 	struct Collider
 	{
@@ -13,13 +14,13 @@ namespace Basic {
 
 		Collider(const Collider& other) = default;
 		Collider& operator=(const Collider& other) = default;
-		Collider(Collider&& other)
+		Collider(Collider&& other) noexcept
 		{
 
 			Item = other.Item;
 			other.Item = nullptr;
 		}
-		Collider& operator=(Collider&& other)
+		Collider& operator=(Collider&& other) noexcept
 		{
 
 			Item = other.Item;

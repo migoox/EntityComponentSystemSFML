@@ -1,12 +1,15 @@
 #pragma once
-#include "../ECS.h"
-#include "../Components.h"
-#include "../Game.h"
+#include "../../ECS.h"
+#include "../../Components.h"
+#include "../../Game.h"
+
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
 using Basic::GameObject;
 using Basic::Entity;
+
+using namespace Basic::Components;
 
 class PhysicsSystem : public ECSSystem
 {

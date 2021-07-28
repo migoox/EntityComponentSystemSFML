@@ -138,9 +138,7 @@ namespace Basic {
 		if (m_TransformPtr == nullptr)
 			return m_WorldPtr->GetComponent<Transform>(m_Entity);
 		else
-		{
 			return *m_TransformPtr;
-		}
 	}
 
 	template <typename ComponentType>

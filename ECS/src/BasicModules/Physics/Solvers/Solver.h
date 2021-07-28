@@ -1,10 +1,10 @@
 #pragma once
 #include <list>
-#include "ColliderItem.h"
-#include "../ECS/World.h"
+#include "../Colliders/ColliderItem.h"
+#include "../../ECS/World.h"
 
 // components
-#include "Collider.h"
+#include "../Components/Collider.h"
 
 namespace Basic {
 	class Solver 

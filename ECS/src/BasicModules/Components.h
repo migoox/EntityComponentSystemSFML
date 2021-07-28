@@ -1,30 +1,44 @@
 #pragma once
-#include "OtherComponents/Transform.h"
-using Basic::Transform;
+#include "Transform.h"
 
-#include "VisualComponents/CircleShape.h"
-#include "VisualComponents/RectangleShape.h"
-#include "VisualComponents/ConvexShape.h"
-#include "VisualComponents/VertexArray.h"
-#include "VisualComponents/Line.h"
-#include "VisualComponents/Sprite.h"
-using Basic::CircleShape;
-using Basic::RectangleShape;
-using Basic::ConvexShape;
-using Basic::VertexArray;
-using Basic::Line;
-using Basic::Sprite;
+// rendering
+#include "Rendering/Components/CircleShape.h"
+#include "Rendering/Components/RectangleShape.h"
+#include "Rendering/Components/ConvexShape.h"
+#include "Rendering/Components/VertexArray.h"
+#include "Rendering/Components/Line.h"
+#include "Rendering/Components/Sprite.h"
 
-#include "PhysicalComponents/RigidBody.h"
-#include "PhysicalComponents/CircleCollider.h"
-#include "PhysicalComponents/PlaneCollider.h"
-#include "PhysicalComponents/Collider.h"
-using Basic::RigidBody;
-using Basic::CircleCollider;
-using Basic::PlaneCollider;
-using Basic::Collider;
+// physics 
+	// components
+#include "Physics/Components/RigidBody.h"
+#include "Physics/Components/Collider.h"
+	// colliders
+#include "Physics/Colliders/CircleCollider.h"
+#include "Physics/Colliders/PlaneCollider.h"
+
+// animation
+#include "Animation/Components/Animator.h"
+#include "Animation/Animation.h"
 
 
-#include "Animation/Animator.h"
-using Basic::Animator;
-using Basic::Animation;
+namespace Basic {
+	namespace Components {
+		using Basic::CircleShape;
+		using Basic::RectangleShape;
+		using Basic::ConvexShape;
+		using Basic::VertexArray;
+		using Basic::Line;
+		using Basic::Sprite;
+
+		using Basic::RigidBody;
+		using Basic::Collider;
+
+		using Basic::ColliderItem;
+		using Basic::PlaneCollider;
+		using Basic::CircleCollider;
+
+		using Basic::Animation;
+	}
+}
+

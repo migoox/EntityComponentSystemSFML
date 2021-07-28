@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "../OtherComponents/Transform.h"
-#include "../ECS/GameObject.h"
+#include "../../Transform.h"
+#include "../../ECS/GameObject.h"
 
 namespace Basic {
 	struct CollisionPoints

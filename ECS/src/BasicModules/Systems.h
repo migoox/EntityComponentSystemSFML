@@ -1,5 +1,5 @@
 #pragma once
-#include "Systems/RendererSystem.h"
-#include "Systems/AnimatorSystem.h"
-#include "Systems/PhysicsSystem.h"
-#include "Systems/CollisionSystem.h"
+#include "Rendering/Systems/RendererSystem.h"
+#include "Animation/Systems/AnimatorSystem.h"
+#include "Physics/Systems/PhysicsSystem.h"
+#include "Physics/Systems/CollisionSystem.h"
