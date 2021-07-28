@@ -31,7 +31,7 @@ public:
 
 				if (gameObject.IsVisible() && gameObject.IsActive())
 				{
-					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+					auto& transform = gameObject.GetTransform();
 
 					target.draw(*convexShapeArr, transform.getTransform());
 				}
@@ -49,7 +49,7 @@ public:
 
 				if (gameObject.IsVisible() && gameObject.IsActive())
 				{
-					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+					auto& transform = gameObject.GetTransform();
 
 					target.draw(*lineArr, transform.getTransform());
 				}
@@ -67,7 +67,7 @@ public:
 
 				if (gameObject.IsVisible() && gameObject.IsActive())
 				{
-					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+					auto& transform = gameObject.GetTransform();
 
 					target.draw(*rectShapeArr, transform.getTransform());
 				}
@@ -85,7 +85,7 @@ public:
 
 				if (gameObject.IsVisible() && gameObject.IsActive())
 				{
-					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+					auto& transform = gameObject.GetTransform();
 
 					target.draw(*circleShapeArr, transform.getTransform());
 				}
@@ -103,7 +103,7 @@ public:
 
 				if (gameObject.IsVisible() && gameObject.IsActive())
 				{
-					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+					auto& transform = gameObject.GetTransform();
 
 					target.draw(*vertArrArr, transform.getTransform());
 				}
@@ -121,7 +121,7 @@ public:
 
 				if (gameObject.IsVisible() && gameObject.IsActive())
 				{
-					auto& transform = m_ComponentManager->GetComponent<Transform>(gameObject.ThisEntity);
+					auto& transform = gameObject.GetTransform();
 
 					target.draw(*spriteArr, transform.getTransform());
 				}

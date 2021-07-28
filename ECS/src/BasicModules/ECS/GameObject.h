@@ -6,56 +6,61 @@
 namespace Basic {
 	class World;
 
-	struct GameObject
+	class GameObject
 	{
+	private:
+		Entity m_Entity = 0;
+		World* m_WorldPtr = nullptr;
+		Transform* m_TransformPtr = nullptr;
+
 	public:
-		Entity ThisEntity = 0;
-		World* WorldPtr = nullptr;
-
-		Transform* TransformPtr = nullptr;
-
 		GameObject() = default;
-		GameObject(Entity entity, World* worldPtr) : ThisEntity(entity), WorldPtr(worldPtr), TransformPtr(nullptr) { }
-		GameObject(Entity entity, World* worldPtr, Transform* trans) : ThisEntity(entity), WorldPtr(worldPtr), TransformPtr(trans) { }
+		GameObject(Entity entity, World* worldPtr) : m_Entity(entity), m_WorldPtr(worldPtr), m_TransformPtr(nullptr) { }
+		GameObject(Entity entity, World* worldPtr, Transform* trans) : m_Entity(entity), m_WorldPtr(worldPtr), m_TransformPtr(trans) { }
 
 		bool IsVisible() const
 		{
-			return EntityManager::GetVisibililty(ThisEntity);
+			return EntityManager::GetVisibililty(m_Entity);
 		}
 
 		void SetVisibility(bool visibility)
 		{
-			EntityManager::SetVisibililty(ThisEntity, visibility);
+			EntityManager::SetVisibililty(m_Entity, visibility);
 		}
 
 		bool IsActive() const
 		{
-			return EntityManager::GetActivity(ThisEntity);
+			return EntityManager::GetActivity(m_Entity);
 		}
 
 		void SetActivity(bool activity)
 		{
-			EntityManager::SetActivity(ThisEntity, activity);
+			EntityManager::SetActivity(m_Entity, activity);
 		}
 
 		bool operator<(const GameObject& rhs) const noexcept
 		{
-			return ThisEntity < rhs.ThisEntity;
+			return m_Entity < rhs.m_Entity;
 		}
 
 		bool operator==(const GameObject& rhs) const noexcept
 		{
-			return ThisEntity == rhs.ThisEntity;
+			return m_Entity == rhs.m_Entity;
 		}
 
 		bool operator!=(const GameObject& rhs) const noexcept
 		{
-			return ThisEntity != rhs.ThisEntity;
+			return m_Entity != rhs.m_Entity;
 		}
 
 		Signature GetSignature() const
 		{
-			return EntityManager::EntitySignature(ThisEntity);
+			return EntityManager::EntitySignature(m_Entity);
+		}
+
+		Entity GetEntity() const
+		{
+			return m_Entity;
 		}
 
 		// functions underneath are defined in World.h under World class

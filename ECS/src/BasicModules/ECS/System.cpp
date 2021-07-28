@@ -6,7 +6,7 @@ void Basic::System::TryToRegisterEntity(Entity entity)
 
 	// check if entity is not added
 	for(auto it : m_GameObjects)
-		if (it.ThisEntity == entity)
+		if (it.GetEntity() == entity)
 			return;
 
 	if (m_SignatureType == SignatureType::Inclusive)
@@ -47,7 +47,7 @@ void Basic::System::UpdateRegistration(Entity entity)
 	auto it = m_GameObjects.begin();
 	for (auto element : m_GameObjects)
 	{
-		if (element.ThisEntity == entity)
+		if (element.GetEntity() == entity)
 			break;
 		it++;
 	}
@@ -96,7 +96,7 @@ void Basic::System::TryToUnregisterEntity(Entity entity)
 		auto it = m_GameObjects.begin();
 		for (auto element : m_GameObjects)
 		{
-			if (element.ThisEntity == entity)
+			if (element.GetEntity() == entity)
 				break;
 			it++;
 		}

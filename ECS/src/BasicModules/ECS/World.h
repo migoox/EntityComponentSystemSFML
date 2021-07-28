@@ -43,10 +43,10 @@ namespace Basic {
 		// Entity Manager Mask
 		GameObject CreateEntity()
 		{
-			GameObject gameObject(EntityManager::CreateEntity(), this);
+			Entity entity = EntityManager::CreateEntity();
 
 			// transform component is always added
-			gameObject.TransformPtr = &gameObject.AddComponent<Transform>(Transform());
+			GameObject gameObject(entity, this, &AddComponent<Transform>(entity, Transform()));
 
 			return gameObject;
 		}
@@ -135,40 +135,40 @@ namespace Basic {
 
 	inline Transform& GameObject::GetTransform() const 
 	{
-		if (TransformPtr == nullptr)
-			return WorldPtr->GetComponent<Transform>(ThisEntity);
+		if (m_TransformPtr == nullptr)
+			return m_WorldPtr->GetComponent<Transform>(m_Entity);
 		else
 		{
-			return *TransformPtr;
+			return *m_TransformPtr;
 		}
 	}
 
 	template <typename ComponentType>
 	inline ComponentType& GameObject::AddComponent(ComponentType&& component)
 	{
-		return WorldPtr->AddComponent<ComponentType>(ThisEntity, std::move(component));
+		return m_WorldPtr->AddComponent<ComponentType>(m_Entity, std::move(component));
 	}
 
 	template <typename ComponentType>
 	inline void GameObject::RemoveComponent()
 	{
-		WorldPtr->RemoveComponent<ComponentType>();
+		m_WorldPtr->RemoveComponent<ComponentType>();
 	}
 
 	template <typename ComponentType>
 	inline ComponentType& GameObject::GetComponent()
 	{
-		return WorldPtr->GetComponent<ComponentType>(ThisEntity);
+		return m_WorldPtr->GetComponent<ComponentType>(m_Entity);
 	}
 
 	template<typename ComponentType>
 	inline bool GameObject::HasComponent()
 	{
-		return WorldPtr->EntityHasThisComponent<ComponentType>(ThisEntity);
+		return m_WorldPtr->EntityHasThisComponent<ComponentType>(m_Entity);
 	}
 
 	inline void GameObject::Destroy()
 	{
-		WorldPtr->DestroyEntity(ThisEntity);
+		m_WorldPtr->DestroyEntity(m_Entity);
 	}
 } // end of Basic
