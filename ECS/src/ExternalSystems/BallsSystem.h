@@ -16,9 +16,9 @@ using Basic::ResourceManager;
 using Basic::ColliderItem;
 
 // external systems/components:
-#include "../ExternalComponents/Selectable.h"
+#include "../ExternalComponents/Ball.h"
 
-class MotionSystem : public ECSSystem
+class BallsSystem : public ECSSystem
 {
 private:
 	GameObject m_StretchingGum;
@@ -30,7 +30,7 @@ public:
 		AddToSignature<Collider>();
 		AddToSignature<CircleShape>();
 		AddToSignature<RigidBody>();
-		AddToSignature<Selectable>();
+		AddToSignature<Ball>();
 
 	}
 
@@ -45,13 +45,13 @@ public:
 	{
 		for (auto& gameObject : m_GameObjects)
 		{
-			auto& selectable = gameObject.GetComponent<Selectable>();
+			auto& ball = gameObject.GetComponent<Ball>();
 			auto& circleShape = gameObject.GetComponent<CircleShape>();
 
-			if (selectable.Selected)
+			if (ball.Selected)
 			{
 				circleShape.setFillColor(sf::Color(20, 100, 245, 245));
-				if (selectable.FitMousePosition)
+				if (ball.FitMousePosition)
 				{
 					gameObject.GetTransform().setPosition(Game::MouseWorldPosition());
 					gameObject.GetComponent<RigidBody>().Velocity = sf::Vector2f();
@@ -60,16 +60,16 @@ public:
 				{
 					auto& line = m_StretchingGum.GetComponent<Line>();
 
-					if (selectable.SlingshotStretchingHappens) // stretch
+					if (ball.SlingshotStretchingHappens) // stretch
 					{
-						if (selectable.SlingshotStretchingStarted) // start
+						if (ball.SlingshotStretchingStarted) // start
 						{
 							m_StretchingGum.SetVisibility(true);
 						}
 
 						line.setPoints(gameObject.GetTransform().getPosition(), Game::MouseWorldPosition());
 					}
-					else if(selectable.SlingshotStretchingFinished) // shoot
+					else if(ball.SlingshotStretchingFinished) // shoot
 					{
 						m_StretchingGum.SetVisibility(false);
 

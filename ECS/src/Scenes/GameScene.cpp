@@ -9,8 +9,8 @@ void GameScene::OnEnter()
 {
 	// 1. Add systems (order can be crucial in some cases)
 		// your systems here
-	AddSystem<SelectionSystem>();
-	AddSystem<MotionSystem>();
+	AddSystem<InputSystem>();
+	AddSystem<BallsSystem>();
 
 		// default systems
 	AddSystem<PhysicsSystem>();
@@ -27,22 +27,22 @@ void GameScene::OnEnter()
 
 	Collider* collider;
 	RigidBody* rigidBody;
-	for (size_t i = 0; i < 100; i++)
+	for (size_t i = 0; i < 50; i++)
 	{
 		GameObject circle = Instantiate();
 
-		auto& circleShape = circle.AddComponent<CircleShape>(CircleShape(10.0f));
-		circleShape.setOrigin(10.0f, 10.0f);
+		auto& circleShape = circle.AddComponent<CircleShape>(CircleShape(20.0f));
+		circleShape.setOrigin(20.0f, 20.0f);
 
-		collider = &circle.AddComponent<Collider>(new CircleCollider(10.0f));
+		collider = &circle.AddComponent<Collider>(new CircleCollider(20.0f));
 		collider->Item->Solid = false;
 
 		rigidBody = &circle.AddComponent<RigidBody>(RigidBody());
 		rigidBody->UseGravity = false;
 
-		circle.GetTransform().setPosition(sf::Vector2f(rand() % 800, rand() % 600));
+		circle.GetTransform().setPosition(sf::Vector2f(100.f + rand() % 600, 100.f + rand() % 400));
 
-		circle.AddComponent<Selectable>(Selectable());
+		circle.AddComponent<Ball>(Ball());
 	}
 
 	// left wall
@@ -111,7 +111,7 @@ void GameScene::OnEnter()
 
 	plane.GetTransform().setPosition(sf::Vector2f(400.f, 0.0f));
 
-
+	// middle
 	plane = Instantiate();
 	auto& line5 = plane.AddComponent<Line>(Line(300.0f, 6.0f, sf::Color::Black));
 	line5.setOrigin(150.0f, 0.0f);
@@ -123,15 +123,14 @@ void GameScene::OnEnter()
 	rigidBody->UseGravity = false;
 	rigidBody->FreezeXAxisMovement = true;
 	rigidBody->FreezeYAxisMovement = true;
-	rigidBody->FreezeRotation = true;
-
+	rigidBody->AngleVelocity = 30.0f;
+	
 	plane.GetTransform().setRotation(60.0f);
 	plane.GetTransform().setPosition(sf::Vector2f(400.f, 300.0f));
 }
 
 void GameScene::Update()
 {
-	Timer timer;
 	const sf::Time& deltaTime = Game::DeltaTime();
 
 	UpdateWorld(deltaTime);

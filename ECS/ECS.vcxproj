@@ -143,9 +143,9 @@
     <ClInclude Include="src\BasicModules\Game.h" />
     <ClInclude Include="src\BasicModules\ResourceManager\ResourceManager.h" />
     <ClInclude Include="src\BasicModules\VisualComponents\VertexArray.h" />
-    <ClInclude Include="src\ExternalComponents\Selectable.h" />
-    <ClInclude Include="src\ExternalSystems\MotionSystem.h" />
-    <ClInclude Include="src\ExternalSystems\SelectionSystem.h" />
+    <ClInclude Include="src\ExternalComponents\Ball.h" />
+    <ClInclude Include="src\ExternalSystems\BallsSystem.h" />
+    <ClInclude Include="src\ExternalSystems\InputSystem.h" />
     <ClInclude Include="src\ExternalSystems\TestSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />

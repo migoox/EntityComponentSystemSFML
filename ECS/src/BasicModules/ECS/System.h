@@ -65,8 +65,12 @@ namespace Basic {
 				m_SignatureType = type;
 		}
 
+		// init is called for adding components to signatures and registering components
+		// creating game objects here or interacting with components is not allowed
+		// can be used for initialization of stuff not associated with engine
 		virtual void Init() {};
 
+		// every initialization which implies interaction with engine should be here
 		virtual void OnStart() {};
 
 		virtual void Update(const sf::Time& deltaTime) {};

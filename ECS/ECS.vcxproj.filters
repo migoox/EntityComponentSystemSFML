@@ -191,13 +191,13 @@
     <ClInclude Include="src\BasicModules\PhysicalComponents\ImpulseSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalComponents\Selectable.h">
+    <ClInclude Include="src\ExternalComponents\Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\SelectionSystem.h">
+    <ClInclude Include="src\ExternalSystems\InputSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\MotionSystem.h">
+    <ClInclude Include="src\ExternalSystems\BallsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

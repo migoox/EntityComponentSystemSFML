@@ -21,8 +21,6 @@ namespace Basic
 		{
 			const char* name = typeid(ComponentType).name();
 
-			std::cout << "register: <<" << name << "\n";
-
 			// id assignment
 			m_ComponentIDs[name] = m_NextComponentID;
 

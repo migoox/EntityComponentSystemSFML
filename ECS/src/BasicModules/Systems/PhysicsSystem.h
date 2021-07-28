@@ -26,6 +26,8 @@ public:
 		for (auto& gameObject : m_GameObjects)
 		{
 			auto& rigidBody = gameObject.GetComponent<RigidBody>();
+			
+			/* MOVEMENT */
 
 			// update acceleration
 			if(!rigidBody.FreezeXAxisMovement)
@@ -59,6 +61,11 @@ public:
 
 			if (!rigidBody.FreezeYAxisMovement)
 				gameObject.GetTransform().move(0.0f, rigidBody.Velocity.y * deltaTime.asSeconds());
+
+			/* ROTATION */
+
+			// rotate
+			gameObject.GetTransform().rotate(rigidBody.AngleVelocity * deltaTime.asSeconds());
 		}
 	}
 };

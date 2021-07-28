@@ -3,8 +3,6 @@
 #include "../PhysicalComponents/PlaneCollider.h"
 #include "../Game.h"
 
-#include <iostream>
-
 float Basic::MathFunctions::DistanceFromLine(sf::Vector2f point, sf::Vector2f lineA, sf::Vector2f lineB)
 {
 	// counting general linear equation which contain point A and B, p stands for "parameter"
@@ -54,6 +52,11 @@ float Basic::MathFunctions::IsUnderLine(sf::Vector2f point, sf::Vector2f lineA, 
 	return true;
 }
 
+float Basic::MathFunctions::DotOfVectors(sf::Vector2f vector1, sf::Vector2f vector2)
+{
+	return vector1.x * vector2.x + vector1.y * vector2.y;
+}
+
 Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoints(
 	const CircleCollider* circle1, const Transform& transform1, 
 	const CircleCollider* circle2, const Transform& transform2)
@@ -76,15 +79,6 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoint
 		collPoints.B = globalPosition2 + collPoints.Normal * circle2->Radius;
 	}
 
-	sf::VertexArray arr(sf::Lines, 2);
-	arr[0].position = collPoints.B;
-	arr[1].position = collPoints.B + collPoints.Normal * collPoints.Depth;
-
-	arr[0].color = sf::Color::Green;
-	arr[1].color = sf::Color::Red;
-
-	Game::TempDraw2(arr);
-
 	return collPoints;
 }
 
@@ -100,18 +94,13 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	sf::Vector2f center = circle->GetGlobalCenter(circleTransform);
 
 	// counting vectors
-	sf::Vector2f CenterPlaneVector = sf::Vector2f(pointB.y - pointA.y, -(pointB.x - pointA.x)) 
-		/ plane->Distance * MathFunctions::DistanceFromLine(center, pointA, pointB);
+	sf::Vector2f PointACenterVector = center - pointA;
 
-	if (MathFunctions::IsUnderLine(center, pointA, pointB))
-		CenterPlaneVector = (-1.0f) * CenterPlaneVector;
+	sf::Vector2f ABVector = pointB - pointA;
+	
+	sf::Vector2f ShadowVector = MathFunctions::DotOfVectors(MathFunctions::NormalizeVector(ABVector), PointACenterVector) * MathFunctions::NormalizeVector(ABVector);
 
-	sf::Vector2f PointACenterVector = sf::Vector2f(center.x - pointA.x, center.y - pointA.y);
-
-	sf::Vector2f ShadowVector = CenterPlaneVector + PointACenterVector;
-
-	sf::Vector2f ABVector = sf::Vector2f(pointB.x - pointA.x, pointB.y - pointA.y);
-
+	sf::Vector2f CenterPlaneVector = ShadowVector - PointACenterVector;
 	// create collision points
 	CollisionPoints collPoints;
 
@@ -173,15 +162,6 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 			}
 		}
 	}
-
-	sf::VertexArray arr(sf::Lines, 2);
-	arr[0].position = collPoints.A;
-	arr[1].position = collPoints.B;
-
-	arr[0].color = sf::Color::Green;
-	arr[1].color = sf::Color::Red;
-
-	Game::TempDraw1(arr);
 
 	return collPoints;
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "ColliderItem.h"
 #include "../Physics/CollisionDetectionAlgorithms.h"
-#include <iostream>
+
 namespace Basic {
 	struct CircleCollider : public ColliderItem
 	{

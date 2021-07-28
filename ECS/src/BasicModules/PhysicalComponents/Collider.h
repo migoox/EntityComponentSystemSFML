@@ -32,7 +32,6 @@ namespace Basic {
 		{
 			if (Item != nullptr)
 			{
-				std::cout << "delete\n";
 				delete Item;
 			}
 		}

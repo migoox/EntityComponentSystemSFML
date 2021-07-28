@@ -1,9 +1,8 @@
 #pragma once
+#include <functional>
+
 #include "EntityManager.h"
 #include "EntityMap.h"
-
-#include <iostream>
-#include <functional>
 
 namespace Basic {
 	class BaseComponentArray

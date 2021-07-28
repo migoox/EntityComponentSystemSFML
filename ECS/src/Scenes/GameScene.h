@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <memory>
 
 // basic modules
@@ -10,10 +9,11 @@
 #include "../BasicModules/ResourceManager/ResourceManager.h"
 
 // include external systems
+#include "../ExternalSystems/BallsSystem.h"
+#include "../ExternalSystems/InputSystem.h"
 
 // include external components
-#include "../ExternalSystems/SelectionSystem.h"
-#include "../ExternalSystems/MotionSystem.h"
+#include "../ExternalComponents/Ball.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
