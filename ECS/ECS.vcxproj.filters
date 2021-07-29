@@ -161,9 +161,6 @@
     <ClInclude Include="src\BasicModules\Physics\Systems\CollisionSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\TestSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\BasicModules\Physics\Colliders\CircleCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>

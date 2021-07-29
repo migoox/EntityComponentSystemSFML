@@ -148,7 +148,6 @@
     <ClInclude Include="src\ExternalComponents\Ball.h" />
     <ClInclude Include="src\ExternalSystems\BallsSystem.h" />
     <ClInclude Include="src\ExternalSystems\InputSystem.h" />
-    <ClInclude Include="src\ExternalSystems\TestSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />
     <ClInclude Include="src\BasicModules\StateMachine\State.h" />
