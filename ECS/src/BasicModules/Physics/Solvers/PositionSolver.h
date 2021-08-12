@@ -21,14 +21,14 @@ namespace Basic {
 			for (auto& collision : collisions)
 			{
 				// check signature
-				if (!HasProperSignature(collision.ObjectA) || !HasProperSignature(collision.ObjectB)) continue;
+				if (!HasCorrectSignature(collision.ObjectA) || !HasCorrectSignature(collision.ObjectB)) continue;
 
 				// get colliders
 				auto& colliderA = collision.ObjectA.GetComponent<Collider>();
 				auto& colliderB = collision.ObjectB.GetComponent<Collider>();
 
 				// find out which of the items are solid and fix their positions
-				if (!colliderA.Item->Solid && !colliderB.Item->Solid)
+				if (colliderA.Item->Movable && colliderB.Item->Movable)
 				{
 					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal / 2.0f;
 
@@ -36,12 +36,12 @@ namespace Basic {
 					collision.ObjectB.GetTransform().move(fixer);
 
 				}
-				else if (!colliderA.Item->Solid)
+				else if (colliderA.Item->Movable)
 				{
 					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal;
 					collision.ObjectA.GetTransform().move(-fixer);
 				}
-				else if (!colliderB.Item->Solid)
+				else if (colliderB.Item->Movable)
 				{
 					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal;
 					collision.ObjectB.GetTransform().move(fixer);

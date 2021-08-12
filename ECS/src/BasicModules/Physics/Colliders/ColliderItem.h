@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "../../Transform.h"
 #include "../../ECS/GameObject.h"
+#include "../Components/RigidBody.h"
 
 namespace Basic {
 	struct CollisionPoints
@@ -24,8 +25,13 @@ namespace Basic {
 		bool CollisionTriggered = false;
 
 		bool Active = true;
-		bool Solve = true;
-		bool Solid = true;
+
+		bool Movable = true;
+		bool Rotatable = true;
+
+		virtual sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const = 0;
+
+		virtual float GetMomentumOfInertia(const RigidBody& rb) const = 0;
 
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,

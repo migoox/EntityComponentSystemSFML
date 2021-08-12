@@ -26,7 +26,7 @@ namespace Basic {
 		}
 
 		// it always will check in "inclusive" way
-		bool HasProperSignature(const GameObject& gameObject)
+		bool HasCorrectSignature(const GameObject& gameObject)
 		{
 			return m_Signature == (m_Signature & gameObject.GetSignature());
 		}

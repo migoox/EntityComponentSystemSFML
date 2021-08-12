@@ -40,6 +40,6 @@ int main()
 
 	// run game
 	Basic::Game::Run();
-	
+
 	return 0;
 }

@@ -68,7 +68,7 @@ public:
 			/* ROTATION */
 
 			// rotate
-			gameObject.GetTransform().rotate(rigidBody.AngleVelocity * deltaTime.asSeconds());
+			gameObject.GetTransform().rotate(rigidBody.AngleVelocity * 180.0f / 3.14159265f * deltaTime.asSeconds());
 		}
 	}
 };

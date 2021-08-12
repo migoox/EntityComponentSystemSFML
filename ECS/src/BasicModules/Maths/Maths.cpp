@@ -49,7 +49,24 @@ float Basic::MathFunctions::IsUnderLine(sf::Vector2f point, sf::Vector2f lineA, 
 	return true;
 }
 
-float Basic::MathFunctions::DotOfVectors(sf::Vector2f vector1, sf::Vector2f vector2)
+float Basic::MathFunctions::Dot(sf::Vector2f vecA, sf::Vector2f vecB)
 {
-	return vector1.x * vector2.x + vector1.y * vector2.y;
+	return vecA.x * vecB.x + vecA.y * vecB.y;
+}
+
+sf::Vector3f Basic::MathFunctions::Cross(sf::Vector3f vecA, sf::Vector3f vecB)
+{
+	return sf::Vector3f(vecA.y * vecB.z - vecA.z * vecB.y, 
+		vecA.z * vecB.x - vecA.x * vecB.z, 
+		vecA.x * vecB.y - vecA.y * vecB.x);
+}
+
+sf::Vector2f Basic::MathFunctions::Cross(float vecA, sf::Vector2f vecB)
+{
+	return sf::Vector2f(-vecA * vecB.y, vecA * vecB.x);
+}
+
+float Basic::MathFunctions::Cross(sf::Vector2f vecA, sf::Vector2f vecB)
+{
+	return vecA.x * vecB.y - vecA.y * vecB.x;
 }

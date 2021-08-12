@@ -8,11 +8,11 @@ namespace Basic {
 		sf::Vector2f Acceleration;
 		sf::Vector2f Force;
 
-		float Mass = 1.0f;
+		float Mass = 10.0f;
 
-		float AngleVelocity = 0.0f;
-		float AngleAcceleration = 0.0f;
-		float Torque = 0.0f;
+		float AngleVelocity = 0.0f; // in radians
+		float AngleAcceleration = 0.0f; 
+		float Torque = 0.0f; 
 
 		bool FreezeRotation = false;
 		bool FreezeXAxisMovement = false;

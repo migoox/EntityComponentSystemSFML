@@ -89,13 +89,8 @@ public:
 							collider1.Item->CollisionTriggered = true;
 							collider2.Item->CollisionTriggered = true;
 
-							// if collpoints are unresolvable or both colliders are flagged
-							// as solid, or one of them is flagged as not to solve, 
-							// do not add any collision info to the list
-							if ((collider1.Item->Solid && collider2.Item->Solid) ||
-								(!collider1.Item->Solve || !collider2.Item->Solve) ||
-								!collPoints.Resolvable)
-								continue;
+							// if collpoints are unresolvable, skip
+							if (!collPoints.Resolvable) continue;
 
 							// add collision occurance to resolve
 							collisions.emplace_back(gameObject1, gameObject2, collPoints);

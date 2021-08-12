@@ -44,7 +44,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 
 	sf::Vector2f ABVector = pointB - pointA;
 	
-	sf::Vector2f ShadowVector = MathFunctions::DotOfVectors(MathFunctions::NormalizeVector(ABVector), PointACenterVector) * MathFunctions::NormalizeVector(ABVector);
+	sf::Vector2f ShadowVector = MathFunctions::Dot(MathFunctions::NormalizeVector(ABVector), PointACenterVector) * MathFunctions::NormalizeVector(ABVector);
 
 	sf::Vector2f CenterPlaneVector = ShadowVector - PointACenterVector;
 	// create collision points

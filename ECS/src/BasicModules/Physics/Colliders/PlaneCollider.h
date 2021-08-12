@@ -13,6 +13,16 @@ namespace Basic {
 		PlaneCollider(sf::Vector2f point, float distance) : Plane(point), Distance(distance) { }
 		PlaneCollider(float distance) : Plane(sf::Vector2f(0.0f, 0.0f)), Distance(distance) { }
 
+		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const
+		{
+			return Plane + trans.getPosition();
+		}
+
+		float GetMomentumOfInertia(const RigidBody& rb) const
+		{
+			return 1.0f / 12.0f * float(std::pow(Distance, 2)) * rb.Mass;
+		}
+
 		sf::Vector2f GetGlobalAPoint(const Transform& trans) const
 		{
 			float pi = 3.141592653f;
