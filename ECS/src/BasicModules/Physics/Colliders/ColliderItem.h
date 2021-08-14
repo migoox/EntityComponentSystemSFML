@@ -15,10 +15,9 @@ namespace Basic {
 		bool Resolvable = true;
 	};
 
-	struct PlaneCollider;
+	class PlaneCollider;
 	struct CircleCollider;
-	struct RectangleCollider;
-	struct ConvexCollider;
+	struct PolygonCollider;
 
 	struct ColliderItem
 	{
@@ -47,6 +46,12 @@ namespace Basic {
 			const Transform& transform,
 			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const = 0;
+
+		virtual CollisionPoints TestCollision(
+			const Transform& transform,
+			const PolygonCollider* convexCollider,
+			const Transform& convexTransform) const = 0;
+
 	};
 
 	struct CollisionInfo

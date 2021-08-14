@@ -1,6 +1,6 @@
 #pragma once
 
-struct Ball
+struct GrabbableElement
 {
 	bool Selected = false;
 	bool DoublySelected = false;

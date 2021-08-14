@@ -5,7 +5,7 @@
 namespace Basic {
 	struct CircleCollider : public ColliderItem
 	{
-		sf::Vector2f Center; // relative to game object's tranform
+		sf::Vector2f Center; // relative to game object's transform
 		float Radius = 0.0f;
 
 		CircleCollider() { }
@@ -35,6 +35,7 @@ namespace Basic {
 			return Radius >= MathFunctions::Distance(globalPoint, globalCenter);
 		}
 
+		// collision tests
 		CollisionPoints TestCollision(
 			const Transform& transform,
 			const ColliderItem* collider,
@@ -48,9 +49,7 @@ namespace Basic {
 			const CircleCollider* circleCollider,
 			const Transform& circleTransform) const override
 		{
-			return CollisionDetection::FindCircleCircleCollisionPoints(
-				this, transform, 
-				circleCollider, circleTransform);
+			return CollisionDetection::FindCircleCircleCollisionPoints(this, transform, circleCollider, circleTransform);
 		}
 
 		CollisionPoints TestCollision(
@@ -58,9 +57,15 @@ namespace Basic {
 			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const override
 		{
-			return CollisionDetection::FindCirclePlaneCollisionPoints(
-				this, transform,
-				planeCollider, planeTransform);
+			return CollisionDetection::FindCirclePlaneCollisionPoints(this, transform, planeCollider, planeTransform);
+		}
+
+		CollisionPoints TestCollision(
+			const Transform& transform,
+			const PolygonCollider* polygonCollider,
+			const Transform& polygonTransform) const override
+		{
+			return CollisionDetection::FindCirclePolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
 		}
 	};
 }

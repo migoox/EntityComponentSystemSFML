@@ -17,7 +17,7 @@ using Basic::ResourceManager;
 using namespace Basic::Components;
 
 // external systems/components:
-#include "../ExternalComponents/Ball.h"
+#include "../ExternalComponents/GrabbableElement.h"
 
 class InputSystem : public ECSSystem
 {
@@ -37,8 +37,7 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 		AddToSignature<Collider>();
-		AddToSignature<CircleShape>();
-		AddToSignature<Ball>();
+		AddToSignature<GrabbableElement>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
@@ -53,26 +52,26 @@ public:
 		for (auto& gameObject : m_GameObjects)
 		{
 			// getting joystick
-			auto& ball = gameObject.GetComponent<Ball>();
+			auto& grabbableElement = gameObject.GetComponent<GrabbableElement>();
 
 			// getting circle collider
 			CircleCollider* circleCollider = (CircleCollider*)gameObject.GetComponent<Collider>().Item;
 
-			if (ball.SlingshotStretchingStarted)
+			if (grabbableElement.SlingshotStretchingStarted)
 			{
-				ball.SlingshotStretchingStarted = false;
+				grabbableElement.SlingshotStretchingStarted = false;
 			}
 
-			if (ball.SlingshotStretchingFinished)
+			if (grabbableElement.SlingshotStretchingFinished)
 			{
-				ball.SlingshotStretchingFinished = false;
+				grabbableElement.SlingshotStretchingFinished = false;
 			}
 
 			if (LeftMouseHeld && RightMouseHeld)
 			{
-				if (ball.Selected)
+				if (grabbableElement.Selected)
 				{
-					ball.FitMousePosition = false;
+					grabbableElement.FitMousePosition = false;
 					return;
 				}
 			}
@@ -83,10 +82,10 @@ public:
 				{
 					if (circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
 					{
-						if (ball.Selected)
-							ball.DoublySelected = true;
+						if (grabbableElement.Selected)
+							grabbableElement.DoublySelected = true;
 						else
-							ball.Selected = true;
+							grabbableElement.Selected = true;
 
 						BodyIsSelected = true;
 					}
@@ -97,41 +96,41 @@ public:
 			{
 				if (!circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
 				{
-					ball.Selected = false;
-					ball.DoublySelected = false;
-					ball.SlingshotStretchingStarted = false;
-					ball.SlingshotStretchingFinished = false;
-					ball.SlingshotStretchingHappens = false;
+					grabbableElement.Selected = false;
+					grabbableElement.DoublySelected = false;
+					grabbableElement.SlingshotStretchingStarted = false;
+					grabbableElement.SlingshotStretchingFinished = false;
+					grabbableElement.SlingshotStretchingHappens = false;
 				}
 			}
 
 			if (LeftMouseHeld)
 			{
-				if (ball.DoublySelected)
+				if (grabbableElement.DoublySelected)
 				{
 					if (circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
 					{
 						// begin changing position by mouse
-						ball.FitMousePosition = true;
+						grabbableElement.FitMousePosition = true;
 					}
 				}
 			}
 
-			if (LeftMouseReleased || ball.SlingshotStretchingHappens)
+			if (LeftMouseReleased || grabbableElement.SlingshotStretchingHappens)
 			{
 				// end changing position by mouse
-				ball.FitMousePosition = false;
+				grabbableElement.FitMousePosition = false;
 			}
 
 			if (RightMouseClicked)
 			{
-				if (ball.Selected)
+				if (grabbableElement.Selected)
 				{
 					if (circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
 					{
 						// begin stretching the slingshot
-						ball.SlingshotStretchingStarted = true;
-						ball.SlingshotStretchingHappens = true;
+						grabbableElement.SlingshotStretchingStarted = true;
+						grabbableElement.SlingshotStretchingHappens = true;
 					}
 				}
 			}
@@ -139,8 +138,8 @@ public:
 			if (RightMouseReleased)
 			{
 				// end stretching the slingshot
-				ball.SlingshotStretchingHappens = false;
-				ball.SlingshotStretchingFinished = true;
+				grabbableElement.SlingshotStretchingHappens = false;
+				grabbableElement.SlingshotStretchingFinished = true;
 			}
 		}
 	}

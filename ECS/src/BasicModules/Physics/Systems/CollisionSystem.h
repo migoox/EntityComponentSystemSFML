@@ -100,8 +100,10 @@ public:
 			}
 		}
 
+		/*
 		// collision resolving
 		for (auto& solver : m_Solvers)
 			solver->Solve(collisions, deltaTime);
+		*/
 	}
 };

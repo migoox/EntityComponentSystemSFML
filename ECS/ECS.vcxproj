@@ -95,6 +95,7 @@
     <ClCompile Include="src\BasicModules\ECS\World.cpp" />
     <ClCompile Include="src\BasicModules\Game.cpp" />
     <ClCompile Include="src\BasicModules\Maths\Maths.cpp" />
+    <ClCompile Include="src\BasicModules\Physics\Colliders\PolygonCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp" />
     <ClCompile Include="src\BasicModules\Tools\Random.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\Components\Line.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="src\BasicModules\Maths\Maths.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\CircleCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\ColliderItem.h" />
+    <ClInclude Include="src\BasicModules\Physics\Colliders\PolygonCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\ImpulseSolver.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\PlaneCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\PositionSolver.h" />
@@ -145,8 +147,8 @@
     <ClInclude Include="src\BasicModules\Game.h" />
     <ClInclude Include="src\BasicModules\Tools\ResourceManager.h" />
     <ClInclude Include="src\BasicModules\Rendering\Components\VertexArray.h" />
-    <ClInclude Include="src\ExternalComponents\Ball.h" />
-    <ClInclude Include="src\ExternalSystems\BallsSystem.h" />
+    <ClInclude Include="src\ExternalComponents\GrabbableElement.h" />
+    <ClInclude Include="src\ExternalSystems\GrabbableElementsSystem.h" />
     <ClInclude Include="src\ExternalSystems\InputSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />

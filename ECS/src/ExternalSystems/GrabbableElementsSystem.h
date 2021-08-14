@@ -16,11 +16,11 @@ using Basic::ResourceManager;
 using Basic::ColliderItem;
 
 // external systems/components:
-#include "../ExternalComponents/Ball.h"
+#include "../ExternalComponents/grabbableElement.h"
 
 using namespace Basic::Components;
 
-class BallsSystem : public ECSSystem
+class GrabbableElementsSystem : public ECSSystem
 {
 private:
 	GameObject m_StretchingGum;
@@ -30,9 +30,8 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 		AddToSignature<Collider>();
-		AddToSignature<CircleShape>();
 		AddToSignature<RigidBody>();
-		AddToSignature<Ball>();
+		AddToSignature<GrabbableElement>();
 
 	}
 
@@ -47,13 +46,13 @@ public:
 	{
 		for (auto& gameObject : m_GameObjects)
 		{
-			auto& ball = gameObject.GetComponent<Ball>();
+			auto& grabbableElement = gameObject.GetComponent<GrabbableElement>();
 			auto& circleShape = gameObject.GetComponent<CircleShape>();
 
-			if (ball.Selected)
+			if (grabbableElement.Selected)
 			{
 				circleShape.setFillColor(sf::Color(20, 100, 245, 245));
-				if (ball.FitMousePosition)
+				if (grabbableElement.FitMousePosition)
 				{
 					gameObject.GetTransform().setPosition(Game::MouseWorldPosition());
 					gameObject.GetComponent<RigidBody>().Velocity = sf::Vector2f();
@@ -62,16 +61,16 @@ public:
 				{
 					auto& line = m_StretchingGum.GetComponent<Line>();
 
-					if (ball.SlingshotStretchingHappens) // stretch
+					if (grabbableElement.SlingshotStretchingHappens) // stretch
 					{
-						if (ball.SlingshotStretchingStarted) // start
+						if (grabbableElement.SlingshotStretchingStarted) // start
 						{
 							m_StretchingGum.SetVisibility(true);
 						}
 
 						line.setPoints(gameObject.GetTransform().getPosition(), Game::MouseWorldPosition());
 					}
-					else if(ball.SlingshotStretchingFinished) // shoot
+					else if(grabbableElement.SlingshotStretchingFinished) // shoot
 					{
 						m_StretchingGum.SetVisibility(false);
 

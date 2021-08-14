@@ -9,11 +9,11 @@
 #include "../BasicModules/Tools/ResourceManager.h"
 
 // include external systems
-#include "../ExternalSystems/BallsSystem.h"
+#include "../ExternalSystems/GrabbableElementsSystem.h"
 #include "../ExternalSystems/InputSystem.h"
 
 // include external components
-#include "../ExternalComponents/Ball.h"
+#include "../ExternalComponents/GrabbableElement.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
