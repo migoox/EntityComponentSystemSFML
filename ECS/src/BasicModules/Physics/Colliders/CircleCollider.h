@@ -13,12 +13,12 @@ namespace Basic {
 		CircleCollider(float radius) : Radius(radius) { }
 		CircleCollider(float radius, sf::Vector2f center) : Radius(radius), Center(center) { }
 
-		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const
+		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override
 		{
 			return Center + trans.getPosition();
 		}
 
-		float GetMomentumOfInertia(const RigidBody& rb) const
+		float GetMomentumOfInertia(const RigidBody& rb) const override
 		{
 			return 0.5f * float(std::pow(Radius, 2)) * rb.Mass;
 		}

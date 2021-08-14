@@ -15,32 +15,92 @@ void Basic::PolygonCollider::Init()
 {
 	m_Correct = false;
 	m_Convex = false;
-	m_RelativeCenterPosition = sf::Vector2f(0.0f, 0.0f);
-	m_GlobalCenterPosition = sf::Vector2f(0.0f, 0.0f);
 }
 
 void Basic::PolygonCollider::UpdatePolygon()
 {
+	// by default polygon isn't correctly defined
 	m_Correct = false;
 
-	if (IsSimple(m_Vertices))
+	// if vertices count is less than 3, leave polygon as uncorrectly defined
+	// it will not be taken into account during collision checks
+	if (m_Vertices.size() < 3)
 		return;
 
-	if (ContainsColinearEdges(m_Vertices))
-		return;
+	assert(IsSimple(m_Vertices), "Engine Error: Polygon has to be simple! - Sequence of vertices isn't correct.");
 
-	m_Convex = IsPolygonConvex(m_Vertices);
-	if (m_Convex)
-	{
-		m_Polygons.push_back({ m_Vertices });
-	}
-	else
-	{
-		if (!Triangulate(m_Vertices, m_Polygons))
-			return;
-	}
+	assert(ContainsColinearEdges(m_Vertices), "Engine Error: Polygon can't include colinear edges(when they are neighbours)!");
 
+	// functions below works only if polygon is correctly defined
+
+	// polygon is correctly defined
 	m_Correct = true;
+
+	// check if it is convex
+	m_Convex = IsPolygonConvex(m_Vertices);
+
+	// triangulate given polygon
+	Triangulate(m_Vertices, m_Triangles);
+
+	// create relative position basing on shape of the collider
+	m_CenterOfGravity = FindCenterOfGravity(m_Vertices);
+
+	// resize global vertices count to fit relative vertices count
+	m_GlobalVertices.resize(m_Vertices.size());
+
+	// counting fixer
+	m_Fixer = -m_CenterOfGravity;
+}
+
+void Basic::PolygonCollider::UpdateGlobalVertices(const Transform& trans) const
+{
+	float angle = trans.getRotation() * 3.141592653f / 180.0f;
+	for (size_t i = 0; i < m_Vertices.size(); i++)
+	{
+		sf::Vector2f vertex = m_Vertices[i] + m_CenterDisplacement + m_Fixer;
+
+		vertex = sf::Vector2f(vertex.x * std::cos(angle) - vertex.y * std::sin(angle),
+			vertex.x * std::sin(angle) + vertex.y * std::cos(angle));
+		
+		vertex += trans.getPosition();
+
+		m_GlobalVertices[i] = vertex;
+	}
+}
+
+void Basic::PolygonCollider::UpdateGlobalTriangles(const Transform& trans) const
+{
+	float angle = trans.getRotation() * 3.141592653f / 180.0f;
+	for (size_t i = 0; i < m_Triangles.size(); i++)
+	{
+		Triangle triangle;
+
+		// vertex A
+		triangle.A = m_Triangles[i].A + m_CenterDisplacement + m_Fixer;
+
+		triangle.A = sf::Vector2f(triangle.A.x * std::cos(angle) - triangle.A.y * std::sin(angle),
+			triangle.A.x * std::sin(angle) + triangle.A.y * std::cos(angle));
+
+		triangle.A += trans.getPosition();
+
+		// vertex B
+		triangle.B = m_Triangles[i].B + m_CenterDisplacement + m_Fixer;
+
+		triangle.B = sf::Vector2f(triangle.B.x * std::cos(angle) - triangle.B.y * std::sin(angle),
+			triangle.B.x * std::sin(angle) + triangle.B.y * std::cos(angle));
+
+		triangle.B += trans.getPosition();
+
+		// vertex C
+		triangle.C = m_Triangles[i].C + m_CenterDisplacement + m_Fixer;
+
+		triangle.C = sf::Vector2f(triangle.C.x * std::cos(angle) - triangle.C.y * std::sin(angle),
+			triangle.C.x * std::sin(angle) + triangle.C.y * std::cos(angle));
+
+		triangle.C += trans.getPosition();
+
+		m_GlobalTriangles[i] = triangle;
+	}
 }
 
 bool Basic::PolygonCollider::IsSimple(const std::vector<sf::Vector2f>& vertices)
@@ -107,13 +167,12 @@ bool Basic::PolygonCollider::IsPolygonConvex(std::vector<sf::Vector2f>& vertices
 	return true;
 }
 
-bool Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Polygon>& triangles)
+void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Triangle>& triangles)
 {
+	// ear clipping algorithm
+	// this method expects correct polygon!
+
 	using MathFunctions::Cross;
-	
-	// if it isn't a polygon return false
-	if (vertices.size() < 3) 
-		return false;
 
 	// create vector of available indexes
 	std::vector<int> indexVector;
@@ -133,12 +192,12 @@ bool Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 		// iterate trough all available indexes
 		for (size_t i = 0; indexVector.size(); i++)
 		{
-			// gain prev, curr and next index of array
+			// get prev, curr and next indexes of array
 			size_t prevIndex = Helpers::GetItem<int>(indexVector, i - 1);
 			size_t currIndex = indexVector[i];
 			size_t nextIndex = Helpers::GetItem<int>(indexVector, i + 1);
 
-			// gain points
+			// get points
 			auto& prev = vertices[prevIndex];
 			auto& curr = vertices[i];
 			auto& next = vertices[nextIndex];
@@ -171,15 +230,45 @@ bool Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 			if (pointInTriangleExists) continue;
 
 			// all of the conditions are met, add triangle and erase curr index
-			triangles.push_back({ {prev, curr, next} });
+			triangles.push_back({prev, curr, next});
 			indexVector.erase(indexVector.begin() + i);
 		}
 	}
 
 	// add last triangle
-	triangles.push_back({ {vertices[indexVector[0]], vertices[indexVector[1]], vertices[indexVector[2]]} });
+	triangles.push_back({vertices[indexVector[0]], vertices[indexVector[1]], vertices[indexVector[2]]});
+}
 
-	return false;
+sf::Vector2f Basic::PolygonCollider::FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices)
+{
+	// based on maths covered by wiki:
+	// https://en.wikipedia.org/wiki/Centroid (of a polyogn) 
+	// formula on wiki:
+	// X = SUM[(Xi + Xi+1) * (Xi * Yi+1 - Xi+1 * Yi)] / 6 / A
+	// Y = SUM[(Yi + Yi + 1) * (Xi * Yi + 1 - Xi + 1 * Yi)] / 6 / A
+	// where A = SUM((Xi * Yi+1 - Xi+1 * Yi)) / 2
+
+	float A = 0.0f;
+	sf::Vector2f centroid = sf::Vector2f(0.0f, 0.0f);
+
+	// count A parameter
+	for (size_t i = 0; i < vertices.size() - 1; i++)
+		A += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+
+	A *= 0.5f;
+
+	// countnig centroid
+	for (size_t i = 0; i < vertices.size() - 1; i++)
+	{
+		float parameter = (vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y);
+		centroid.x += (vertices[i].x + vertices[i + 1].x) * parameter;
+		centroid.y += (vertices[i].y + vertices[i + 1].y) * parameter;
+	}
+
+	centroid.x = centroid.x / 6 / A;
+	centroid.y = centroid.y / 6 / A;
+
+	return centroid;
 }
 
 Basic::PolygonCollider::PolygonCollider()
@@ -190,12 +279,66 @@ Basic::PolygonCollider::PolygonCollider()
 Basic::PolygonCollider::PolygonCollider(std::initializer_list<sf::Vector2f> list)
 {
 	Init();
-	if (list.size() >= 3)
+	for (auto& it : list)
+		m_Vertices.push_back(it);
+	UpdatePolygon();
+}
+
+Basic::PolygonCollider::PolygonCollider(const std::vector<sf::Vector2f>& vector)
+{
+	Init();
+	m_Vertices = vector;
+	UpdatePolygon();
+}
+
+void Basic::PolygonCollider::SetVertex(size_t index, sf::Vector2f vertex)
+{
+	m_Vertices[index] = vertex;
+}
+
+void Basic::PolygonCollider::AddVertex(sf::Vector2f vertex)
+{
+	m_Vertices.push_back(vertex);
+	UpdatePolygon();
+}
+
+void Basic::PolygonCollider::MoveCollider(sf::Vector2f displacement)
+{
+	m_CenterDisplacement += displacement;
+}
+
+sf::Vector2f Basic::PolygonCollider::GetGlobalCenterOfGravity(const Transform& trans) const
+{
+	return m_CenterOfGravity + m_CenterDisplacement + trans.getPosition();
+}
+
+float Basic::PolygonCollider::GetMomentumOfInertia(const RigidBody& rb) const
+{
+	float A = 0.0f;
+	float B = 0.0f;
+
+	for (size_t i = 0; i < m_Vertices.size() - 1; i++)
+		A += m_Vertices[i].x * m_Vertices[i + 1].y - m_Vertices[i + 1].x * m_Vertices[i].y;
+
+	for (size_t i = 0; i < m_Vertices.size() - 1; i++)
 	{
-		for (auto& it : list)
-		{
-			m_Vertices.push_back(it);
-		}
-		UpdatePolygon();
+		auto& i1 = m_Vertices[i];
+		auto& i2 = m_Vertices[i + 1];
+
+		B += (std::pow(i1.x, 2) + std::pow(i1.y, 2) + i1.x * i2.x + i1.y * i2.y + std::pow(i2.y, 2) + std::pow(i2.y, 2)) * (i1.x * i2.y - i2.x * i1.y);
 	}
+
+	return B / A / 6 * rb.Mass;
+}
+
+const std::vector<sf::Vector2f>& Basic::PolygonCollider::GlobalVertices(const Transform& trans) const
+{
+	UpdateGlobalVertices(trans);
+	return m_GlobalVertices;
+}
+
+const std::vector<Basic::Triangle>& Basic::PolygonCollider::GlobalTriangles(const Transform& trans) const
+{
+	UpdateGlobalTriangles(trans);
+	return m_GlobalTriangles;
 }

@@ -13,12 +13,12 @@ namespace Basic {
 		PlaneCollider(sf::Vector2f point, float distance) : Plane(point), Distance(distance) { }
 		PlaneCollider(float distance) : Plane(sf::Vector2f(0.0f, 0.0f)), Distance(distance) { }
 
-		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const
+		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override
 		{
 			return Plane + trans.getPosition();
 		}
 
-		float GetMomentumOfInertia(const RigidBody& rb) const
+		float GetMomentumOfInertia(const RigidBody& rb) const override
 		{
 			return 1.0f / 12.0f * float(std::pow(Distance, 2)) * rb.Mass;
 		}

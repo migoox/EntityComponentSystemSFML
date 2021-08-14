@@ -15,6 +15,13 @@ namespace Basic {
 		bool Resolvable = true;
 	};
 
+	struct Triangle
+	{
+		sf::Vector2f A;
+		sf::Vector2f B;
+		sf::Vector2f C;
+	};
+
 	class PlaneCollider;
 	struct CircleCollider;
 	struct PolygonCollider;
@@ -28,6 +35,7 @@ namespace Basic {
 		bool Movable = true;
 		bool Rotatable = true;
 
+		// relatively to this center transformation of collider will be done
 		virtual sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const = 0;
 
 		virtual float GetMomentumOfInertia(const RigidBody& rb) const = 0;

@@ -4,6 +4,7 @@
 
 #include "ColliderItem.h"
 #include "../CollisionDetectionAlgorithms.h"
+#include <cassert>
 
 namespace Basic {
 	namespace Helpers{
@@ -21,28 +22,31 @@ namespace Basic {
 		bool PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p);
 	}
 
-	struct Polygon
-	{
-		std::vector<sf::Vector2f> m_GlobalVertices;
-	};
-
 	class PolygonCollider : public ColliderItem
 	{
 	private:
-		sf::Vector2f m_RelativeCenterPosition;
-		sf::Vector2f m_GlobalCenterPosition;
+		sf::Vector2f m_CenterOfGravity;
+		sf::Vector2f m_CenterDisplacement;
+
+		sf::Vector2f m_Fixer; // usefull for transformation of polygon
 
 		bool m_Correct;
-
 		bool m_Convex;
-		std::vector<Polygon> m_Polygons;
+
+		std::vector<Triangle> m_Triangles;
+		mutable std::vector<Triangle> m_GlobalTriangles;
 
 		std::vector<sf::Vector2f> m_Vertices;
+		mutable std::vector<sf::Vector2f> m_GlobalVertices;
 
 	private:
 		void Init();
 
 		void UpdatePolygon();
+
+		void UpdateGlobalVertices(const Transform& trans) const;
+
+		void UpdateGlobalTriangles(const Transform& trans) const;
 
 		bool IsSimple(const std::vector<sf::Vector2f>& vertices);
 
@@ -50,29 +54,37 @@ namespace Basic {
 
 		bool ContainsColinearEdges(const std::vector<sf::Vector2f>& vertices);
 
-		// ear clipping algorithm
-		bool Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Polygon>& triangles);
+		void Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Triangle>& triangles);
+
+		sf::Vector2f FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices);
 
 	public:
 		PolygonCollider();
 
 		PolygonCollider(std::initializer_list<sf::Vector2f> list);
 
-		const std::vector<sf::Vector2f>& Vertices() const { return m_Vertices; }
-		
-		const std::vector<Polygon>& Polygons() const { return m_Polygons; }
+		PolygonCollider(const std::vector<sf::Vector2f>& vector);
+
+		// relative poisition
+		void SetVertex(size_t index, sf::Vector2f vertex);
+
+		// relative position
+		void AddVertex(sf::Vector2f vertex);
+
+		// moves collider relatively to game object's transform
+		void MoveCollider(sf::Vector2f displacement);
+
+		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override;
+
+		float GetMomentumOfInertia(const RigidBody& rb) const override;
+
+		const std::vector<sf::Vector2f>& GlobalVertices(const Transform& trans) const;
+
+		const std::vector<Triangle>& GlobalTriangles(const Transform& trans) const;
 
 		bool IsCorrect() const { return m_Correct; }
 
 		bool IsConvex() const { return m_Convex; }
-
-		void SetCenter(sf::Vector2f center);
-
-		void SetVertex(size_t vertex, sf::Vector2f value);
-
-		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override { return m_GlobalCenterPosition; };
-
-		float GetMomentumOfInertia(const RigidBody& rb) const override { return 0.0f; };
 
 		// collision tests
 		CollisionPoints TestCollision(

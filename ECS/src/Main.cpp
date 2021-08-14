@@ -66,7 +66,6 @@ int main()
 
 	sf::RenderWindow window(sf::VideoMode(400, 400), "SFML works!");
 	sf::VertexArray vertexArr(sf::PrimitiveType::Triangles);
-	vertexArr.resize(4 * 3);
 
 	while (window.isOpen())
 	{
@@ -92,9 +91,6 @@ int main()
 							i++;
 						}
 					}
-
-
-
 				}
 			}
 		}
