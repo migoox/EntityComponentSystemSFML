@@ -1,8 +1,10 @@
 #pragma once
-#include <fstream>
 #include <SFML/Graphics.hpp>
+#include <fstream>
+
 #include "Scene.h"
 #include "StateMachine/StateMachine.h"
+#include "Rendering/VisualGizmos.h"
 
 // fixes scaling to 4k
 #ifdef USING_WINDOWS
@@ -54,13 +56,5 @@ namespace Basic {
 		static sf::Vector2u WindowSize();
 
 		static sf::Vector2f MouseWorldPosition();
-
-		sf::VertexArray temp1;
-		sf::VertexArray temp2;
-		sf::VertexArray temp3;
-
-		static void TempDraw1(sf::VertexArray v) { s_Instance.temp1 = v; }
-		static void TempDraw2(sf::VertexArray v) { s_Instance.temp2 = v; }
-		static void TempDraw3(sf::VertexArray v) { s_Instance.temp3 = v; }
 	};
 }

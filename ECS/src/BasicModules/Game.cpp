@@ -34,7 +34,7 @@ void Basic::Game::InitWindow()
 	}
 
 	// create default window in case there is no config file
-	m_Window.create(sf::VideoMode(800, 600), "Game");
+	m_Window.create(sf::VideoMode(800, 600), "Game", sf::Style::Close, sf::ContextSettings(24, 8, 16));
 	m_Window.setFramerateLimit(60);
 }
 
@@ -62,9 +62,9 @@ void Basic::Game::Render()
 {
 	// render current scene
 	s_CurrentScene->Render(m_Window);
-	m_Window.draw(temp1);
-	m_Window.draw(temp2);
-	m_Window.draw(temp3);
+
+	// render gizmos
+	VisualGizmos::Render(m_Window);
 }
 
 Basic::Game::Game()

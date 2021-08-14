@@ -60,6 +60,9 @@
     <ClCompile Include="src\BasicModules\Physics\Colliders\PolygonCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Game.h">
@@ -207,6 +210,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Physics\Colliders\PolygonCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
