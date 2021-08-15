@@ -1,4 +1,5 @@
 #include "PolygonCollider.h"
+
 bool Basic::Helpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p)
 {
 	using MathFunctions::Cross;
@@ -45,8 +46,9 @@ void Basic::PolygonCollider::UpdatePolygon()
 	// create relative position basing on shape of the collider
 	m_CenterOfGravity = FindCenterOfGravity(m_Vertices);
 
-	// resize global vertices count to fit relative vertices count
+	// resize global vertices and global triangles count to fit relative vertices count
 	m_GlobalVertices.resize(m_Vertices.size());
+	m_GlobalTriangles.resize(m_Vertices.size() - 2);
 
 	// counting fixer
 	m_Fixer = -m_CenterOfGravity;
@@ -105,12 +107,12 @@ void Basic::PolygonCollider::UpdateGlobalTriangles(const Transform& trans) const
 
 bool Basic::PolygonCollider::IsSimple(const std::vector<sf::Vector2f>& vertices)
 {
-	return false;
+	return true;
 }
 
 bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2f>& vertices)
 {
-	return false;
+	return true;
 }
 
 bool Basic::PolygonCollider::IsPolygonConvex(std::vector<sf::Vector2f>& vertices)
@@ -174,6 +176,9 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 
 	using MathFunctions::Cross;
 
+	// clear triangles
+	triangles.clear();
+
 	// create vector of available indexes
 	std::vector<int> indexVector;
 
@@ -182,15 +187,11 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 		indexVector.push_back(i);
 	}
 
-	// prepare total counts of elements
-	size_t totalTriangleCount = vertices.size() - 2;
-	size_t totalTriangleVerticesCount = totalTriangleCount * 3;
-
 	// main loop
 	while (indexVector.size() > 3)
 	{
 		// iterate trough all available indexes
-		for (size_t i = 0; indexVector.size(); i++)
+		for (size_t i = 0; i < indexVector.size(); i++)
 		{
 			// get prev, curr and next indexes of array
 			size_t prevIndex = Helpers::GetItem<int>(indexVector, i - 1);
@@ -207,15 +208,15 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 			sf::Vector2f vectorCurrToNext = next - curr;
 
 			// if angle is not convex - skip
-			if (Cross(vectorCurrToPrev, vectorCurrToNext) < 0.0f) continue;
+			if (Cross(vectorCurrToPrev, vectorCurrToNext) > 0.0f) continue;
 
 			// check if there is a point inside of the triangle
 			bool pointInTriangleExists = false;
 
-			for (size_t j = 0; j < indexVector.size(); j++)
+			for (size_t j = 0; j < vertices.size(); j++)
 			{
 				// do not take into account prev, curr and next indexes
-				if (j = prevIndex || j == currIndex || j == nextIndex) continue;
+				if (j == prevIndex || j == currIndex || j == nextIndex) continue;
 
 				// if there is a point in triangle
 				if (Helpers::PointInTriangle(prev, curr, next, vertices[j]))
@@ -232,6 +233,7 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 			// all of the conditions are met, add triangle and erase curr index
 			triangles.push_back({prev, curr, next});
 			indexVector.erase(indexVector.begin() + i);
+			break;
 		}
 	}
 
@@ -289,6 +291,17 @@ Basic::PolygonCollider::PolygonCollider(const std::vector<sf::Vector2f>& vector)
 	Init();
 	m_Vertices = vector;
 	UpdatePolygon();
+}
+
+void Basic::PolygonCollider::Clear()
+{
+	m_Vertices.clear();
+	m_GlobalVertices.clear();
+
+	m_Triangles.clear();
+	m_GlobalTriangles.clear();
+
+	Init();
 }
 
 void Basic::PolygonCollider::SetVertex(size_t index, sf::Vector2f vertex)

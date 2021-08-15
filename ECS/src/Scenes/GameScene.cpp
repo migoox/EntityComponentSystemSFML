@@ -22,7 +22,14 @@ void GameScene::OnEnter()
 	InitWorldSystems();
 
 	// 3. Create GameObjects
+	GameObject test = Instantiate();
 
+	PolygonCollider* coll = (PolygonCollider*)test.AddComponent<Collider>(
+		new PolygonCollider({
+		sf::Vector2f(100.0f, 50.0f),
+		sf::Vector2f(500.0f, 200.0f),
+		sf::Vector2f(400.0f, 300.0f),
+		sf::Vector2f(90.0f, 100.0f) })).Item;
 
 }
 

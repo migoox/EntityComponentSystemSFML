@@ -13,9 +13,11 @@
 	// components
 #include "Physics/Components/RigidBody.h"
 #include "Physics/Components/Collider.h"
+
 	// colliders
 #include "Physics/Colliders/CircleCollider.h"
 #include "Physics/Colliders/PlaneCollider.h"
+#include "Physics/Colliders/PolygonCollider.h"
 
 // animation
 #include "Animation/Components/Animator.h"
@@ -37,6 +39,7 @@ namespace Basic {
 		using Basic::ColliderItem;
 		using Basic::PlaneCollider;
 		using Basic::CircleCollider;
+		using Basic::PolygonCollider;
 
 		using Basic::Animation;
 	}

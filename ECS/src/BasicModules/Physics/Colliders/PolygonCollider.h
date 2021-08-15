@@ -65,6 +65,8 @@ namespace Basic {
 
 		PolygonCollider(const std::vector<sf::Vector2f>& vector);
 
+		void Clear();
+
 		// relative poisition
 		void SetVertex(size_t index, sf::Vector2f vertex);
 

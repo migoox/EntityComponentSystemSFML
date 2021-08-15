@@ -15,6 +15,8 @@
 // include external components
 #include "../ExternalComponents/GrabbableElement.h"
 
+#include "../BasicModules/Rendering/VisualGizmos.h"
+
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
