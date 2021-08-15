@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <list>
+#include <memory>
 
 #include "ColliderItem.h"
 #include "../CollisionDetectionAlgorithms.h"
@@ -56,7 +57,9 @@ namespace Basic {
 
 		void Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Triangle>& triangles);
 
-		sf::Vector2f FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices);
+		sf::Vector2f FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices) const;
+
+		sf::Vector2f TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const;
 
 	public:
 		PolygonCollider();
@@ -79,6 +82,8 @@ namespace Basic {
 		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override;
 
 		float GetMomentumOfInertia(const RigidBody& rb) const override;
+
+		void DrawOnceOnVisualGizmos(const Transform& trans) const override;
 
 		const std::vector<sf::Vector2f>& GlobalVertices(const Transform& trans) const;
 

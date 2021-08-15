@@ -31,7 +31,7 @@ using namespace Basic::Components;
 class GameScene : public Scene
 {
 private:
-
+	GameObject m_Test;
 public:
 	using Scene::Scene;
 	~GameScene();

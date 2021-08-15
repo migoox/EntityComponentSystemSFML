@@ -1,5 +1,5 @@
 #include "PolygonCollider.h"
-
+#include <iostream>
 bool Basic::Helpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p)
 {
 	using MathFunctions::Cross;
@@ -56,18 +56,8 @@ void Basic::PolygonCollider::UpdatePolygon()
 
 void Basic::PolygonCollider::UpdateGlobalVertices(const Transform& trans) const
 {
-	float angle = trans.getRotation() * 3.141592653f / 180.0f;
 	for (size_t i = 0; i < m_Vertices.size(); i++)
-	{
-		sf::Vector2f vertex = m_Vertices[i] + m_CenterDisplacement + m_Fixer;
-
-		vertex = sf::Vector2f(vertex.x * std::cos(angle) - vertex.y * std::sin(angle),
-			vertex.x * std::sin(angle) + vertex.y * std::cos(angle));
-		
-		vertex += trans.getPosition();
-
-		m_GlobalVertices[i] = vertex;
-	}
+		m_GlobalVertices[i] = TranslateRelativePointToGlobal(m_Vertices[i], trans);
 }
 
 void Basic::PolygonCollider::UpdateGlobalTriangles(const Transform& trans) const
@@ -75,33 +65,11 @@ void Basic::PolygonCollider::UpdateGlobalTriangles(const Transform& trans) const
 	float angle = trans.getRotation() * 3.141592653f / 180.0f;
 	for (size_t i = 0; i < m_Triangles.size(); i++)
 	{
-		Triangle triangle;
-
-		// vertex A
-		triangle.A = m_Triangles[i].A + m_CenterDisplacement + m_Fixer;
-
-		triangle.A = sf::Vector2f(triangle.A.x * std::cos(angle) - triangle.A.y * std::sin(angle),
-			triangle.A.x * std::sin(angle) + triangle.A.y * std::cos(angle));
-
-		triangle.A += trans.getPosition();
-
-		// vertex B
-		triangle.B = m_Triangles[i].B + m_CenterDisplacement + m_Fixer;
-
-		triangle.B = sf::Vector2f(triangle.B.x * std::cos(angle) - triangle.B.y * std::sin(angle),
-			triangle.B.x * std::sin(angle) + triangle.B.y * std::cos(angle));
-
-		triangle.B += trans.getPosition();
-
-		// vertex C
-		triangle.C = m_Triangles[i].C + m_CenterDisplacement + m_Fixer;
-
-		triangle.C = sf::Vector2f(triangle.C.x * std::cos(angle) - triangle.C.y * std::sin(angle),
-			triangle.C.x * std::sin(angle) + triangle.C.y * std::cos(angle));
-
-		triangle.C += trans.getPosition();
-
-		m_GlobalTriangles[i] = triangle;
+		m_GlobalTriangles[i] = {
+			TranslateRelativePointToGlobal(m_Triangles[i].A, trans),
+			TranslateRelativePointToGlobal(m_Triangles[i].B, trans),
+			TranslateRelativePointToGlobal(m_Triangles[i].C, trans)
+		};
 	}
 }
 
@@ -236,12 +204,11 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 			break;
 		}
 	}
-
 	// add last triangle
 	triangles.push_back({vertices[indexVector[0]], vertices[indexVector[1]], vertices[indexVector[2]]});
 }
 
-sf::Vector2f Basic::PolygonCollider::FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices)
+sf::Vector2f Basic::PolygonCollider::FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices) const 
 {
 	// based on maths covered by wiki:
 	// https://en.wikipedia.org/wiki/Centroid (of a polyogn) 
@@ -271,6 +238,18 @@ sf::Vector2f Basic::PolygonCollider::FindCenterOfGravity(const std::vector<sf::V
 	centroid.y = centroid.y / 6 / A;
 
 	return centroid;
+}
+
+sf::Vector2f Basic::PolygonCollider::TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const
+{
+	float angle = trans.getRotation() * 3.141592653f / 180.0f;
+
+	sf::Vector2f global = point + m_CenterDisplacement + m_Fixer;
+	global = sf::Vector2f(global.x * std::cos(angle) - global.y * std::sin(angle),
+		global.x * std::sin(angle) + global.y * std::cos(angle));
+	global += trans.getPosition();
+
+	return global;
 }
 
 Basic::PolygonCollider::PolygonCollider()
@@ -322,7 +301,7 @@ void Basic::PolygonCollider::MoveCollider(sf::Vector2f displacement)
 
 sf::Vector2f Basic::PolygonCollider::GetGlobalCenterOfGravity(const Transform& trans) const
 {
-	return m_CenterOfGravity + m_CenterDisplacement + trans.getPosition();
+	return TranslateRelativePointToGlobal(m_CenterOfGravity, trans);
 }
 
 float Basic::PolygonCollider::GetMomentumOfInertia(const RigidBody& rb) const
@@ -342,6 +321,44 @@ float Basic::PolygonCollider::GetMomentumOfInertia(const RigidBody& rb) const
 	}
 
 	return B / A / 6 * rb.Mass;
+}
+
+void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) const
+{
+	float angle = trans.getRotation() * 3.141592653f / 180.0f;
+
+	auto arr1 = sf::VertexArray(sf::PrimitiveType::LinesStrip, m_Vertices.size() + 1);
+
+	for (size_t i = 0; i < m_Vertices.size(); i++)
+	{
+		arr1[i].position = TranslateRelativePointToGlobal(m_Vertices[i], trans);
+
+		arr1[i].color = sf::Color(0.0f, 26.0f, 102.0f);
+	}
+	arr1[m_Vertices.size()] = arr1[0];
+
+	auto arr2 = sf::VertexArray(sf::PrimitiveType::Triangles, m_Triangles.size() * 3);
+
+	for (size_t i = 0, j = 0; j < m_Triangles.size(); i += 3, j++)
+	{
+		arr2[i].position = TranslateRelativePointToGlobal(m_Triangles[j].A, trans);
+		arr2[i + 1].position = TranslateRelativePointToGlobal(m_Triangles[j].B, trans);
+		arr2[i + 2].position = TranslateRelativePointToGlobal(m_Triangles[j].C, trans);
+
+		sf::Color color = sf::Color(0.0f, 60.0f + 20.0f * (j % 4), 150.0f + 30 * (j % 4));
+		arr2[i].color = color;
+		arr2[i + 1].color = color;
+		arr2[i + 2].color = color;
+	}
+
+	CircleShape gCenter(2.0f);
+	gCenter.setFillColor(sf::Color::Red);
+	gCenter.setOrigin(1.0f, 1.0f);
+	gCenter.setPosition(GetGlobalCenterOfGravity(trans));
+
+	Basic::VisualGizmos::DrawOnce(arr2);
+	Basic::VisualGizmos::DrawOnce(arr1);
+	Basic::VisualGizmos::DrawOnce(gCenter);
 }
 
 const std::vector<sf::Vector2f>& Basic::PolygonCollider::GlobalVertices(const Transform& trans) const

@@ -23,6 +23,11 @@ namespace Basic {
 			return 1.0f / 12.0f * float(std::pow(Distance, 2)) * rb.Mass;
 		}
 
+		void DrawOnceOnVisualGizmos(const Transform& trans) const override
+		{
+
+		}
+
 		sf::Vector2f GetGlobalAPoint(const Transform& trans) const
 		{
 			float pi = 3.141592653f;

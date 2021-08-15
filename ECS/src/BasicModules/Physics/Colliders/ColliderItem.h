@@ -3,6 +3,7 @@
 #include "../../Transform.h"
 #include "../../ECS/GameObject.h"
 #include "../Components/RigidBody.h"
+#include "../../Rendering/VisualGizmos.h"
 
 namespace Basic {
 	struct CollisionPoints
@@ -39,6 +40,8 @@ namespace Basic {
 		virtual sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const = 0;
 
 		virtual float GetMomentumOfInertia(const RigidBody& rb) const = 0;
+
+		virtual void DrawOnceOnVisualGizmos(const Transform& trans) const = 0;
 
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,

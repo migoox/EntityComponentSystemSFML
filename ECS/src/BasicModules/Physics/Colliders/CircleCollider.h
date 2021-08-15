@@ -23,6 +23,11 @@ namespace Basic {
 			return 0.5f * float(std::pow(Radius, 2)) * rb.Mass;
 		}
 
+		void DrawOnceOnVisualGizmos(const Transform& trans) const override
+		{
+			
+		}
+
 		sf::Vector2f GetGlobalCenter(const Transform& trans) const
 		{
 			return Center + trans.getPosition();

@@ -42,17 +42,17 @@ void Basic::VisualGizmos::IDrawOnce(Line line)
 
 void Basic::VisualGizmos::IDrawOnce(CircleShape circle)
 {
-	m_CircleShapes.push_back(circle);
+	m_TempCircleShapes.push_back(circle);
 }
 
 void Basic::VisualGizmos::IDrawOnce(VertexArray verArr)
 {
-	m_VertexArrays.push_back(verArr);
+	m_TempVertexArrays.push_back(verArr);
 }
 
 void Basic::VisualGizmos::IDrawOnce(RectangleShape rect)
 {
-	m_RectangleShapes.push_back(rect);
+	m_TempRectangleShapes.push_back(rect);
 }
 
 void Basic::VisualGizmos::IClearLines()
@@ -87,20 +87,20 @@ void Basic::VisualGizmos::IRender(sf::RenderTarget& target)
 {
 	for (auto& it : m_Lines)
 		target.draw(it);
-	for (auto& it : m_CircleShapes)
-		target.draw(it);
 	for (auto& it : m_VertexArrays)
 		target.draw(it);
 	for (auto& it : m_RectangleShapes)
 		target.draw(it);
+	for (auto& it : m_CircleShapes)
+		target.draw(it);
 
 	for (auto& it : m_TempLines)
-		target.draw(it);
-	for (auto& it : m_TempCircleShapes)
 		target.draw(it);
 	for (auto& it : m_TempVertexArrays)
 		target.draw(it);
 	for (auto& it : m_TempRectangleShapes)
+		target.draw(it);
+	for (auto& it : m_TempCircleShapes)
 		target.draw(it);
 
 	m_TempLines.clear();

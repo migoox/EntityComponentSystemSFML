@@ -6,6 +6,7 @@
 #include "Components/CircleShape.h"
 #include "Components/VertexArray.h"
 #include "Components/RectangleShape.h"
+#include "../Physics/Colliders/ColliderItem.h"
 
 namespace Basic {
 	class VisualGizmos
@@ -40,6 +41,7 @@ namespace Basic {
 		void IClearCircleShapes();
 		void IClearVertexArrays();
 		void IClearRectangleShapes();
+		void IClearDrawableElements();
 		void IClear();
 
 		void IRender(sf::RenderTarget& target);
