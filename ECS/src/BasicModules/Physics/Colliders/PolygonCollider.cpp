@@ -150,7 +150,7 @@ bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2
 	return false;
 }
 
-bool Basic::PolygonCollider::IsPolygonConvex(std::vector<sf::Vector2f>& vertices)
+bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& vertices)
 {
 	using MathFunctions::Cross;
 
@@ -337,6 +337,15 @@ Basic::PolygonCollider::PolygonCollider(const std::vector<sf::Vector2f>& vector)
 	Init();
 	m_Vertices = vector;
 	UpdatePolygon();
+}
+
+Basic::PolygonCollider::PolygonCollider(std::initializer_list<sf::Vector2f> list, sf::Vector2f displacementOfCenter)
+{
+	Init();
+	for (auto& it : list)
+		m_Vertices.push_back(it);
+	UpdatePolygon();
+	MoveCollider(displacementOfCenter);
 }
 
 void Basic::PolygonCollider::Clear()

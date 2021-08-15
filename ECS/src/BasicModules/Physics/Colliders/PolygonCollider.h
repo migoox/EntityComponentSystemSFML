@@ -64,7 +64,7 @@ namespace Basic {
 
 		bool IsSimple(const std::vector<sf::Vector2f>& vertices);
 
-		bool IsPolygonConvex(std::vector<sf::Vector2f>& vertices);
+		bool IsPolygonConvex(const std::vector<sf::Vector2f>& vertices);
 
 		bool ContainsColinearEdges(const std::vector<sf::Vector2f>& vertices);
 
@@ -80,6 +80,8 @@ namespace Basic {
 		PolygonCollider(std::initializer_list<sf::Vector2f> list);
 
 		PolygonCollider(const std::vector<sf::Vector2f>& vector);
+
+		PolygonCollider(std::initializer_list<sf::Vector2f> list, sf::Vector2f displacementOfCenter);
 
 		void Clear();
 
