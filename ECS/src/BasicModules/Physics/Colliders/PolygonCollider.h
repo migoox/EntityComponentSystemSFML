@@ -20,7 +20,20 @@ namespace Basic {
 				return vector[index];
 		}
 
+		template<typename T>
+		const T& GetItem(const std::vector<T>& vector, size_t index)
+		{
+			if (index >= vector.size())
+				return vector[index % vector.size()];
+			else if (index < 0)
+				return vector[index % vector.size() + vector.size()];
+			else
+				return vector[index];
+		}
+
 		bool PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p);
+
+		bool LinesIntersect(sf::Vector2f a, sf::Vector2f b, sf::Vector2f c, sf::Vector2f d);
 	}
 
 	class PolygonCollider : public ColliderItem

@@ -12,6 +12,24 @@ bool Basic::Helpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& 
 	return false;
 }
 
+bool Basic::Helpers::LinesIntersect(sf::Vector2f a, sf::Vector2f b, sf::Vector2f c, sf::Vector2f d)
+{
+	if (a == c && b == d)
+		return true;
+
+	float denominator = ((b.x - a.x) * (d.y - c.y)) - ((b.y - a.y) * (d.x - c.x));
+	float numerator1 = ((a.y - c.y) * (d.x - c.x)) - ((a.x - c.x) * (d.y - c.y));
+	float numerator2 = ((a.y - c.y) * (b.x - a.x)) - ((a.x - c.x) * (b.y - a.y));
+
+	// Detect coincident lines (has a problem, read below)
+	if (denominator == 0) return numerator1 == 0 && numerator2 == 0;
+
+	float r = numerator1 / denominator;
+	float s = numerator2 / denominator;
+
+	return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
+}
+
 void Basic::PolygonCollider::Init()
 {
 	m_Correct = false;
@@ -28,9 +46,9 @@ void Basic::PolygonCollider::UpdatePolygon()
 	if (m_Vertices.size() < 3)
 		return;
 
-	assert(IsSimple(m_Vertices), "Engine Error: Polygon has to be simple! - Sequence of vertices isn't correct.");
+	assert(IsSimple(m_Vertices) && "Engine Error: Polygon has to be simple! - Sequence of vertices isn't correct.");
 
-	assert(ContainsColinearEdges(m_Vertices), "Engine Error: Polygon can't include colinear edges(when they are neighbours)!");
+	assert(!ContainsColinearEdges(m_Vertices) && "Engine Error: Polygon can't include colinear edges(when they are neighbours)!");
 
 	// functions below works only if polygon is correctly defined
 
@@ -75,12 +93,61 @@ void Basic::PolygonCollider::UpdateGlobalTriangles(const Transform& trans) const
 
 bool Basic::PolygonCollider::IsSimple(const std::vector<sf::Vector2f>& vertices)
 {
+	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> lines;
+	lines.reserve(vertices.size());
+
+	for (size_t i = 0; i < vertices.size(); i++)
+		lines.push_back(
+			std::pair<sf::Vector2f, sf::Vector2f>
+			(
+			vertices[i], 
+			Helpers::GetItem<sf::Vector2f>(vertices, i + 1)
+			)
+		);
+
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		for (size_t j = i + 2; j < lines.size(); j++)
+		{
+			// prevent comparing neighbours
+			if (i + 1 == j) continue;
+			if (i == 0 && j == lines.size() - 1) continue;
+
+			// check intersections
+			if (Helpers::LinesIntersect(lines[i].first, lines[i].second,
+				lines[j].first, lines[j].second))
+				return false;
+		}
+	}
+
 	return true;
 }
 
 bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2f>& vertices)
 {
-	return true;
+	using MathFunctions::Cross;
+
+	// n represents the amount of the vertices
+	size_t n = vertices.size();
+
+	// going through all of the vertices
+	for (size_t i = 0; i < n; i++)
+	{
+		// get points
+		auto& prev = Helpers::GetItem<sf::Vector2f>(vertices, i - 1);
+		auto& curr = Helpers::GetItem<sf::Vector2f>(vertices, i);
+		auto& next = Helpers::GetItem<sf::Vector2f>(vertices, i + 1);
+
+		// count vectors
+		sf::Vector2f vectorCurrToPrev = prev - curr;
+		sf::Vector2f vectorCurrToNext = next - curr;
+
+		// vectors are collinear
+		if (Cross(vectorCurrToPrev, vectorCurrToNext) == 0.0f)
+			return true;
+	}
+
+	return false;
 }
 
 bool Basic::PolygonCollider::IsPolygonConvex(std::vector<sf::Vector2f>& vertices)

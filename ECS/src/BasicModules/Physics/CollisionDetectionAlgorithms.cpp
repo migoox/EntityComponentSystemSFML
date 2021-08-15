@@ -1,6 +1,7 @@
 #include "CollisionDetectionAlgorithms.h"
 #include "Colliders/CircleCollider.h"
 #include "Colliders/PlaneCollider.h"
+#include "Colliders/PolygonCollider.h"
 #include "../Game.h"
 
 Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoints(
