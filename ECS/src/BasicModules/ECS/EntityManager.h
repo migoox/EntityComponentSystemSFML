@@ -1,6 +1,7 @@
 #pragma once
 #include <stack>
 #include <array>
+#include <cassert>
 #include "ECSModules.h"
 
 namespace Basic {

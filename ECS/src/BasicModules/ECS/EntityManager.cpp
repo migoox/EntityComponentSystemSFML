@@ -23,6 +23,8 @@ Basic::EntityManager::EntityManager()
 
 Basic::Entity Basic::EntityManager::ICreateEntity()
 {
+	assert(m_EntitiesCount < MAX_ENTITIES && "Too many entities.");
+
 	Basic::Entity entity = m_AvailableEntites.top();
 	m_AvailableEntites.pop();
 	m_EntitiesCount++;
@@ -31,6 +33,8 @@ Basic::Entity Basic::EntityManager::ICreateEntity()
 
 void Basic::EntityManager::IDestroyEntity(Entity entity)
 {
+	assert(m_EntitiesCount < MAX_ENTITIES && "Entity out of range.");
+
 	m_AvailableEntites.push(entity);
 	m_EntitiesCount--;
 }
@@ -42,6 +46,7 @@ Basic::Entity Basic::EntityManager::IEntitiesCount()
 
 Basic::Signature& Basic::EntityManager::IEntitySignature(Entity entity)
 {
+	assert(m_EntitiesCount < MAX_ENTITIES && "Entity out of range.");
 	return m_EntitySignatures[entity];
 }
 
@@ -72,6 +77,7 @@ Basic::Entity Basic::EntityManager::CreateEntity()
 
 void Basic::EntityManager::DestroyEntity(Entity entity)
 {
+	assert(m_EntitiesCount < MAX_ENTITIES && "Entity out of range.");
 	s_Instance.IDestroyEntity(entity);
 }
 
