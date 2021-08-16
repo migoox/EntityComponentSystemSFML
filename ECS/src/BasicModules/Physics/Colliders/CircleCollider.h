@@ -3,41 +3,72 @@
 #include "../CollisionDetectionAlgorithms.h"
 
 namespace Basic {
-	struct CircleCollider : public ColliderItem
+	class CircleCollider : public ColliderItem
 	{
-		sf::Vector2f Center; // relative to game object's transform
-		float Radius = 0.0f;
+	private:
+		sf::Vector2f m_ColliderDisplacement;
 
+		float m_Radius = 0.0f;
+
+	public:
 		CircleCollider() { }
 
-		CircleCollider(float radius) : Radius(radius) { }
-		CircleCollider(float radius, sf::Vector2f center) : Radius(radius), Center(center) { }
+		CircleCollider(float radius) : m_Radius(radius) { }
+		CircleCollider(float radius, sf::Vector2f displacement) : m_Radius(radius), m_ColliderDisplacement(displacement) { }
+
+		float Radius() const
+		{
+			return m_Radius;
+		}
 
 		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override
 		{
-			return Center + trans.getPosition();
+			sf::Vector2f scale = trans.getScale();
+			float angle = trans.getRotation() * 3.141592653f / 180.0f;
+
+			sf::Vector2f global = m_ColliderDisplacement;
+
+			global.x *= scale.x;
+			global.y *= scale.y;
+
+			global = sf::Vector2f(global.x * std::cos(angle) - global.y * std::sin(angle),
+				global.x * std::sin(angle) + global.y * std::cos(angle));
+			global += trans.getPosition();
+
+			return global;
 		}
 
-		float GetMomentumOfInertia(const RigidBody& rb) const override
+		float GetMomentOfInertia(const RigidBody& rb) const override
 		{
-			return 0.5f * float(std::pow(Radius, 2)) * rb.Mass;
+			return 0.5f * float(std::pow(m_Radius, 2)) * rb.Mass;
+		}
+
+		void MoveCollider(sf::Vector2f displacement) override
+		{
+			m_ColliderDisplacement += displacement;
 		}
 
 		void DrawOnceOnVisualGizmos(const Transform& trans) const override
 		{
-			
-		}
+			CircleShape shape(m_Radius);
+			shape.setFillColor(sf::Color::Blue);
+			shape.setOrigin(m_Radius, m_Radius);
+			shape.setPosition(GetGlobalCenterOfGravity(trans));
 
-		sf::Vector2f GetGlobalCenter(const Transform& trans) const
-		{
-			return Center + trans.getPosition();
+			CircleShape gCenter(2.0f);
+			gCenter.setFillColor(sf::Color::Red);
+			gCenter.setOrigin(1.0f, 1.0f);
+			gCenter.setPosition(GetGlobalCenterOfGravity(trans));
+
+			Basic::VisualGizmos::DrawOnce(shape);
+			Basic::VisualGizmos::DrawOnce(gCenter);
 		}
 
 		bool ContainsGlobalPoint(const sf::Vector2f globalPoint, const Transform& trans)
 		{
-			sf::Vector2f globalCenter = GetGlobalCenter(trans);
+			sf::Vector2f globalCenter = GetGlobalCenterOfGravity(trans);
 
-			return Radius >= MathFunctions::Distance(globalPoint, globalCenter);
+			return  m_Radius >= MathFunctions::Distance(globalPoint, globalCenter);
 		}
 
 		// collision tests

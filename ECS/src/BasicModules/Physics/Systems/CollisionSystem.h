@@ -81,13 +81,15 @@ public:
 						collPoints = collider1.Item->TestCollision(
 							transform1, collider2.Item, transform2);
 
-
 						// if collision is detected
 						if (collPoints.HasCollision)
 						{
 							// raise the flag that collision happened in current frame
 							collider1.Item->CollisionTriggered = true;
 							collider2.Item->CollisionTriggered = true;
+
+							// if one of colliders is marked not to solve, skip
+							if (!collider1.Item->Solve || !collider2.Item->Solve) continue;
 
 							// if collpoints are unresolvable, skip
 							if (!collPoints.Resolvable) continue;

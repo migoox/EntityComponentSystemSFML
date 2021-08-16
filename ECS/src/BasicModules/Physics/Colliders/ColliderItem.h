@@ -24,24 +24,37 @@ namespace Basic {
 	};
 
 	class PlaneCollider;
-	struct CircleCollider;
-	struct PolygonCollider;
+	class CircleCollider;
+	class PolygonCollider;
 
 	struct ColliderItem
 	{
 		bool CollisionTriggered = false;
 
+		// if you want to turn off collider set is as false
 		bool Active = true;
 
+		// if you don't want this collider to have solved collisions set it as false
+		bool Solve = true;
+
+		// if you want to make movement got from collisions of your body blocked set it as false
 		bool Movable = true;
+
+		// if you want to make rotation got from collisions of your body blocked set it as false
 		bool Rotatable = true;
 
 		// relatively to this center transformation of collider will be done
 		virtual sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const = 0;
 
-		virtual float GetMomentumOfInertia(const RigidBody& rb) const = 0;
+		virtual float GetMomentOfInertia(const RigidBody& rb) const = 0;
 
 		virtual void DrawOnceOnVisualGizmos(const Transform& trans) const = 0;
+
+		// move collider relatively to game object's transform
+		virtual void MoveCollider(sf::Vector2f displacement) = 0;
+
+		// rotate collider around it's center of gravity (angle in degrees)
+		virtual void RotateCollider(float angle) { };
 
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,

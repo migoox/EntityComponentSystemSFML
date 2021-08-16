@@ -44,8 +44,8 @@ namespace Basic {
 				// prepare needed values
 				float mA = rigidBodyA.Mass, mB = rigidBodyB.Mass; // mass A and mass B
 
-				float iA = colliderA.Item->GetMomentumOfInertia(rigidBodyA); // inertia A
-				float iB = colliderB.Item->GetMomentumOfInertia(rigidBodyB); // intertia B
+				float iA = colliderA.Item->GetMomentOfInertia(rigidBodyA); // inertia A
+				float iB = colliderB.Item->GetMomentOfInertia(rigidBodyB); // intertia B
 
 				sf::Vector2f vA1 = rigidBodyA.Velocity, vB1 = rigidBodyB.Velocity; // linear velocity before collision
 				float omegaA1 = rigidBodyA.AngleVelocity, omegaB1 = rigidBodyB.AngleVelocity; // angle velocity before collision

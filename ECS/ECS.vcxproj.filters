@@ -63,6 +63,9 @@
     <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicModules\Physics\Colliders\PlaneCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Game.h">

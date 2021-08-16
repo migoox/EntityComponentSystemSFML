@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <iostream>
 
 #include "ColliderItem.h"
 #include "../CollisionDetectionAlgorithms.h"
@@ -10,23 +11,25 @@
 namespace Basic {
 	namespace Helpers{
 		template<typename T>
-		T& GetItem(std::vector<T>& vector, size_t index)
+		T& GetItem(std::vector<T>& vector, int index)
 		{
-			if (index >= vector.size())
-				return vector[index % vector.size()];
+			int n = vector.size();
+			if (index >= n)
+				return vector[index % n];
 			else if (index < 0)
-				return vector[index % vector.size() + vector.size()];
+				return vector[index % n + n];
 			else
 				return vector[index];
 		}
 
 		template<typename T>
-		const T& GetItem(const std::vector<T>& vector, size_t index)
+		const T& GetItem(const std::vector<T>& vector, int index)
 		{
-			if (index >= vector.size())
-				return vector[index % vector.size()];
+			int n = vector.size();
+			if (index >= n)
+				return vector[index % n];
 			else if (index < 0)
-				return vector[index % vector.size() + vector.size()];
+				return vector[index % n + n];
 			else
 				return vector[index];
 		}
@@ -40,9 +43,13 @@ namespace Basic {
 	{
 	private:
 		sf::Vector2f m_CenterOfGravity;
-		sf::Vector2f m_CenterDisplacement;
 
-		sf::Vector2f m_Fixer; // usefull for transformation of polygon
+		sf::Vector2f m_ColliderDisplacement;
+		float m_ColliderRotation;
+
+		// collider's center of gravity should be placed on (0, 0) point
+		// fixer is a vector which moves center of gravity to (0, 0), it is required in polygon
+		sf::Vector2f m_Fixer; 
 
 		bool m_Correct;
 		bool m_Convex;
@@ -92,11 +99,13 @@ namespace Basic {
 		void AddVertex(sf::Vector2f vertex);
 
 		// moves collider relatively to game object's transform
-		void MoveCollider(sf::Vector2f displacement);
+		void MoveCollider(sf::Vector2f displacement) override;
+
+		void RotateCollider(float angle) override;
 
 		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override;
 
-		float GetMomentumOfInertia(const RigidBody& rb) const override;
+		float GetMomentOfInertia(const RigidBody& rb) const override;
 
 		void DrawOnceOnVisualGizmos(const Transform& trans) const override;
 

@@ -3,54 +3,43 @@
 #include "../CollisionDetectionAlgorithms.h"
 
 namespace Basic {
-	struct PlaneCollider : public ColliderItem
+	class PlaneCollider : public ColliderItem
 	{
-		sf::Vector2f Plane;
-		float Distance = 0.0f;
+	private:
+		sf::Vector2f m_ColliderDisplacement;
+		float m_ColliderRotation = 0.0f;
 
+		float m_Distance = 0.0f;
+	private:
+
+		sf::Vector2f TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const;
+
+	public:
 		PlaneCollider() { }
 
-		PlaneCollider(sf::Vector2f point, float distance) : Plane(point), Distance(distance) { }
-		PlaneCollider(float distance) : Plane(sf::Vector2f(0.0f, 0.0f)), Distance(distance) { }
+		PlaneCollider(float distance) : m_Distance(distance) { }
 
-		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override
-		{
-			return Plane + trans.getPosition();
-		}
+		PlaneCollider(float distance, sf::Vector2f displacement) : m_Distance(distance), m_ColliderDisplacement(displacement) { }
 
-		float GetMomentumOfInertia(const RigidBody& rb) const override
-		{
-			return 1.0f / 12.0f * float(std::pow(Distance, 2)) * rb.Mass;
-		}
+		PlaneCollider(sf::Vector2f pointA, sf::Vector2f pointB);
 
-		void DrawOnceOnVisualGizmos(const Transform& trans) const override
-		{
+		PlaneCollider(sf::Vector2f pointA, sf::Vector2f pointB, sf::Vector2f displacement);
 
-		}
+		float Distance() const;
 
-		sf::Vector2f GetGlobalAPoint(const Transform& trans) const
-		{
-			float pi = 3.141592653f;
+		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override;
 
-			sf::Vector2f pointA;
+		float GetMomentOfInertia(const RigidBody& rb) const override;
 
-			pointA.x = trans.getPosition().x + Plane.x - std::cos(trans.getRotation() * pi / 180.0f) * Distance / 2;
-			pointA.y = trans.getPosition().y + Plane.y - std::sin(trans.getRotation() * pi / 180.0f) * Distance / 2;
+		void DrawOnceOnVisualGizmos(const Transform& trans) const override;
 
-			return pointA;
-		}
+		void MoveCollider(sf::Vector2f displacement) override;
 
-		sf::Vector2f GetGlobalBPoint(const Transform& trans) const
-		{
-			float pi = 3.141592653f;
+		void RotateCollider(float angle) override;
 
-			sf::Vector2f pointB;
+		sf::Vector2f GetGlobalAPoint(const Transform& trans) const;
 
-			pointB.x = trans.getPosition().x + Plane.x + std::cos(trans.getRotation() * pi / 180.0f) * Distance / 2;
-			pointB.y = trans.getPosition().y + Plane.y + std::sin(trans.getRotation() * pi / 180.0f) * Distance / 2;
-
-			return pointB;
-		}
+		sf::Vector2f GetGlobalBPoint(const Transform& trans) const;
 
 		// collision tests
 		CollisionPoints TestCollision(

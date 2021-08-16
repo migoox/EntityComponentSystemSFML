@@ -127,11 +127,8 @@ bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2
 {
 	using MathFunctions::Cross;
 
-	// n represents the amount of the vertices
-	size_t n = vertices.size();
-
 	// going through all of the vertices
-	for (size_t i = 0; i < n; i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		// get points
 		auto& prev = Helpers::GetItem<sf::Vector2f>(vertices, i - 1);
@@ -161,7 +158,7 @@ bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& ve
 	// with the first cross product
 
 	// n represents the amount of the vertices
-	size_t n = vertices.size();
+	int n = vertices.size();
 
 	// cross procucts
 	float crossProduct;
@@ -182,7 +179,7 @@ bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& ve
 	firstCrossProduct = Cross(n1P, n2P);
 
 	// going through all of the vertices
-	for (size_t i = 1; i < n; i++)
+	for (int i = 1; i < n; i++)
 	{
 		// getting neighbours
 		neighbours[0] = Helpers::GetItem<sf::Vector2f>(vertices, i - 1);
@@ -217,7 +214,7 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 	// create vector of available indexes
 	std::vector<int> indexVector;
 
-	for (size_t i = 0; i < vertices.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		indexVector.push_back(i);
 	}
@@ -226,7 +223,7 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 	while (indexVector.size() > 3)
 	{
 		// iterate trough all available indexes
-		for (size_t i = 0; i < indexVector.size(); i++)
+		for (int i = 0; i < indexVector.size(); i++)
 		{
 			// get prev, curr and next indexes of array
 			size_t prevIndex = Helpers::GetItem<int>(indexVector, i - 1);
@@ -309,12 +306,27 @@ sf::Vector2f Basic::PolygonCollider::FindCenterOfGravity(const std::vector<sf::V
 
 sf::Vector2f Basic::PolygonCollider::TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const
 {
+	sf::Vector2f scale = trans.getScale();
 	float angle = trans.getRotation() * 3.141592653f / 180.0f;
+	float colliderAngle = m_ColliderRotation * 3.141592653f / 180.0f;
 
-	sf::Vector2f global = point + m_CenterDisplacement + m_Fixer;
-	global = sf::Vector2f(global.x * std::cos(angle) - global.y * std::sin(angle),
+	point += m_Fixer;
+
+	point = sf::Vector2f(
+		point.x * std::cos(colliderAngle) - point.y * std::sin(colliderAngle),
+		point.x * std::sin(colliderAngle) + point.y * std::cos(colliderAngle));
+
+	sf::Vector2f global = point + m_ColliderDisplacement;
+
+	global.x *= scale.x;
+	global.y *= scale.y;
+
+	global = sf::Vector2f(
+		global.x * std::cos(angle) - global.y * std::sin(angle),
 		global.x * std::sin(angle) + global.y * std::cos(angle));
+
 	global += trans.getPosition();
+
 
 	return global;
 }
@@ -372,7 +384,12 @@ void Basic::PolygonCollider::AddVertex(sf::Vector2f vertex)
 
 void Basic::PolygonCollider::MoveCollider(sf::Vector2f displacement)
 {
-	m_CenterDisplacement += displacement;
+	m_ColliderDisplacement += displacement;
+}
+
+void Basic::PolygonCollider::RotateCollider(float angle)
+{
+	m_ColliderRotation += angle;
 }
 
 sf::Vector2f Basic::PolygonCollider::GetGlobalCenterOfGravity(const Transform& trans) const
@@ -380,7 +397,7 @@ sf::Vector2f Basic::PolygonCollider::GetGlobalCenterOfGravity(const Transform& t
 	return TranslateRelativePointToGlobal(m_CenterOfGravity, trans);
 }
 
-float Basic::PolygonCollider::GetMomentumOfInertia(const RigidBody& rb) const
+float Basic::PolygonCollider::GetMomentOfInertia(const RigidBody& rb) const
 {
 	float A = 0.0f;
 	float B = 0.0f;

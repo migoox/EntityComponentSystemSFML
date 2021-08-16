@@ -95,6 +95,7 @@
     <ClCompile Include="src\BasicModules\ECS\World.cpp" />
     <ClCompile Include="src\BasicModules\Game.cpp" />
     <ClCompile Include="src\BasicModules\Maths\Maths.cpp" />
+    <ClCompile Include="src\BasicModules\Physics\Colliders\PlaneCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\Colliders\PolygonCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp" />

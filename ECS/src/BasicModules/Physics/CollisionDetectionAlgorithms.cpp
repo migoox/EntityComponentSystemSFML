@@ -8,22 +8,22 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoint
 	const CircleCollider* circle1, const Transform& transform1, 
 	const CircleCollider* circle2, const Transform& transform2)
 {
-	sf::Vector2f globalPosition1 = circle1->GetGlobalCenter(transform1);
-	sf::Vector2f globalPosition2 = circle2->GetGlobalCenter(transform2);
+	sf::Vector2f globalPosition1 = circle1->GetGlobalCenterOfGravity(transform1);
+	sf::Vector2f globalPosition2 = circle2->GetGlobalCenterOfGravity(transform2);
 
 	float distanceBetweenCenters = sqrt(pow(globalPosition1.x - globalPosition2.x, 2) +
 		pow(globalPosition1.y - globalPosition2.y, 2));
 
 	CollisionPoints collPoints; // default parameters
 
-	if (distanceBetweenCenters <= circle1->Radius + circle2->Radius)
+	if (distanceBetweenCenters <= circle1->Radius() + circle2->Radius())
 	{
 		// collision
 		collPoints.HasCollision = true;
 		collPoints.Normal = MathFunctions::NormalizeVector(globalPosition1 - globalPosition2);
-		collPoints.Depth = circle1->Radius + circle2->Radius - MathFunctions::Distance(globalPosition1, globalPosition2);
-		collPoints.A = globalPosition1 - collPoints.Normal * circle1->Radius;
-		collPoints.B = globalPosition2 + collPoints.Normal * circle2->Radius;
+		collPoints.Depth = circle1->Radius() + circle2->Radius() - MathFunctions::Distance(globalPosition1, globalPosition2);
+		collPoints.A = globalPosition1 - collPoints.Normal * circle1->Radius();
+		collPoints.B = globalPosition2 + collPoints.Normal * circle2->Radius();
 	}
 
 	return collPoints;
@@ -38,7 +38,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	// counting points
 	sf::Vector2f pointA = plane->GetGlobalAPoint(planeTransform);
 	sf::Vector2f pointB = plane->GetGlobalBPoint(planeTransform);
-	sf::Vector2f center = circle->GetGlobalCenter(circleTransform);
+	sf::Vector2f center = circle->GetGlobalCenterOfGravity(circleTransform);
 
 	// counting vectors
 	sf::Vector2f PointACenterVector = center - pointA;
@@ -51,43 +51,43 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	// create collision points
 	CollisionPoints collPoints;
 
-	if (MathFunctions::Distance(center, pointA) <= circle->Radius) // one of the points of edge is inside the circle
+	if (MathFunctions::Distance(center, pointA) <= circle->Radius()) // one of the points of edge is inside the circle
 	{
 		collPoints.HasCollision = true;
 
 		// counting collision points
-		if (MathFunctions::VectorDistance(ShadowVector) >= plane->Distance ||
+		if (MathFunctions::VectorDistance(ShadowVector) >= plane->Distance() ||
 			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
 		{
 			collPoints.B = pointA;
-			collPoints.A = center + MathFunctions::NormalizeVector(collPoints.B - center) * circle->Radius;
+			collPoints.A = center + MathFunctions::NormalizeVector(collPoints.B - center) * circle->Radius();
 			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
 			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
 		}
 		else // if circle is between points A and B
 		{
-			collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circle->Radius;
+			collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circle->Radius();
 			collPoints.B = center + CenterPlaneVector;
 			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
 			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
 		}
 	}
-	else if (MathFunctions::Distance(center, pointB) <= circle->Radius) // one of the points of edge is inside the circle
+	else if (MathFunctions::Distance(center, pointB) <= circle->Radius()) // one of the points of edge is inside the circle
 	{
 		collPoints.HasCollision = true;
 
 		// counting collision points
-		if (MathFunctions::VectorDistance(ShadowVector) >= plane->Distance ||
+		if (MathFunctions::VectorDistance(ShadowVector) >= plane->Distance() ||
 			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
 		{
 			collPoints.B = pointB;
-			collPoints.A = center + MathFunctions::NormalizeVector(collPoints.B - center) * circle->Radius;
+			collPoints.A = center + MathFunctions::NormalizeVector(collPoints.B - center) * circle->Radius();
 			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
 			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
 		}
 		else
 		{
-			collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circle->Radius;
+			collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circle->Radius();
 			collPoints.B = center + CenterPlaneVector;
 			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
 			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
@@ -95,14 +95,14 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 	}
 	else // if circle collides with the line (not with it's points)
 	{
-		if (MathFunctions::VectorDistance(CenterPlaneVector) <= circle->Radius)
+		if (MathFunctions::VectorDistance(CenterPlaneVector) <= circle->Radius())
 		{
-			if (MathFunctions::VectorDistance(ShadowVector) <= plane->Distance &&
+			if (MathFunctions::VectorDistance(ShadowVector) <= plane->Distance() &&
 				ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
 			{
 				collPoints.HasCollision = true;
 
-				collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circle->Radius;
+				collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circle->Radius();
 				collPoints.B = center + CenterPlaneVector;
 				collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
 				collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
