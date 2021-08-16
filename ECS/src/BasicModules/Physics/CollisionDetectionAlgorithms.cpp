@@ -267,3 +267,38 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePolygonCollisionPoint
 	return CollisionPoints();
 }
 
+Basic::CollisionPoints Basic::CollisionDetection::FindRectanglePolygonCollisionPoints(const RectangleCollider* rectangle, const Transform& rectangleTransform, const PolygonCollider* polygon, const Transform& polygonTransform)
+{
+	return CollisionPoints();
+}
+
+Basic::CollisionPoints Basic::CollisionDetection::FindPolygonRectangleCollisionPoints(const PolygonCollider* polygon, const Transform& polygonTransform, const RectangleCollider* rectangle, const Transform& rectangleTransform)
+{
+	return CollisionPoints();
+}
+
+Basic::CollisionPoints Basic::CollisionDetection::FindRectangleCircleCollisionPoints(const RectangleCollider* rectangle, const Transform& rectangleTransform, const CircleCollider* circle, const Transform& circleTransform)
+{
+	return CollisionPoints();
+}
+
+Basic::CollisionPoints Basic::CollisionDetection::FindCircleRectangleCollisionPoints(const CircleCollider* circle, const Transform& circleTransform, const RectangleCollider* rectangle, const Transform& rectangleTransform)
+{
+	return CollisionPoints();
+}
+
+Basic::CollisionPoints Basic::CollisionDetection::FindRectanglePlaneCollisionPoints(const RectangleCollider* rectangle, const Transform& rectangleTransform, const PlaneCollider* plane, const Transform& planeTransform)
+{
+	return CollisionPoints();
+}
+
+Basic::CollisionPoints Basic::CollisionDetection::FindPlaneRectangleCollisionPoints(const PlaneCollider* plane, const Transform& planeTransform, const RectangleCollider* rectangle, const Transform& rectangleTransform)
+{
+	return CollisionPoints();
+}
+
+Basic::CollisionPoints Basic::CollisionDetection::FindRectangleRectangleCollisionPoints(const RectangleCollider* rectangle1, const Transform& rectangle1Transform, const RectangleCollider* rectangle2, const Transform& rectangle2Transform)
+{
+	return CollisionPoints();
+}
+

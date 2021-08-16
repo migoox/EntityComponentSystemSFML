@@ -77,7 +77,6 @@ Basic::Entity Basic::EntityManager::CreateEntity()
 
 void Basic::EntityManager::DestroyEntity(Entity entity)
 {
-	assert(m_EntitiesCount < MAX_ENTITIES && "Entity out of range.");
 	s_Instance.IDestroyEntity(entity);
 }
 

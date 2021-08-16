@@ -66,6 +66,9 @@
     <ClCompile Include="src\BasicModules\Physics\Colliders\PlaneCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicModules\Physics\Colliders\RectangleCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Game.h">
@@ -216,6 +219,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Physics\Colliders\RectangleCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

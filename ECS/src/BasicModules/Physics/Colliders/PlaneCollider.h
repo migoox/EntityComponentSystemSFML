@@ -21,10 +21,6 @@ namespace Basic {
 
 		PlaneCollider(float distance, sf::Vector2f displacement) : m_Distance(distance), m_ColliderDisplacement(displacement) { }
 
-		PlaneCollider(sf::Vector2f pointA, sf::Vector2f pointB);
-
-		PlaneCollider(sf::Vector2f pointA, sf::Vector2f pointB, sf::Vector2f displacement);
-
 		float Distance() const;
 
 		sf::Vector2f GetGlobalCenterOfGravity(const Transform& trans) const override;
@@ -68,10 +64,18 @@ namespace Basic {
 
 		CollisionPoints TestCollision(
 			const Transform& transform,
-			const PolygonCollider* convexCollider,
-			const Transform& convexTransform) const override
+			const PolygonCollider* polygonCollider,
+			const Transform& polygonTransform) const override
 		{
-			return CollisionDetection::FindPlanePolygonCollisionPoints(this, transform, convexCollider, convexTransform);
+			return CollisionDetection::FindPlanePolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
+		}
+
+		CollisionPoints TestCollision(
+			const Transform& transform,
+			const RectangleCollider* rectangleCollider,
+			const Transform& rectangleTransform) const
+		{
+			return CollisionDetection::FindPlaneRectangleCollisionPoints(this, transform, rectangleCollider, rectangleTransform);
 		}
 	};
 }

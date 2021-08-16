@@ -18,6 +18,7 @@
 #include "Physics/Colliders/CircleCollider.h"
 #include "Physics/Colliders/PlaneCollider.h"
 #include "Physics/Colliders/PolygonCollider.h"
+#include "Physics/Colliders/RectangleCollider.h"
 
 // animation
 #include "Animation/Components/Animator.h"
@@ -40,6 +41,7 @@ namespace Basic {
 		using Basic::PlaneCollider;
 		using Basic::CircleCollider;
 		using Basic::PolygonCollider;
+		using Basic::RectangleCollider;
 
 		using Basic::Animation;
 	}

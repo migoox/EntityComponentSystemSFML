@@ -97,6 +97,7 @@
     <ClCompile Include="src\BasicModules\Maths\Maths.cpp" />
     <ClCompile Include="src\BasicModules\Physics\Colliders\PlaneCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\Colliders\PolygonCollider.cpp" />
+    <ClCompile Include="src\BasicModules\Physics\Colliders\RectangleCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp" />
     <ClCompile Include="src\BasicModules\Tools\Random.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="src\BasicModules\Physics\Colliders\CircleCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\ColliderItem.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\PolygonCollider.h" />
+    <ClInclude Include="src\BasicModules\Physics\Colliders\RectangleCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\ImpulseSolver.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\PlaneCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\PositionSolver.h" />

@@ -145,10 +145,18 @@ namespace Basic {
 
 		CollisionPoints TestCollision(
 			const Transform& transform,
-			const PolygonCollider* PolygonCollider,
-			const Transform& PolygonTransform) const override
+			const PolygonCollider* polygonCollider,
+			const Transform& polygonTransform) const override
 		{
-			return CollisionDetection::FindPolygonPolygonCollisionPoints(this, transform, PolygonCollider, PolygonTransform);
+			return CollisionDetection::FindPolygonPolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
+		}
+
+		CollisionPoints TestCollision(
+			const Transform& transform,
+			const RectangleCollider* rectangleCollider,
+			const Transform& rectangleTransform) const override
+		{
+			return CollisionDetection::FindPolygonRectangleCollisionPoints(this, transform, rectangleCollider, rectangleTransform);
 		}
 	};
 }

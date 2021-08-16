@@ -24,17 +24,18 @@ void GameScene::OnEnter()
 	// 3. Create GameObjects
 	m_Test = Instantiate();
 
-	Collider& coll = m_Test.AddComponent<Collider>(new PolygonCollider(
+	/*Collider& coll = m_Test.AddComponent<Collider>(new PolygonCollider(
 		{
 			sf::Vector2f(0.0f, 0.0f),
 			sf::Vector2f(300.0f, 100.0f),
 			sf::Vector2f(200.0f, 200.0f),
 			sf::Vector2f(10.0f, 50.0f)
-		}));
+		}));*/
 
+	Collider& coll = m_Test.AddComponent<Collider>(new RectangleCollider(sf::Vector2f(200.0f, 100.0f)));
 
 	//coll.Item->RotateCollider(50.0f);
-	coll.Item->MoveCollider(sf::Vector2f(30.0f, 30.0f));
+	coll->MoveCollider(sf::Vector2f(30.0f, 30.0f));
 	
 	m_Test.GetTransform().setPosition(400.0f, 400.0f);
 }

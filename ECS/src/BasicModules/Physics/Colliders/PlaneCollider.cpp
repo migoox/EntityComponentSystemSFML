@@ -1,6 +1,4 @@
 #include "PlaneCollider.h"
-#include <iostream>
-
 
 sf::Vector2f Basic::PlaneCollider::TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const
 {
@@ -27,26 +25,6 @@ sf::Vector2f Basic::PlaneCollider::TranslateRelativePointToGlobal(sf::Vector2f p
 	return global;
 }
 
-Basic::PlaneCollider::PlaneCollider(sf::Vector2f pointA, sf::Vector2f pointB)
-{
-	using MathFunctions::Dot;
-	float pi = 3.141592653f;
-
-	m_Distance = MathFunctions::Distance(pointA, pointB);
-	m_ColliderRotation = std::acos(Dot(pointB, sf::Vector2f(m_Distance / 2.f, 0.0f)) / m_Distance) * 180.0f / pi;
-}
-
-Basic::PlaneCollider::PlaneCollider(sf::Vector2f pointA, sf::Vector2f pointB, sf::Vector2f displacement)
-{
-	using MathFunctions::Dot;
-	float pi = 3.141592653f;
-
-	m_Distance = MathFunctions::Distance(pointA, pointB);
-	//m_ColliderRotation = std::acos(Dot(pointB, sf::Vector2f(m_Distance / 2.f, 0.0f)) / m_Distance) * 180.0f / pi;
-
-	m_ColliderDisplacement = displacement;
-}
-
 float Basic::PlaneCollider::Distance() const
 {
 	return m_Distance;
@@ -69,8 +47,6 @@ void Basic::PlaneCollider::DrawOnceOnVisualGizmos(const Transform& trans) const
 	gCenter.setFillColor(sf::Color::Red);
 	gCenter.setOrigin(1.0f, 1.0f);
 	gCenter.setPosition(GetGlobalCenterOfGravity(trans));
-
-	std::cout << GetGlobalCenterOfGravity(trans).x << ", " << GetGlobalCenterOfGravity(trans).y << std::endl;
 
 	Basic::VisualGizmos::DrawOnce(line);
 	Basic::VisualGizmos::DrawOnce(gCenter);

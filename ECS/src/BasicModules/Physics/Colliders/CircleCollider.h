@@ -103,5 +103,13 @@ namespace Basic {
 		{
 			return CollisionDetection::FindCirclePolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
 		}
+
+		CollisionPoints TestCollision(
+			const Transform& transform,
+			const RectangleCollider* rectangleCollider,
+			const Transform& rectangleTransform) const override
+		{
+			return CollisionDetection::FindCircleRectangleCollisionPoints(this, transform, rectangleCollider, rectangleTransform);
+		}
 	};
 }

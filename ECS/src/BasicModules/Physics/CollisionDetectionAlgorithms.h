@@ -41,5 +41,33 @@ namespace Basic {
 		CollisionPoints FindPlanePolygonCollisionPoints(
 			const PlaneCollider* plane, const Transform& planeTransform,
 			const PolygonCollider* polygon, const Transform& polygonTransform);
+
+		CollisionPoints FindRectanglePolygonCollisionPoints(
+			const RectangleCollider* rectangle, const Transform& rectangleTransform,
+			const PolygonCollider* polygon, const Transform& polygonTransform);
+
+		CollisionPoints FindPolygonRectangleCollisionPoints(
+			const PolygonCollider* polygon, const Transform& polygonTransform,
+			const RectangleCollider* rectangle, const Transform& rectangleTransform);
+
+		CollisionPoints FindRectangleCircleCollisionPoints(
+			const RectangleCollider* rectangle, const Transform& rectangleTransform,
+			const CircleCollider* circle, const Transform& circleTransform);
+
+		CollisionPoints FindCircleRectangleCollisionPoints(
+			const CircleCollider* circle, const Transform& circleTransform,
+			const RectangleCollider* rectangle, const Transform& rectangleTransform);
+
+		CollisionPoints FindRectanglePlaneCollisionPoints(
+			const RectangleCollider* rectangle, const Transform& rectangleTransform,
+			const PlaneCollider* plane, const Transform& planeTransform);
+
+		CollisionPoints FindPlaneRectangleCollisionPoints(
+			const PlaneCollider* plane, const Transform& planeTransform,
+			const RectangleCollider* rectangle, const Transform& rectangleTransform);
+
+		CollisionPoints FindRectangleRectangleCollisionPoints(
+			const RectangleCollider* rectangle1, const Transform& rectangle1Transform,
+			const RectangleCollider* rectangle2, const Transform& rectangle2Transform);
 	}
 }

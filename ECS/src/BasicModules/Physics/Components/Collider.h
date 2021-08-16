@@ -29,6 +29,11 @@ namespace Basic {
 			return *this;
 		}
 
+		ColliderItem* operator->()
+		{
+			return Item;
+		}
+
 		~Collider()
 		{
 			if (Item != nullptr)
