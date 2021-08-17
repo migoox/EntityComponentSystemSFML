@@ -49,6 +49,8 @@ namespace Basic {
 		// rotate collider around it's center of gravity (angle in degrees)
 		virtual void RotateCollider(float angle) { };
 
+		virtual sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const = 0;
+
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const ColliderItem* circleCollider,
@@ -66,8 +68,8 @@ namespace Basic {
 
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
-			const PolygonCollider* convexCollider,
-			const Transform& convexTransform) const = 0;
+			const PolygonCollider* polygonCollider,
+			const Transform& polygonTransform) const = 0;
 	};
 
 	struct CollisionInfo

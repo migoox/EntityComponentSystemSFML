@@ -465,3 +465,29 @@ const std::vector<std::array<sf::Vector2f, 3>>& Basic::PolygonCollider::GlobalTr
 	return m_GlobalTriangles;
 }
 
+sf::Vector2f Basic::PolygonCollider::FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const
+{
+	assert(m_Correct && "PhysicsEngine: Can't find furthest point, since polygon is incorrectly defined.");
+
+	assert(m_Convex && "PhysicsEngine: Can't find furthest point, since polygon is concave.");
+
+	using MathFunctions::Dot;
+
+	// prepare values
+	sf::Vector2f maxPoint = m_Vertices[0];
+	float maxDistance = Dot(maxPoint, direction);
+
+	// find max point
+	for (int i = 1; i < m_Vertices.size(); i++)
+	{
+		float distance = Dot(m_Vertices[i], direction);
+		if (distance > maxDistance)
+		{
+			maxDistance = distance;
+			maxPoint = m_Vertices[i];
+		}
+	}
+
+	return TranslateRelativePointToGlobal(maxPoint, transform);
+}
+

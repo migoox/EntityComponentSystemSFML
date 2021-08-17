@@ -71,3 +71,8 @@ sf::Vector2f Basic::PlaneCollider::GetGlobalBPoint(const Transform& trans) const
 {
 	return TranslateRelativePointToGlobal(sf::Vector2f(m_Distance / 2.0f, 0.0f), trans);
 }
+
+sf::Vector2f Basic::PlaneCollider::FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const
+{
+	return sf::Vector2f();
+}

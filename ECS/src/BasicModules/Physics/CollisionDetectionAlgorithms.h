@@ -6,20 +6,93 @@
 #include "Colliders/ColliderItem.h"
 
 namespace Basic {
-	namespace CollisionHelpers {
-		// furthest point
+	namespace GJK {
+		class Simplex
+		{
+		private:
+			std::array<sf::Vector2f, 3> m_Points;
 
-		sf::Vector2f FindFurthestPointCircle(sf::Vector2f globalCenter, float radius, sf::Vector2f direction);
+			unsigned int m_Size;
 
-		sf::Vector2f FindFurthestPointPlane(sf::Vector2f globalCenter, float distance, sf::Vector2f direction);
+		public:
+			Simplex()
+				: m_Points({ sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f) }), m_Size(0)
+			{}
 
-		sf::Vector2f FindFurthestPointPolygon(const std::vector<sf::Vector2f>* polygon, sf::Vector2f direction);
+			Simplex(std::initializer_list<sf::Vector2f> list)
+				: m_Points({ sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f) }), m_Size(0)
+			{
+				*this = list;
+			}
+
+			Simplex& operator=(std::initializer_list<sf::Vector2f> list)
+			{
+				int i = 0;
+				// iterate trough the list
+				for (auto& it : list)
+				{
+					// if list's size is bigger than 3
+					// break the loop
+					if (i > 3)
+						break;
+
+					m_Points[i] = it;
+					i++;
+				}
+
+				if (i > 3)
+					m_Size = 3;
+				else
+					m_Size = list.size();
+
+				return *this;
+			}
+
+			void PushFront(sf::Vector2f point)
+			{
+				m_Points = { point, m_Points[0], m_Points[1] };
+				m_Size = std::min(m_Size + 1, 3u);
+			}
+
+			void PopBack()
+			{
+				assert(m_Size > 0 && "Simplex out of range.");
+
+				m_Size--;
+
+				if (m_Size == 0)
+					m_Points = { };
+				else if(m_Size == 1)
+					m_Points = { m_Points[0] };
+				else
+					m_Points = { m_Points[0], m_Points[1] };
+			}
+
+			sf::Vector2f& operator[](unsigned i) { return m_Points[i]; }
+			unsigned int Size() const { return m_Size; }
+
+			auto begin() const { return m_Points.begin(); }
+			auto end()   const { return m_Points.end() - (3 - m_Size); }
+		};
+
+		bool HandleSimplex(Simplex points, sf::Vector2f direction);
+
+		bool LineCase(Simplex& points, sf::Vector2f& direction);
+
+		bool TriangleCase(Simplex& points, sf::Vector2f& direction);
 
 		sf::Vector2f FindFurthestPointTriangle(const std::array<sf::Vector2f, 3>* triangle, sf::Vector2f direction);
 
-		bool SATAlgorithm(
-			const std::vector<sf::Vector2f>* polygon1,
-			const std::vector<sf::Vector2f>* polygon2);
+		sf::Vector2f SupportFunction(const ColliderItem* colliderA, const Transform& transformA,
+			const ColliderItem* colliderB, const Transform& transformB, sf::Vector2f direction);
+
+		bool Algorithm(const ColliderItem* colliderA, const Transform& transformA,
+			const ColliderItem* colliderB, const Transform& transformB);
+	}
+	namespace SAT {
+		bool Algorithm(
+			const std::vector<sf::Vector2f>* polygonA,
+			const std::vector<sf::Vector2f>* polygonB);
 
 	}
 	namespace CollisionDetection {

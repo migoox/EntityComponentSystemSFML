@@ -4,42 +4,79 @@
 #include "Colliders/PolygonCollider.h"
 #include "../Game.h"
 
-// TO DO: implement circle and plane
-sf::Vector2f Basic::CollisionHelpers::FindFurthestPointCircle(sf::Vector2f globalCenter, float radius, sf::Vector2f direction)
+bool Basic::GJK::HandleSimplex(Simplex points, sf::Vector2f direction)
 {
-	return sf::Vector2f();
+	if(points.Size() == 2)
+		return LineCase(points, direction);
+
+	return TriangleCase(points, direction);
 }
 
-sf::Vector2f Basic::CollisionHelpers::FindFurthestPointPlane(sf::Vector2f globalCenter, float distance, sf::Vector2f direction)
+bool Basic::GJK::LineCase(Simplex& points, sf::Vector2f& direction)
 {
-	return sf::Vector2f();
-}
-
-sf::Vector2f Basic::CollisionHelpers::FindFurthestPointPolygon(const std::vector<sf::Vector2f>* polygon, sf::Vector2f direction)
-{
-	assert(polygon->size() >= 3 && "PhysicsEngine: Can't find furthest point, since polygon is incorrectly defined.");
-
 	using MathFunctions::Dot;
+	using MathFunctions::Cross;
 
-	// prepare values
-	sf::Vector2f maxPoint = polygon->at(0);
-	float maxDistance = Dot(maxPoint, direction);
+	sf::Vector2f a = points[0];
+	sf::Vector2f b = points[1];
 
-	// find max point
-	for (int i = 1; i < polygon->size(); i++)
+	sf::Vector2f abVec = b - a;
+	sf::Vector2f aoVec = - a;
+
+	// AB region
+	if (Dot(abVec, aoVec) > 0.0f)
 	{
-		float distance = Dot(polygon->at(i), direction);
-		if (distance > maxDistance)
-		{
-			maxDistance = distance;
-			maxPoint = polygon->at(i);
-		}
+		direction = Cross(Cross(abVec, aoVec), abVec);
+	}
+	// A region
+	else
+	{
+		points = { a };
+		direction = aoVec;
 	}
 
-	return maxPoint;
+	return false;
 }
 
-sf::Vector2f Basic::CollisionHelpers::FindFurthestPointTriangle(const std::array<sf::Vector2f, 3>* triangle, sf::Vector2f direction)
+bool Basic::GJK::TriangleCase(Simplex& points, sf::Vector2f& direction)
+{
+	using MathFunctions::Dot;
+	using MathFunctions::Cross;
+
+	sf::Vector2f a = points[0];
+	sf::Vector2f b = points[1];
+	sf::Vector2f c = points[2];
+
+	sf::Vector2f abVec = b - a;
+	sf::Vector2f acVec = c - a;
+	sf::Vector2f aoVec = -a;
+
+	sf::Vector2f abVecPerpendicular = Cross(Cross(acVec, abVec), abVec);
+	sf::Vector2f acVecPerpendicular = Cross(Cross(abVec, acVec), acVec);
+
+	// AB region
+	if (Dot(abVecPerpendicular, aoVec) > 0.0f)
+	{
+		points = { a, b };
+		direction = abVecPerpendicular;
+
+		return false;
+	}
+	// AC region
+	else if (Dot(acVecPerpendicular, aoVec) > 0.0f)
+	{
+		points = { a, c };
+		direction = acVecPerpendicular;
+
+		return false;
+
+	}
+
+	// origin is in the region ABC and collision is detected
+	return true;
+}
+
+sf::Vector2f Basic::GJK::FindFurthestPointTriangle(const std::array<sf::Vector2f, 3>* triangle, sf::Vector2f direction)
 {
 	using MathFunctions::Dot;
 
@@ -61,29 +98,72 @@ sf::Vector2f Basic::CollisionHelpers::FindFurthestPointTriangle(const std::array
 	return maxPoint;
 }
 
+sf::Vector2f Basic::GJK::SupportFunction(const ColliderItem* colliderA, const Transform& transformA, const ColliderItem* colliderB, const Transform& transformB, sf::Vector2f direction)
+{
+	return colliderA->FindFurthestPointInDirection(transformA, direction) - 
+		colliderB->FindFurthestPointInDirection(transformA, -direction);
+}
 
-bool Basic::CollisionHelpers::SATAlgorithm(
-	const std::vector<sf::Vector2f>* polygon1, 
-	const std::vector<sf::Vector2f>* polygon2)
+bool Basic::GJK::Algorithm(const ColliderItem* colliderA, const Transform& transformA, 
+	const ColliderItem* colliderB, const Transform& transformB)
+{
+	using MathFunctions::Dot;
+
+	// get first support point in any direction (I've used right direction)
+	sf::Vector2f support = SupportFunction(colliderA, transformA, colliderB, transformB, sf::Vector2f(1.0f, 0));
+
+	// simplex - array of points, max size = 3
+	Simplex points;
+	points.PushFront(support);
+
+	// next direction is towards the origin
+	sf::Vector2f direction = -support;
+
+	while (true)
+	{
+		support = SupportFunction(colliderA, transformA, colliderB, transformB, direction);
+
+		if (Dot(support, direction) <= 0)
+		{
+			// there is no collision
+			return false;
+		}
+
+		points.PushFront(support);
+
+		if (HandleSimplex(points, direction))
+		{
+			// triangle(simplex) which contains point (0, 0) is found,
+			// so that collision occured
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Basic::SAT::Algorithm(
+	const std::vector<sf::Vector2f>* polygonA,
+	const std::vector<sf::Vector2f>* polygonB)
 {
 	// SAT algorithm
 	using MathFunctions::Dot;
-	const std::vector<sf::Vector2f>* poly1 = polygon1;
-	const std::vector<sf::Vector2f>* poly2 = polygon2;
+	const std::vector<sf::Vector2f>* poly1 = polygonA;
+	const std::vector<sf::Vector2f>* poly2 = polygonB;
 
 	for (int shape = 0; shape < 2; shape++)
 	{
 		if (shape == 1) // swap to second
 		{
-			poly1 = polygon2;
-			poly2 = polygon1;
+			poly1 = polygonB;
+			poly2 = polygonA;
 		}
 
 		// iterate trough all of the vertices of current shape
 		for (int currVertex = 0; currVertex < poly1->size(); currVertex++)
 		{
 			// find next vertex, if current vertex is the last, the next will be the first vertex in vector
-			int nextVertex = (currVertex + 1) % poly1->size(); 
+			int nextVertex = (currVertex + 1) % poly1->size();
 
 			// get points
 			sf::Vector2f curr = poly1->at(currVertex);
@@ -128,6 +208,7 @@ bool Basic::CollisionHelpers::SATAlgorithm(
 	// there is collision
 	return true;
 }
+
 
 Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoints(
 	const CircleCollider* circle1, const Transform& transform1, 
@@ -383,9 +464,13 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	// if one of the colliders is described as not to solve, use SAT Algorithm
 	if (!polygon1->Solve || !polygon2->Solve)
 	{
-		collPoints.HasCollision = CollisionHelpers::SATAlgorithm(
-			&polygon1->GlobalVertices(polygon1Transform), &polygon2->GlobalVertices(polygon2Transform));
+		collPoints.HasCollision = GJK::Algorithm(polygon1, polygon1Transform, 
+			polygon2, polygon1Transform);
 		collPoints.Resolvable = false;
+
+		if(collPoints.HasCollision)
+			std::cout << "Collision" << Game::DeltaTime().asSeconds() << std::endl;
+
 		return collPoints;
 	}
 

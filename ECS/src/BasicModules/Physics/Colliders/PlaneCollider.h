@@ -37,6 +37,8 @@ namespace Basic {
 
 		sf::Vector2f GetGlobalBPoint(const Transform& trans) const;
 
+		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override;
+
 		// collision tests
 		CollisionPoints TestCollision(
 			const Transform& transform,

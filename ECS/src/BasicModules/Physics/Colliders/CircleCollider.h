@@ -71,6 +71,11 @@ namespace Basic {
 			return  m_Radius >= MathFunctions::Distance(globalPoint, globalCenter);
 		}
 
+		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override
+		{
+
+		}
+
 		// collision tests
 		CollisionPoints TestCollision(
 			const Transform& transform,
