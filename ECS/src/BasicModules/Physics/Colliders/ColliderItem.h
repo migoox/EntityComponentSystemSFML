@@ -16,16 +16,8 @@ namespace Basic {
 		bool Resolvable = true;
 	};
 
-	struct Triangle
-	{
-		sf::Vector2f A;
-		sf::Vector2f B;
-		sf::Vector2f C;
-	};
-
 	class PlaneCollider;
 	class CircleCollider;
-	class RectangleCollider;
 	class PolygonCollider;
 
 	struct ColliderItem
@@ -76,11 +68,6 @@ namespace Basic {
 			const Transform& transform,
 			const PolygonCollider* convexCollider,
 			const Transform& convexTransform) const = 0;
-
-		virtual CollisionPoints TestCollision(
-			const Transform& transform,
-			const RectangleCollider* rectangleCollider,
-			const Transform& rectangleTransform) const = 0;
 	};
 
 	struct CollisionInfo

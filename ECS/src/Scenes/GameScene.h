@@ -32,6 +32,7 @@ class GameScene : public Scene
 {
 private:
 	GameObject m_Test;
+	GameObject m_Test2;
 public:
 	using Scene::Scene;
 	~GameScene();

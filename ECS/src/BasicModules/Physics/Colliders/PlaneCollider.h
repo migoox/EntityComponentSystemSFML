@@ -69,13 +69,5 @@ namespace Basic {
 		{
 			return CollisionDetection::FindPlanePolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
 		}
-
-		CollisionPoints TestCollision(
-			const Transform& transform,
-			const RectangleCollider* rectangleCollider,
-			const Transform& rectangleTransform) const
-		{
-			return CollisionDetection::FindPlaneRectangleCollisionPoints(this, transform, rectangleCollider, rectangleTransform);
-		}
 	};
 }

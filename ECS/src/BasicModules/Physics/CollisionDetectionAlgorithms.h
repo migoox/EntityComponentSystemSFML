@@ -1,10 +1,27 @@
 #pragma once
 #include <math.h>
+#include <array>
 
 #include "../Maths/Maths.h"
 #include "Colliders/ColliderItem.h"
 
 namespace Basic {
+	namespace CollisionHelpers {
+		// furthest point
+
+		sf::Vector2f FindFurthestPointCircle(sf::Vector2f globalCenter, float radius, sf::Vector2f direction);
+
+		sf::Vector2f FindFurthestPointPlane(sf::Vector2f globalCenter, float distance, sf::Vector2f direction);
+
+		sf::Vector2f FindFurthestPointPolygon(const std::vector<sf::Vector2f>* polygon, sf::Vector2f direction);
+
+		sf::Vector2f FindFurthestPointTriangle(const std::array<sf::Vector2f, 3>* triangle, sf::Vector2f direction);
+
+		bool SATAlgorithm(
+			const std::vector<sf::Vector2f>* polygon1,
+			const std::vector<sf::Vector2f>* polygon2);
+
+	}
 	namespace CollisionDetection {
 		CollisionPoints FindCircleCircleCollisionPoints(
 			const CircleCollider* circle1, const Transform& transform1,
@@ -41,33 +58,5 @@ namespace Basic {
 		CollisionPoints FindPlanePolygonCollisionPoints(
 			const PlaneCollider* plane, const Transform& planeTransform,
 			const PolygonCollider* polygon, const Transform& polygonTransform);
-
-		CollisionPoints FindRectanglePolygonCollisionPoints(
-			const RectangleCollider* rectangle, const Transform& rectangleTransform,
-			const PolygonCollider* polygon, const Transform& polygonTransform);
-
-		CollisionPoints FindPolygonRectangleCollisionPoints(
-			const PolygonCollider* polygon, const Transform& polygonTransform,
-			const RectangleCollider* rectangle, const Transform& rectangleTransform);
-
-		CollisionPoints FindRectangleCircleCollisionPoints(
-			const RectangleCollider* rectangle, const Transform& rectangleTransform,
-			const CircleCollider* circle, const Transform& circleTransform);
-
-		CollisionPoints FindCircleRectangleCollisionPoints(
-			const CircleCollider* circle, const Transform& circleTransform,
-			const RectangleCollider* rectangle, const Transform& rectangleTransform);
-
-		CollisionPoints FindRectanglePlaneCollisionPoints(
-			const RectangleCollider* rectangle, const Transform& rectangleTransform,
-			const PlaneCollider* plane, const Transform& planeTransform);
-
-		CollisionPoints FindPlaneRectangleCollisionPoints(
-			const PlaneCollider* plane, const Transform& planeTransform,
-			const RectangleCollider* rectangle, const Transform& rectangleTransform);
-
-		CollisionPoints FindRectangleRectangleCollisionPoints(
-			const RectangleCollider* rectangle1, const Transform& rectangle1Transform,
-			const RectangleCollider* rectangle2, const Transform& rectangle2Transform);
 	}
 }

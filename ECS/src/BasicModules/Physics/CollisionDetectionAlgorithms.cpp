@@ -4,6 +4,131 @@
 #include "Colliders/PolygonCollider.h"
 #include "../Game.h"
 
+// TO DO: implement circle and plane
+sf::Vector2f Basic::CollisionHelpers::FindFurthestPointCircle(sf::Vector2f globalCenter, float radius, sf::Vector2f direction)
+{
+	return sf::Vector2f();
+}
+
+sf::Vector2f Basic::CollisionHelpers::FindFurthestPointPlane(sf::Vector2f globalCenter, float distance, sf::Vector2f direction)
+{
+	return sf::Vector2f();
+}
+
+sf::Vector2f Basic::CollisionHelpers::FindFurthestPointPolygon(const std::vector<sf::Vector2f>* polygon, sf::Vector2f direction)
+{
+	assert(polygon->size() >= 3 && "PhysicsEngine: Can't find furthest point, since polygon is incorrectly defined.");
+
+	using MathFunctions::Dot;
+
+	// prepare values
+	sf::Vector2f maxPoint = polygon->at(0);
+	float maxDistance = Dot(maxPoint, direction);
+
+	// find max point
+	for (int i = 1; i < polygon->size(); i++)
+	{
+		float distance = Dot(polygon->at(i), direction);
+		if (distance > maxDistance)
+		{
+			maxDistance = distance;
+			maxPoint = polygon->at(i);
+		}
+	}
+
+	return maxPoint;
+}
+
+sf::Vector2f Basic::CollisionHelpers::FindFurthestPointTriangle(const std::array<sf::Vector2f, 3>* triangle, sf::Vector2f direction)
+{
+	using MathFunctions::Dot;
+
+	// prepare values
+	sf::Vector2f maxPoint = triangle->at(0);
+	float maxDistance = Dot(maxPoint, direction);
+
+	// find max point
+	for (int i = 1; i < 3; i++)
+	{
+		float distance = Dot(triangle->at(i), direction);
+		if (distance > maxDistance)
+		{
+			maxDistance = distance;
+			maxPoint = triangle->at(i);
+		}
+	}
+
+	return maxPoint;
+}
+
+
+bool Basic::CollisionHelpers::SATAlgorithm(
+	const std::vector<sf::Vector2f>* polygon1, 
+	const std::vector<sf::Vector2f>* polygon2)
+{
+	// SAT algorithm
+	using MathFunctions::Dot;
+	const std::vector<sf::Vector2f>* poly1 = polygon1;
+	const std::vector<sf::Vector2f>* poly2 = polygon2;
+
+	for (int shape = 0; shape < 2; shape++)
+	{
+		if (shape == 1) // swap to second
+		{
+			poly1 = polygon2;
+			poly2 = polygon1;
+		}
+
+		// iterate trough all of the vertices of current shape
+		for (int currVertex = 0; currVertex < poly1->size(); currVertex++)
+		{
+			// find next vertex, if current vertex is the last, the next will be the first vertex in vector
+			int nextVertex = (currVertex + 1) % poly1->size(); 
+
+			// get points
+			sf::Vector2f curr = poly1->at(currVertex);
+			sf::Vector2f next = poly1->at(nextVertex);
+
+			// create vector currVertex -> nextVertex
+			sf::Vector2f currNextVec = next - curr;
+
+			// create axis(normal of current edge)
+			sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / MathFunctions::VectorDistance(currNextVec);
+
+			// find min and max 1d points(on axis) for shape 1
+			float min1 = Dot(poly1->at(0), axis), max1 = Dot(poly1->at(0), axis);
+
+			for (int i = 1; i < poly1->size(); i++)
+			{
+				float dot = Dot(poly1->at(i), axis);
+
+				min1 = std::min(min1, dot);
+				max1 = std::max(max1, dot);
+			}
+
+			// find min and max 1d points(on axis) for shape 2
+			float min2 = Dot(poly2->at(0), axis), max2 = Dot(poly2->at(0), axis);
+
+			for (int i = 1; i < poly2->size(); i++)
+			{
+				float dot = Dot(poly2->at(i), axis);
+
+				min2 = std::min(min2, dot);
+				max2 = std::max(max2, dot);
+			}
+
+			if (!(max2 >= min1 && max1 >= min2))
+			{
+				// there is no collision
+				return false;
+			}
+		}
+	}
+
+	// there is collision
+	return true;
+}
+
 Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoints(
 	const CircleCollider* circle1, const Transform& transform1, 
 	const CircleCollider* circle2, const Transform& transform2)
@@ -243,6 +368,29 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 
 Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoints(const PolygonCollider* polygon1, const Transform& polygon1Transform, const PolygonCollider* polygon2, const Transform& polygon2Transform)
 {
+	CollisionPoints collPoints;
+
+	// for now i am going to handle only convex vs convex collision
+	if (!polygon1->IsConvex() || !polygon2->IsConvex())
+	{
+		collPoints.HasCollision = false;
+		collPoints.Resolvable = false;
+
+		return collPoints;
+	}
+
+	// convex vs convex collision detection, without resolving
+	// if one of the colliders is described as not to solve, use SAT Algorithm
+	if (!polygon1->Solve || !polygon2->Solve)
+	{
+		collPoints.HasCollision = CollisionHelpers::SATAlgorithm(
+			&polygon1->GlobalVertices(polygon1Transform), &polygon2->GlobalVertices(polygon2Transform));
+		collPoints.Resolvable = false;
+		return collPoints;
+	}
+
+	// convex vs convex collision detection, with resolving
+	
 
 	return CollisionPoints();
 }
@@ -267,38 +415,4 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePolygonCollisionPoint
 	return CollisionPoints();
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindRectanglePolygonCollisionPoints(const RectangleCollider* rectangle, const Transform& rectangleTransform, const PolygonCollider* polygon, const Transform& polygonTransform)
-{
-	return CollisionPoints();
-}
-
-Basic::CollisionPoints Basic::CollisionDetection::FindPolygonRectangleCollisionPoints(const PolygonCollider* polygon, const Transform& polygonTransform, const RectangleCollider* rectangle, const Transform& rectangleTransform)
-{
-	return CollisionPoints();
-}
-
-Basic::CollisionPoints Basic::CollisionDetection::FindRectangleCircleCollisionPoints(const RectangleCollider* rectangle, const Transform& rectangleTransform, const CircleCollider* circle, const Transform& circleTransform)
-{
-	return CollisionPoints();
-}
-
-Basic::CollisionPoints Basic::CollisionDetection::FindCircleRectangleCollisionPoints(const CircleCollider* circle, const Transform& circleTransform, const RectangleCollider* rectangle, const Transform& rectangleTransform)
-{
-	return CollisionPoints();
-}
-
-Basic::CollisionPoints Basic::CollisionDetection::FindRectanglePlaneCollisionPoints(const RectangleCollider* rectangle, const Transform& rectangleTransform, const PlaneCollider* plane, const Transform& planeTransform)
-{
-	return CollisionPoints();
-}
-
-Basic::CollisionPoints Basic::CollisionDetection::FindPlaneRectangleCollisionPoints(const PlaneCollider* plane, const Transform& planeTransform, const RectangleCollider* rectangle, const Transform& rectangleTransform)
-{
-	return CollisionPoints();
-}
-
-Basic::CollisionPoints Basic::CollisionDetection::FindRectangleRectangleCollisionPoints(const RectangleCollider* rectangle1, const Transform& rectangle1Transform, const RectangleCollider* rectangle2, const Transform& rectangle2Transform)
-{
-	return CollisionPoints();
-}
 

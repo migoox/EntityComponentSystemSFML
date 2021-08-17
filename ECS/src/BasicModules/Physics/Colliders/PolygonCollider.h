@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <list>
 #include <memory>
 #include <iostream>
@@ -42,25 +43,26 @@ namespace Basic {
 	class PolygonCollider : public ColliderItem
 	{
 	private:
+		std::vector<std::array<sf::Vector2f, 3>> m_Triangles;
+		mutable std::vector<std::array<sf::Vector2f, 3>> m_GlobalTriangles;
+
+	protected:
 		sf::Vector2f m_CenterOfGravity;
 
 		sf::Vector2f m_ColliderDisplacement;
 		float m_ColliderRotation;
 
-		// collider's center of gravity should be placed on (0, 0) point
-		// fixer is a vector which moves center of gravity to (0, 0), it is required in polygon
-		sf::Vector2f m_Fixer; 
-
 		bool m_Correct;
 		bool m_Convex;
 
-		std::vector<Triangle> m_Triangles;
-		mutable std::vector<Triangle> m_GlobalTriangles;
+		// collider's center of gravity should be placed on (0, 0) point
+		// fixer is a vector which moves center of gravity to (0, 0), it is required in polygon
+		sf::Vector2f m_Fixer;
 
 		std::vector<sf::Vector2f> m_Vertices;
 		mutable std::vector<sf::Vector2f> m_GlobalVertices;
 
-	private:
+	protected:
 		void Init();
 
 		void UpdatePolygon();
@@ -75,7 +77,7 @@ namespace Basic {
 
 		bool ContainsColinearEdges(const std::vector<sf::Vector2f>& vertices);
 
-		void Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Triangle>& triangles);
+		void Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<std::array<sf::Vector2f, 3>>& triangles);
 
 		sf::Vector2f FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices) const;
 
@@ -111,12 +113,12 @@ namespace Basic {
 
 		const std::vector<sf::Vector2f>& GlobalVertices(const Transform& trans) const;
 
-		const std::vector<Triangle>& GlobalTriangles(const Transform& trans) const;
+		const std::vector<std::array<sf::Vector2f, 3>>& GlobalTriangles(const Transform& trans) const;
 
 		bool IsCorrect() const { return m_Correct; }
 
 		bool IsConvex() const { return m_Convex; }
-
+		
 		// collision tests
 		CollisionPoints TestCollision(
 			const Transform& transform,
@@ -149,14 +151,6 @@ namespace Basic {
 			const Transform& polygonTransform) const override
 		{
 			return CollisionDetection::FindPolygonPolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
-		}
-
-		CollisionPoints TestCollision(
-			const Transform& transform,
-			const RectangleCollider* rectangleCollider,
-			const Transform& rectangleTransform) const override
-		{
-			return CollisionDetection::FindPolygonRectangleCollisionPoints(this, transform, rectangleCollider, rectangleTransform);
 		}
 	};
 }

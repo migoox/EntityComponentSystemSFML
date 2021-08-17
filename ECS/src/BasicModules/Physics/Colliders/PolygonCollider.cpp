@@ -84,9 +84,9 @@ void Basic::PolygonCollider::UpdateGlobalTriangles(const Transform& trans) const
 	for (size_t i = 0; i < m_Triangles.size(); i++)
 	{
 		m_GlobalTriangles[i] = {
-			TranslateRelativePointToGlobal(m_Triangles[i].A, trans),
-			TranslateRelativePointToGlobal(m_Triangles[i].B, trans),
-			TranslateRelativePointToGlobal(m_Triangles[i].C, trans)
+			TranslateRelativePointToGlobal(m_Triangles[i][0], trans),
+			TranslateRelativePointToGlobal(m_Triangles[i][0], trans),
+			TranslateRelativePointToGlobal(m_Triangles[i][0], trans)
 		};
 	}
 }
@@ -201,11 +201,10 @@ bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& ve
 	return true;
 }
 
-void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<Triangle>& triangles)
+void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertices, std::vector<std::array<sf::Vector2f, 3>>& triangles)
 {
 	// ear clipping algorithm
 	// this method expects correct polygon!
-
 	using MathFunctions::Cross;
 
 	// clear triangles
@@ -426,7 +425,7 @@ void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) cons
 	{
 		arr1[i].position = TranslateRelativePointToGlobal(m_Vertices[i], trans);
 
-		arr1[i].color = sf::Color(0.0f, 26.0f, 102.0f);
+		arr1[i].color = sf::Color(0.0f, 26.0f, 102.0f, 200.0f);
 	}
 	arr1[m_Vertices.size()] = arr1[0];
 
@@ -434,9 +433,9 @@ void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) cons
 
 	for (size_t i = 0, j = 0; j < m_Triangles.size(); i += 3, j++)
 	{
-		arr2[i].position = TranslateRelativePointToGlobal(m_Triangles[j].A, trans);
-		arr2[i + 1].position = TranslateRelativePointToGlobal(m_Triangles[j].B, trans);
-		arr2[i + 2].position = TranslateRelativePointToGlobal(m_Triangles[j].C, trans);
+		arr2[i].position = TranslateRelativePointToGlobal(m_Triangles[j][0], trans);
+		arr2[i + 1].position = TranslateRelativePointToGlobal(m_Triangles[j][1], trans);
+		arr2[i + 2].position = TranslateRelativePointToGlobal(m_Triangles[j][2], trans);
 
 		sf::Color color = sf::Color(0.0f, 60.0f + 20.0f * (j % 4), 150.0f + 30 * (j % 4));
 		arr2[i].color = color;
@@ -460,8 +459,9 @@ const std::vector<sf::Vector2f>& Basic::PolygonCollider::GlobalVertices(const Tr
 	return m_GlobalVertices;
 }
 
-const std::vector<Basic::Triangle>& Basic::PolygonCollider::GlobalTriangles(const Transform& trans) const
+const std::vector<std::array<sf::Vector2f, 3>>& Basic::PolygonCollider::GlobalTriangles(const Transform& trans) const
 {
 	UpdateGlobalTriangles(trans);
 	return m_GlobalTriangles;
 }
+
