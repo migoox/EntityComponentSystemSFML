@@ -15,5 +15,7 @@ namespace Basic {
 		sf::Vector3f Cross(sf::Vector3f vecA, sf::Vector3f vecB);
 		sf::Vector2f Cross(float vecA, sf::Vector2f vecB);
 		float Cross(sf::Vector2f vecA, sf::Vector2f vecB);
+
+		sf::Vector2f TripleProduct(sf::Vector2f a, sf::Vector2f b, sf::Vector2f c);
 	}
 }

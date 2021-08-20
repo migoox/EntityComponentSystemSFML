@@ -57,7 +57,7 @@ float Basic::MathFunctions::Dot(sf::Vector2f vecA, sf::Vector2f vecB)
 sf::Vector3f Basic::MathFunctions::Cross(sf::Vector3f vecA, sf::Vector3f vecB)
 {
 	return sf::Vector3f(vecA.y * vecB.z - vecA.z * vecB.y, 
-		vecA.z * vecB.x - vecA.x * vecB.z, 
+		vecA.x * vecB.z - vecA.z * vecB.x, 
 		vecA.x * vecB.y - vecA.y * vecB.x);
 }
 
@@ -69,4 +69,9 @@ sf::Vector2f Basic::MathFunctions::Cross(float vecA, sf::Vector2f vecB)
 float Basic::MathFunctions::Cross(sf::Vector2f vecA, sf::Vector2f vecB)
 {
 	return vecA.x * vecB.y - vecA.y * vecB.x;
+}
+
+sf::Vector2f Basic::MathFunctions::TripleProduct(sf::Vector2f a, sf::Vector2f b, sf::Vector2f c)
+{
+	return (b * Dot(a, c)) - (a * Dot(b, c));
 }

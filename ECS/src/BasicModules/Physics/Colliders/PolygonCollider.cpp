@@ -473,21 +473,23 @@ sf::Vector2f Basic::PolygonCollider::FindFurthestPointInDirection(const Transfor
 
 	using MathFunctions::Dot;
 
+
 	// prepare values
-	sf::Vector2f maxPoint = m_Vertices[0];
+	sf::Vector2f maxPoint = TranslateRelativePointToGlobal(m_Vertices[0], transform);
 	float maxDistance = Dot(maxPoint, direction);
 
 	// find max point
 	for (int i = 1; i < m_Vertices.size(); i++)
 	{
-		float distance = Dot(m_Vertices[i], direction);
+		sf::Vector2f currPoint = TranslateRelativePointToGlobal(m_Vertices[i], transform);
+		float distance = Dot(currPoint, direction);
 		if (distance > maxDistance)
 		{
 			maxDistance = distance;
-			maxPoint = m_Vertices[i];
+			maxPoint = currPoint;
 		}
 	}
 
-	return TranslateRelativePointToGlobal(maxPoint, transform);
+	return maxPoint;
 }
 

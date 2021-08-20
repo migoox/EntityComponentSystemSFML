@@ -16,34 +16,22 @@ namespace Basic {
 
 		public:
 			Simplex()
-				: m_Points({ sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f) }), m_Size(0)
+				: m_Points({ sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f) }), m_Size(0u)
 			{}
 
 			Simplex(std::initializer_list<sf::Vector2f> list)
-				: m_Points({ sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f) }), m_Size(0)
+				: m_Points({ sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f), sf::Vector2f(0.f, 0.0f) }), m_Size(0u)
 			{
 				*this = list;
 			}
 
 			Simplex& operator=(std::initializer_list<sf::Vector2f> list)
 			{
-				int i = 0;
-				// iterate trough the list
-				for (auto& it : list)
+				for (auto v = list.begin(); v != list.end(); v++)
 				{
-					// if list's size is bigger than 3
-					// break the loop
-					if (i > 3)
-						break;
-
-					m_Points[i] = it;
-					i++;
+					m_Points[std::distance(list.begin(), v)] = *v;
 				}
-
-				if (i > 3)
-					m_Size = 3;
-				else
-					m_Size = list.size();
+				m_Size = list.size();
 
 				return *this;
 			}
@@ -54,20 +42,6 @@ namespace Basic {
 				m_Size = std::min(m_Size + 1, 3u);
 			}
 
-			void PopBack()
-			{
-				assert(m_Size > 0 && "Simplex out of range.");
-
-				m_Size--;
-
-				if (m_Size == 0)
-					m_Points = { };
-				else if(m_Size == 1)
-					m_Points = { m_Points[0] };
-				else
-					m_Points = { m_Points[0], m_Points[1] };
-			}
-
 			sf::Vector2f& operator[](unsigned i) { return m_Points[i]; }
 			unsigned int Size() const { return m_Size; }
 
@@ -75,7 +49,7 @@ namespace Basic {
 			auto end()   const { return m_Points.end() - (3 - m_Size); }
 		};
 
-		bool HandleSimplex(Simplex points, sf::Vector2f direction);
+		bool HandleSimplex(Simplex& points, sf::Vector2f& direction);
 
 		bool LineCase(Simplex& points, sf::Vector2f& direction);
 

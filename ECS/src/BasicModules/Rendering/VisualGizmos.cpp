@@ -85,14 +85,6 @@ void Basic::VisualGizmos::IClear()
 
 void Basic::VisualGizmos::IRender(sf::RenderTarget& target)
 {
-	for (auto& it : m_RectangleShapes)
-		target.draw(it);
-	for (auto& it : m_Lines)
-		target.draw(it);
-	for (auto& it : m_VertexArrays)
-		target.draw(it);
-	for (auto& it : m_CircleShapes)
-		target.draw(it);
 
 	for (auto& it : m_TempRectangleShapes)
 		target.draw(it);
@@ -101,6 +93,15 @@ void Basic::VisualGizmos::IRender(sf::RenderTarget& target)
 	for (auto& it : m_TempVertexArrays)
 		target.draw(it);
 	for (auto& it : m_TempCircleShapes)
+		target.draw(it);
+
+	for (auto& it : m_RectangleShapes)
+		target.draw(it);
+	for (auto& it : m_Lines)
+		target.draw(it);
+	for (auto& it : m_VertexArrays)
+		target.draw(it);
+	for (auto& it : m_CircleShapes)
 		target.draw(it);
 
 	m_TempLines.clear();

@@ -4,72 +4,97 @@
 #include "Colliders/PolygonCollider.h"
 #include "../Game.h"
 
-bool Basic::GJK::HandleSimplex(Simplex points, sf::Vector2f direction)
+bool Basic::GJK::HandleSimplex(Simplex& points, sf::Vector2f& direction)
 {
-	if(points.Size() == 2)
+	// notice that we have to use reference, since direction and 
+	// points will be modified
+
+	// if simplex contains 2 points, that means that it is a line
+	// we have to find next direction, and return false, since in line case
+	// there is no collision detection
+	if (points.Size() == 2)
 		return LineCase(points, direction);
 
+	// if simplex contains 3 points, that means that it is a triangle and
+	// we have to find out in which region lies origin
 	return TriangleCase(points, direction);
 }
 
 bool Basic::GJK::LineCase(Simplex& points, sf::Vector2f& direction)
 {
+	using MathFunctions::TripleProduct;
 	using MathFunctions::Dot;
-	using MathFunctions::Cross;
 
+	// get required points
+	// in our data structure, first point in the row 
+	// is recently added point
 	sf::Vector2f a = points[0];
 	sf::Vector2f b = points[1];
 
+	// count vectors
 	sf::Vector2f abVec = b - a;
-	sf::Vector2f aoVec = - a;
+	sf::Vector2f aoVec = sf::Vector2f(0.0f, 0.0f) - a; // origin - a
 
-	// AB region
-	if (Dot(abVec, aoVec) > 0.0f)
-	{
-		direction = Cross(Cross(abVec, aoVec), abVec);
-	}
-	// A region
-	else
-	{
-		points = { a };
-		direction = aoVec;
-	}
+	// count ab perpendicular vector in correct direction(to origin)
+	// using triple product
+	sf::Vector2f abVecPerpendicular = TripleProduct(abVec, aoVec, abVec);
 
+	// set our direction
+	direction = MathFunctions::NormalizeVector(abVecPerpendicular);
+
+	// return false as there is no possibility to find out
+	// if collision occured in line case
 	return false;
 }
 
 bool Basic::GJK::TriangleCase(Simplex& points, sf::Vector2f& direction)
 {
+	using MathFunctions::TripleProduct;
 	using MathFunctions::Dot;
-	using MathFunctions::Cross;
 
+	// get requied points
+	// in our data structure, first point in the row
+	// is recently added point
 	sf::Vector2f a = points[0];
 	sf::Vector2f b = points[1];
 	sf::Vector2f c = points[2];
 
+	// count vectors
 	sf::Vector2f abVec = b - a;
 	sf::Vector2f acVec = c - a;
-	sf::Vector2f aoVec = -a;
+	sf::Vector2f aoVec = sf::Vector2f(0.0f, 0.0f) - a; // origin - a
 
-	sf::Vector2f abVecPerpendicular = Cross(Cross(acVec, abVec), abVec);
-	sf::Vector2f acVecPerpendicular = Cross(Cross(abVec, acVec), acVec);
+	// count ab perpendicular vector in correct direction(to origin)
+	sf::Vector2f abVecPerpendicular =
+		MathFunctions::TripleProduct(acVec, abVec, abVec);
 
-	// AB region
+	// count ac perpendicular vector in correct direction(to origin)
+	sf::Vector2f acVecPerpendicular =
+		MathFunctions::TripleProduct(abVec, acVec, acVec);
+
+	// if origin lies in AB region
 	if (Dot(abVecPerpendicular, aoVec) > 0.0f)
 	{
+		// get rid off c point, there will be found new point in
+		// main loop, since we are changing direction as well
 		points = { a, b };
-		direction = abVecPerpendicular;
+
+		// set direction
+		direction = MathFunctions::NormalizeVector(abVecPerpendicular);
 
 		return false;
 	}
-	// AC region
+	// if origin lies in AC region
 	else if (Dot(acVecPerpendicular, aoVec) > 0.0f)
 	{
+		// get rid off b point, there will be found new point in
+		// main loop, since we are changing direction as well
 		points = { a, c };
-		direction = acVecPerpendicular;
+
+		// set direction
+		direction = MathFunctions::NormalizeVector(acVecPerpendicular);
 
 		return false;
-
 	}
 
 	// origin is in the region ABC and collision is detected
@@ -100,8 +125,8 @@ sf::Vector2f Basic::GJK::FindFurthestPointTriangle(const std::array<sf::Vector2f
 
 sf::Vector2f Basic::GJK::SupportFunction(const ColliderItem* colliderA, const Transform& transformA, const ColliderItem* colliderB, const Transform& transformB, sf::Vector2f direction)
 {
-	return colliderA->FindFurthestPointInDirection(transformA, direction) - 
-		colliderB->FindFurthestPointInDirection(transformA, -direction);
+	return colliderA->FindFurthestPointInDirection(transformA, direction)
+		- colliderB->FindFurthestPointInDirection(transformB, -direction);
 }
 
 bool Basic::GJK::Algorithm(const ColliderItem* colliderA, const Transform& transformA, 
@@ -109,29 +134,46 @@ bool Basic::GJK::Algorithm(const ColliderItem* colliderA, const Transform& trans
 {
 	using MathFunctions::Dot;
 
-	// get first support point in any direction (I've used right direction)
-	sf::Vector2f support = SupportFunction(colliderA, transformA, colliderB, transformB, sf::Vector2f(1.0f, 0));
+	// first direction - vector from center of A to B
+	sf::Vector2f direction = MathFunctions::NormalizeVector(
+		colliderB->GetGlobalCenterOfGravity(transformB) -
+		colliderA->GetGlobalCenterOfGravity(transformA));
 
-	// simplex - array of points, max size = 3
-	Simplex points;
-	points.PushFront(support);
+	// creating simplex and pushing first point based
+	// on direction counted above
+	// simplex is a data structure with max_size = 3
+	Simplex simplex;
+	simplex.PushFront(
+		SupportFunction(colliderA, transformA,
+			colliderB, transformB,
+			direction));
 
-	// next direction is towards the origin
-	sf::Vector2f direction = -support;
+	// changing direction to be towards the origin ( (0, 0) point )
+	direction = MathFunctions::NormalizeVector(
+		sf::Vector2f(0.0f, 0.0f) - simplex[0]);
 
 	while (true)
 	{
-		support = SupportFunction(colliderA, transformA, colliderB, transformB, direction);
+		// creating new point based on current direction
+		sf::Vector2f A = SupportFunction(colliderA, transformA,
+			colliderB, transformB,
+			direction);
 
-		if (Dot(support, direction) <= 0)
+		// if point is not the proper region,
+		// end algorithm with false
+		if (Dot(A, direction) < 0.0f)
 		{
 			// there is no collision
 			return false;
 		}
 
-		points.PushFront(support);
+		// if point is in proper region,
+		// add to simplex
+		simplex.PushFront(A);
 
-		if (HandleSimplex(points, direction))
+		// pass current state of simplex and current direction
+		// to function, which will manage them and give results
+		if (HandleSimplex(simplex, direction))
 		{
 			// triangle(simplex) which contains point (0, 0) is found,
 			// so that collision occured
@@ -139,6 +181,7 @@ bool Basic::GJK::Algorithm(const ColliderItem* colliderA, const Transform& trans
 		}
 	}
 
+	// shouldn't happen
 	return false;
 }
 
@@ -464,12 +507,16 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	// if one of the colliders is described as not to solve, use SAT Algorithm
 	if (!polygon1->Solve || !polygon2->Solve)
 	{
+		/*collPoints.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
+			&polygon2->GlobalVertices(polygon2Transform));*/
+
 		collPoints.HasCollision = GJK::Algorithm(polygon1, polygon1Transform, 
-			polygon2, polygon1Transform);
+			polygon2, polygon2Transform);
+
 		collPoints.Resolvable = false;
 
-		if(collPoints.HasCollision)
-			std::cout << "Collision" << Game::DeltaTime().asSeconds() << std::endl;
+		if (collPoints.HasCollision)
+			std::cout << "collision" << Game::DeltaTime().asSeconds() << std::endl;
 
 		return collPoints;
 	}

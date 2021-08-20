@@ -68,12 +68,12 @@ namespace Basic {
 		{
 			sf::Vector2f globalCenter = GetGlobalCenterOfGravity(trans);
 
-			return  m_Radius >= MathFunctions::Distance(globalPoint, globalCenter);
+			return m_Radius >= MathFunctions::Distance(globalPoint, globalCenter);
 		}
 
 		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override
 		{
-
+			return GetGlobalCenterOfGravity(transform) + m_Radius * MathFunctions::NormalizeVector(direction);
 		}
 
 		// collision tests

@@ -31,6 +31,7 @@ void GameScene::OnEnter()
 		sf::Vector2f(200.0f, 200.0f),
 		sf::Vector2f(10.0f, 50.0f)
 	}));
+
 	coll1->Solve = false;
 
 	//coll1.Item->RotateCollider(50.0f);
@@ -86,9 +87,9 @@ void GameScene::Update()
 		m_Test2.GetTransform().move(200.0f * deltaTime.asSeconds(), 0.0f);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		m_Test2.GetComponent<Collider>().Item->RotateCollider(-2.5f);
+		m_Test2.GetTransform().rotate(-2.5f);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		m_Test2.GetComponent<Collider>().Item->RotateCollider(2.5f);
+		m_Test2.GetTransform().rotate(2.5f);
 
 	UpdateWorld(deltaTime);
 }
