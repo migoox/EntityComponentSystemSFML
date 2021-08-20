@@ -135,8 +135,7 @@ namespace Basic {
 			const CircleCollider* circleCollider,
 			const Transform& circleTransform) const override
 		{
-			return CollisionDetection::FindPolygonCircleCollisionPoints(
-				this, transform, circleCollider, circleTransform);
+			return CollisionDetection::FindCirclePolygonCollisionPoints(circleCollider, circleTransform, this, transform);
 		}
 
 		CollisionPoints TestCollision(
@@ -144,7 +143,7 @@ namespace Basic {
 			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const override
 		{
-			return CollisionDetection::FindPolygonPlaneCollisionPoints(this, transform, planeCollider, planeTransform);
+			return CollisionDetection::FindPlanePolygonCollisionPoints(planeCollider, planeTransform, this, transform);
 		}
 
 		CollisionPoints TestCollision(
@@ -152,7 +151,7 @@ namespace Basic {
 			const PolygonCollider* polygonCollider,
 			const Transform& polygonTransform) const override
 		{
-			return CollisionDetection::FindPolygonPolygonCollisionPoints(this, transform, polygonCollider, polygonTransform);
+			return CollisionDetection::FindPolygonPolygonCollisionPoints(polygonCollider, polygonTransform, this, transform);
 		}
 	};
 }

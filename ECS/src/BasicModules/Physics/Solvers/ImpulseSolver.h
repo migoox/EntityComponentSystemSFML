@@ -61,7 +61,7 @@ namespace Basic {
 				sf::Vector2f gA = colliderA.Item->GetGlobalCenterOfGravity(collision.ObjectA.GetTransform());
 				sf::Vector2f gB = colliderB.Item->GetGlobalCenterOfGravity(collision.ObjectB.GetTransform());
 
-				sf::Vector2f n = -collision.Points.Normal; // collision normal
+				sf::Vector2f n = collision.Points.Normal; // collision normal
 
 				using MathFunctions::Cross;
 				using MathFunctions::Dot;

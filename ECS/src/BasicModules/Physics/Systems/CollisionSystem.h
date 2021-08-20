@@ -31,7 +31,7 @@ public:
 
 		// add solvers
 		m_Solvers.push_back(std::make_unique<PositionSolver>(m_ParentWorld));
-		m_Solvers.push_back(std::make_unique<ImpulseSolver>(m_ParentWorld));
+		//m_Solvers.push_back(std::make_unique<ImpulseSolver>(m_ParentWorld));
 	}
 
 	void Update(const sf::Time& deltaTime) override
@@ -47,8 +47,6 @@ public:
 		// create collision info container
 		std::list<CollisionInfo> collisions;
 
-
-		// collision detection 
 		auto colliders = m_ComponentManager->ArrayData<Collider>();
 		size_t collidersCount = m_ComponentManager->Size<Collider>();
 		if (colliders != nullptr)
@@ -57,55 +55,116 @@ public:
 			{
 				for (size_t j = i + 1; j < collidersCount; j++)
 				{
-					auto gameObject1 = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Collider>(i));
-					auto gameObject2 = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Collider>(j));
-
-					if (gameObject1.IsActive() && gameObject2.IsActive())
+					auto gameObjectA = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Collider>(i));
+					auto gameObjectB = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Collider>(j));
+					if (gameObjectA.IsActive() && gameObjectB.IsActive())
 					{
 						// get colliders
-						auto& collider1 = colliders[i];
-						auto& collider2 = colliders[j];
+						auto& colliderA = colliders[i];
+						auto& colliderB = colliders[j];
 
 						// if one of colliders is blank, skip
-						if (collider1.Item == nullptr || collider2.Item == nullptr) continue;
+						if (colliderA.Item == nullptr || colliderB.Item == nullptr) continue;
 
 						// if one of colliders is not active, skip
-						if (!collider1.Item->Active || !collider2.Item->Active) continue;
+						if (!colliderA->Active || !colliderB->Active) continue;
 
 						// get transforms
-						auto& transform1 = gameObject1.GetTransform();
-						auto& transform2 = gameObject2.GetTransform();
+						auto& transformA = gameObjectA.GetTransform();
+						auto& transformB = gameObjectB.GetTransform();
 
-						CollisionPoints collPoints;
-						// get collision points of both colliders
-						collPoints = collider1.Item->TestCollision(
-							transform1, collider2.Item, transform2);
+						// collider A collides with collider B and returns collision points
+						CollisionPoints collPoints1 = colliderA->TestCollision(
+							transformA, colliderB.Item, transformB);
 
 						// if collision is detected
-						if (collPoints.HasCollision)
+						if (collPoints1.HasCollision)
 						{
 							// raise the flag that collision happened in current frame
-							collider1.Item->CollisionTriggered = true;
-							collider2.Item->CollisionTriggered = true;
+							colliderA.Item->CollisionTriggered = true;
+							colliderB.Item->CollisionTriggered = true;
 
 							// if one of colliders is marked not to solve, skip
-							if (!collider1.Item->Solve || !collider2.Item->Solve) continue;
+							if (!colliderA.Item->Solve || !colliderB.Item->Solve) continue;
 
 							// if collpoints are unresolvable, skip
-							if (!collPoints.Resolvable) continue;
+							if (!collPoints1.Resolvable) continue;
 
 							// add collision occurance to resolve
-							collisions.emplace_back(gameObject1, gameObject2, collPoints);
+
+							// collision A with B occurance
+							collisions.emplace_back(gameObjectA, gameObjectB, collPoints1);
+
+							// reversed collision points
+							CollisionPoints collPoints2; 
+							collPoints2.A = collPoints1.B;
+							collPoints2.B = collPoints1.A;
+							collPoints2.Depth = collPoints1.Depth;
+							collPoints2.Normal = -collPoints1.Normal;
+							collPoints2.HasCollision = true;
+
+							// collision B with A occurance
+							collisions.emplace_back(gameObjectB, gameObjectA, collPoints2);
 						}
 					}
+
 				}
 			}
 		}
 
-		/*
+		/* slow alternative
+		// collision detection loop
+		for (auto gameObjectA : m_GameObjects)
+		{
+			for (auto gameObjectB : m_GameObjects)
+			{
+				// if objects are the same, skip
+				if (gameObjectA == gameObjectB) continue;
+
+				if (gameObjectA.IsActive() && gameObjectB.IsActive())
+				{
+					// get colliders
+					auto& colliderA = gameObjectA.GetComponent<Collider>();
+					auto& colliderB = gameObjectB.GetComponent<Collider>();
+
+					// if one of colliders is blank, skip
+					if (colliderA.Item == nullptr || colliderB.Item == nullptr) continue;
+
+					// if one of colliders is not active, skip
+					if (!colliderA->Active || !colliderB->Active) continue;
+
+					// get transforms
+					auto& transformA = gameObjectA.GetTransform();
+					auto& transformB = gameObjectB.GetTransform();
+
+					// collider A collides with collider B and returns collision points
+					CollisionPoints collPoints = colliderA->TestCollision(
+						transformA, colliderB.Item, transformB);
+
+					// if collision is detected
+					if (collPoints.HasCollision)
+					{
+						// raise the flag that collision happened in current frame
+						colliderA.Item->CollisionTriggered = true;
+						colliderB.Item->CollisionTriggered = true;
+
+						// if one of colliders is marked not to solve, skip
+						if (!colliderA.Item->Solve || !colliderB.Item->Solve) continue;
+
+						// if collpoints are unresolvable, skip
+						if (!collPoints.Resolvable) continue;
+
+
+						// add collision occurance to resolve
+						collisions.emplace_back(gameObjectA, gameObjectB, collPoints);
+					}
+				}
+			}
+		}
+		*/
+
 		// collision resolving
 		for (auto& solver : m_Solvers)
 			solver->Solve(collisions, deltaTime);
-		*/
 	}
 };

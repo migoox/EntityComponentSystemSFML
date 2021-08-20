@@ -1,6 +1,6 @@
 #pragma once
 #include "Solver.h"
-
+#include <iostream>
 namespace Basic {
 	class PositionSolver : public Solver
 	{
@@ -27,24 +27,18 @@ namespace Basic {
 				auto& colliderA = collision.ObjectA.GetComponent<Collider>();
 				auto& colliderB = collision.ObjectB.GetComponent<Collider>();
 
+				sf::Vector2f fixer;
+
 				// find out which of the items are solid and fix their positions
-				if (colliderA.Item->Movable && colliderB.Item->Movable)
+				if (colliderA.Item->Movable)
 				{
-					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal / 2.0f;
-
-					collision.ObjectA.GetTransform().move(-fixer);
-					collision.ObjectB.GetTransform().move(fixer);
-
+					fixer = collision.Points.Depth * collision.Points.Normal / 2.0f;
+					collision.ObjectA.GetTransform().move(fixer);
 				}
-				else if (colliderA.Item->Movable)
+				else
 				{
-					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal;
-					collision.ObjectA.GetTransform().move(-fixer);
-				}
-				else if (colliderB.Item->Movable)
-				{
-					sf::Vector2f fixer = collision.Points.Depth * collision.Points.Normal;
-					collision.ObjectB.GetTransform().move(fixer);
+					fixer = collision.Points.Depth * collision.Points.Normal;
+					collision.ObjectA.GetTransform().move(fixer);
 				}
 			}
 		}

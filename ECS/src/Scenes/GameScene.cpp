@@ -22,9 +22,11 @@ void GameScene::OnEnter()
 	InitWorldSystems();
 
 	// 3. Create GameObjects
-	m_Test2 = Instantiate();
+	m_Test = Instantiate();
 
-	auto& coll1 = m_Test2.AddComponent<Collider>(new PolygonCollider(
+	//auto& coll1 = m_Test.AddComponent<Collider>(new CircleCollider(50.0f));
+
+	auto& coll1 = m_Test.AddComponent<Collider>(new PolygonCollider(
 	{
 		sf::Vector2f(0.0f, 0.0f),
 		sf::Vector2f(300.0f, 100.0f),
@@ -32,24 +34,21 @@ void GameScene::OnEnter()
 		sf::Vector2f(10.0f, 50.0f)
 	}));
 
-	coll1->Solve = false;
 
 	//coll1.Item->RotateCollider(50.0f);
 	//coll1->MoveCollider(sf::Vector2f(30.0f, 30.0f));
 
-	m_Test2.GetTransform().setPosition(200.0f, 200.0f);
+	m_Test.GetTransform().setPosition(200.0f, 200.0f);
 
 
-	m_Test = Instantiate();
+	m_Test2 = Instantiate();
 
-
-	auto& coll2 = m_Test.AddComponent<Collider>(new RectangleCollider(sf::Vector2f(200.0f, 100.0f)));
-	coll2->Solve = false;
-
+	auto& coll2 = m_Test2.AddComponent<Collider>(new RectangleCollider(sf::Vector2f(200.0f, 100.0f)));
+	//auto& coll2 = m_Test2.AddComponent<Collider>(new CircleCollider(100.0f));
 	//coll1.Item->RotateCollider(50.0f);
 	//coll2->MoveCollider(sf::Vector2f(30.0f, 30.0f));
 	
-	m_Test.GetTransform().setPosition(400.0f, 400.0f);
+	m_Test2.GetTransform().setPosition(400.0f, 400.0f);
 }
 
 void GameScene::Update()

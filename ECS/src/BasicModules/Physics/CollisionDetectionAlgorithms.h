@@ -1,6 +1,8 @@
 #pragma once
 #include <math.h>
 #include <array>
+#include <list>
+#include <limits>
 
 #include "../Maths/Maths.h"
 #include "Colliders/ColliderItem.h"
@@ -60,9 +62,30 @@ namespace Basic {
 		sf::Vector2f SupportFunction(const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB, sf::Vector2f direction);
 
+		CollisionPoints AlgorithmWithEPA(const ColliderItem* colliderA, const Transform& transformA,
+			const ColliderItem* colliderB, const Transform& transformB);
+
 		bool Algorithm(const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB);
 	}
+
+	namespace EPA {
+		struct Edge
+		{
+			sf::Vector2f A;
+			sf::Vector2f B;
+			sf::Vector2f Normal;
+			float Distance;
+			size_t AIndex;
+		};
+
+		Edge FindClosestEdge(const std::vector<sf::Vector2f>& polytope);
+
+		CollisionPoints GetCollisionPoints(const ColliderItem* colliderA, const Transform& transformA,
+			const ColliderItem* colliderB, const Transform& transformB,
+			const GJK::Simplex& simplex, float tolerance = 0.001f);
+	}
+
 	namespace SAT {
 		bool Algorithm(
 			const std::vector<sf::Vector2f>* polygonA,
@@ -71,39 +94,39 @@ namespace Basic {
 	}
 	namespace CollisionDetection {
 		CollisionPoints FindCircleCircleCollisionPoints(
-			const CircleCollider* circle1, const Transform& transform1,
-			const CircleCollider* circle2, const Transform& transform2);
+			const CircleCollider* circleA, const Transform& transformA,
+			const CircleCollider* circleB, const Transform& transformB);
 
 		CollisionPoints FindCirclePlaneCollisionPoints(
-			const CircleCollider* circle, const Transform& circleTransform,
-			const PlaneCollider* plane, const Transform& planeTransform);
+			const CircleCollider* circleA, const Transform& circleATransform,
+			const PlaneCollider* planeA, const Transform& planeBTransform);
 
 		CollisionPoints FindPlaneCircleCollisionPoints(
-			const PlaneCollider* plane, const Transform& planeTransform,
-			const CircleCollider* circle, const Transform& circleTransform);
+			const PlaneCollider* planeA, const Transform& planeATransform,
+			const CircleCollider* circleB, const Transform& circleBTransform);
 
 		CollisionPoints FindPlanePlaneCollisionPoints(
-			const PlaneCollider* plane1, const Transform& plane1Transform,
-			const PlaneCollider* plane2, const Transform& plane2Transform);
+			const PlaneCollider* planeA, const Transform& planeATransform,
+			const PlaneCollider* planeB, const Transform& planeBTransform);
 
 		CollisionPoints FindPolygonPolygonCollisionPoints(
-			const PolygonCollider* polygon1, const Transform& polygon1Transform,
-			const PolygonCollider* polygon2, const Transform& polygon2Transform);
+			const PolygonCollider* polygonA, const Transform& polygonATransform,
+			const PolygonCollider* polygonB, const Transform& polygonBTransform);
 
 		CollisionPoints FindPolygonCircleCollisionPoints(
-			const PolygonCollider* polygon, const Transform& polygonTransform,
-			const CircleCollider* circle, const Transform& circleTransform);
+			const PolygonCollider* polygonA, const Transform& polygonATransform,
+			const CircleCollider* circleB, const Transform& circleBTransform);
 
 		CollisionPoints FindCirclePolygonCollisionPoints(
-			const CircleCollider* circle, const Transform& circleTransform,
-			const PolygonCollider* polygon, const Transform& polygonTransform);
+			const CircleCollider* circleA, const Transform& circleBTransform,
+			const PolygonCollider* polygonB, const Transform& polygonBTransform);
 
 		CollisionPoints FindPolygonPlaneCollisionPoints(
-			const PolygonCollider* polygon, const Transform& polygonTransform,
-			const PlaneCollider* plane, const Transform& planeTransform);
+			const PolygonCollider* polygonA, const Transform& polygonATransform,
+			const PlaneCollider* planeB, const Transform& planeBTransform);
 
 		CollisionPoints FindPlanePolygonCollisionPoints(
-			const PlaneCollider* plane, const Transform& planeTransform,
-			const PolygonCollider* polygon, const Transform& polygonTransform);
+			const PlaneCollider* planeA, const Transform& planeATransform,
+			const PolygonCollider* polygonB, const Transform& polygonBTransform);
 	}
 }
