@@ -27,7 +27,11 @@ namespace Basic {
 
 		float GetMomentOfInertia(const RigidBody& rb) const override;
 
+		AABB GetGlobalAABB(const Transform& trans) const override;
+
 		void DrawOnceOnVisualGizmos(const Transform& trans) const override;
+
+		void DrawAABBOnceOnVisualGizmos(const Transform& trans) const override;
 
 		void MoveCollider(sf::Vector2f displacement) override;
 

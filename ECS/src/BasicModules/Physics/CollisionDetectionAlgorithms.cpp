@@ -264,7 +264,6 @@ Basic::EPA::Edge Basic::EPA::FindClosestEdge(
 	const std::vector<sf::Vector2f>& polytope)
 {
 	using MathFunctions::Dot;
-	using MathFunctions::TripleProduct;
 	using MathFunctions::NormalizeVector;
 
 	// prepare containers and values
@@ -287,8 +286,8 @@ Basic::EPA::Edge Basic::EPA::FindClosestEdge(
 		// get normal of the ab line
 		currEdge.Normal = NormalizeVector(sf::Vector2f(abVec.y, -abVec.x));
 
-		// count required dot product
-		currEdge.Distance = Dot(currEdge.Normal, oaVec);
+		// count distance between edge and origin
+		currEdge.Distance = Dot(oaVec, currEdge.Normal);
 
 		// winding check
 		if (currEdge.Distance < 0.0f)
@@ -297,7 +296,7 @@ Basic::EPA::Edge Basic::EPA::FindClosestEdge(
 			currEdge.Normal = -currEdge.Normal;
 		}
 
-
+		// set closest edge
 		if (closestEdge.Distance > currEdge.Distance)
 		{
 			closestEdge = currEdge;
@@ -318,8 +317,10 @@ Basic::CollisionPoints Basic::EPA::GetCollisionPoints(const ColliderItem* collid
 	// pass simplex to polytope's points container
 	std::vector<sf::Vector2f> polytope(simplex.begin(), simplex.end());
 
-	size_t maxIterationsCount = 100;
+	// prevents infinite loop if sth goes wrong
+	size_t maxIterationsCount = 1000;
 	size_t iterationsCount = 0;
+
 	while (true)
 	{
 		if (iterationsCount > maxIterationsCount)
@@ -341,8 +342,11 @@ Basic::CollisionPoints Basic::EPA::GetCollisionPoints(const ColliderItem* collid
 		// prepare vector
 		sf::Vector2f opVec = p - sf::Vector2f(0.0f, 0.0f); // p - origin
 
-		// if we found proper coll points return them and end algorithm
-		if (Dot(opVec, closestEdge.Normal) - closestEdge.Distance < 0.001f)
+		// prepare support point's edge distance 
+		float newDistance = Dot(opVec, closestEdge.Normal);
+
+		// if we found proper coll points
+		if (newDistance - closestEdge.Distance < tolerance)
 		{
 			//  set coll points
 			collPoints.HasCollision = true;
@@ -354,9 +358,8 @@ Basic::CollisionPoints Basic::EPA::GetCollisionPoints(const ColliderItem* collid
 		}
 
 		// if condition wasn't met, expand our polytope
+		// pass new support point between A and B of curr closest edge
 		polytope.insert(polytope.begin() + closestEdge.AIndex + 1, p);
-
-		std::cout << "";
 	}
 
 	// shouldn't happen

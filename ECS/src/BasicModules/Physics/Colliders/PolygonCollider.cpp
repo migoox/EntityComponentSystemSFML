@@ -415,6 +415,39 @@ float Basic::PolygonCollider::GetMomentOfInertia(const RigidBody& rb) const
 	return B / A / 6 * rb.Mass;
 }
 
+Basic::AABB Basic::PolygonCollider::GetGlobalAABB(const Transform& trans) const
+{
+	sf::Vector2f min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+	sf::Vector2f max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+
+	for (size_t i = 0; i < m_Vertices.size(); i++)
+	{
+		auto& curr = m_GlobalVertices[i];
+
+		curr = TranslateRelativePointToGlobal(m_Vertices[i], trans);
+
+		if (curr.x > max.x)
+		{
+			max.x = curr.x;
+		}
+		if (curr.x < min.x) 
+		{
+			min.x = curr.x;
+		}
+
+		if (curr.y > max.y) 
+		{
+			max.y = curr.y;
+		}
+		if (curr.y < min.y)
+		{
+			min.y = curr.y;
+		}
+	}
+
+	return { min, max };
+}
+
 void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) const
 {
 	float angle = trans.getRotation() * 3.141592653f / 180.0f;
@@ -425,7 +458,7 @@ void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) cons
 	{
 		arr1[i].position = TranslateRelativePointToGlobal(m_Vertices[i], trans);
 
-		arr1[i].color = sf::Color(0.0f, 26.0f, 102.0f, 200.0f);
+		arr1[i].color = sf::Color(0.0f, 26.0f, 102.0f, 0.8f * 255.0f);
 	}
 	arr1[m_Vertices.size()] = arr1[0];
 
@@ -437,20 +470,32 @@ void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) cons
 		arr2[i + 1].position = TranslateRelativePointToGlobal(m_Triangles[j][1], trans);
 		arr2[i + 2].position = TranslateRelativePointToGlobal(m_Triangles[j][2], trans);
 
-		sf::Color color = sf::Color(0.0f, 60.0f + 20.0f * (j % 4), 150.0f + 30 * (j % 4));
+		sf::Color color = sf::Color(0.0f, 60.0f + 20.0f * (j % 4), 150.0f + 30 * (j % 4), 0.8f * 255.0f);
 		arr2[i].color = color;
 		arr2[i + 1].color = color;
 		arr2[i + 2].color = color;
 	}
 
 	CircleShape gCenter(2.0f);
-	gCenter.setFillColor(sf::Color::Red);
+	gCenter.setFillColor(sf::Color(255.0f, 0.0f, 0.0f, 0.8f * 255.0f));
 	gCenter.setOrigin(1.0f, 1.0f);
 	gCenter.setPosition(GetGlobalCenterOfGravity(trans));
 
 	Basic::VisualGizmos::DrawOnce(arr2);
 	Basic::VisualGizmos::DrawOnce(arr1);
 	Basic::VisualGizmos::DrawOnce(gCenter);
+}
+
+void Basic::PolygonCollider::DrawAABBOnceOnVisualGizmos(const Transform& trans) const
+{
+	AABB aabb = GetGlobalAABB(trans);
+
+	Basic::RectangleShape rect;
+	rect.setSize(sf::Vector2f(aabb.maxPoint - aabb.minPoint));
+	rect.setPosition(aabb.minPoint);
+	rect.setFillColor(sf::Color(0.0f, 150.0f, 50.0f, 0.4f * 255.0f));
+
+	Basic::VisualGizmos::DrawOnce(rect);
 }
 
 const std::vector<sf::Vector2f>& Basic::PolygonCollider::GlobalVertices(const Transform& trans) const

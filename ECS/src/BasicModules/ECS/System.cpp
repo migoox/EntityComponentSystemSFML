@@ -24,6 +24,8 @@ void Basic::System::TryToRegisterEntity(Entity entity)
 		{
 			GameObject gO = { entity , m_ParentWorld };
 			m_GameObjects.push_back(gO);
+
+			OnGameObjectAdded(gO);
 		}
 	}
 	else
@@ -35,6 +37,8 @@ void Basic::System::TryToRegisterEntity(Entity entity)
 		{
 			GameObject gO = { entity , m_ParentWorld };
 			m_GameObjects.push_back(gO);
+
+			OnGameObjectAdded(gO);
 		}
 	}
 }
@@ -45,11 +49,10 @@ void Basic::System::UpdateRegistration(Entity entity)
 
 	// check if entity is not added and save iterator in case it is
 	auto it = m_GameObjects.begin();
-	for (auto element : m_GameObjects)
+	for (; it != m_GameObjects.end(); it++)
 	{
-		if (element.GetEntity() == entity)
+		if (it->GetEntity() == entity)
 			break;
-		it++;
 	}
 
 	// entity exists in system, we have to check if it has valid signature
@@ -59,6 +62,7 @@ void Basic::System::UpdateRegistration(Entity entity)
 		{
 			if (m_Signature != (m_Signature & entitySignature))
 			{
+				OnGameObjectRemoved(*it);
 				m_GameObjects.erase(it);
 			}
 		}
@@ -66,6 +70,7 @@ void Basic::System::UpdateRegistration(Entity entity)
 		{
 			if (m_Signature != entitySignature)
 			{
+				OnGameObjectRemoved(*it);
 				m_GameObjects.erase(it);
 			}
 		}
@@ -77,14 +82,18 @@ void Basic::System::UpdateRegistration(Entity entity)
 	{
 		if (m_Signature == (m_Signature & entitySignature)) // logical operator AND
 		{
-			m_GameObjects.push_back({ entity , m_ParentWorld });
+			GameObject gO = { entity , m_ParentWorld };
+			m_GameObjects.push_back(gO);
+			OnGameObjectAdded(gO);
 		}
 	}
 	else
 	{
 		if (m_Signature == entitySignature)
 		{
-			m_GameObjects.push_back({ entity , m_ParentWorld });
+			GameObject gO = { entity , m_ParentWorld };
+			m_GameObjects.push_back(gO);
+			OnGameObjectAdded(gO);
 		}
 	}
 }
@@ -94,13 +103,16 @@ void Basic::System::TryToUnregisterEntity(Entity entity)
 	if (m_GameObjects.size() > 0)
 	{
 		auto it = m_GameObjects.begin();
-		for (auto element : m_GameObjects)
+		for (; it != m_GameObjects.end(); it++)
 		{
-			if (element.GetEntity() == entity)
+			if (it->GetEntity() == entity)
 				break;
-			it++;
 		}
 
+		if (it == m_GameObjects.end())
+			return;
+
+		OnGameObjectRemoved(*it);
 		m_GameObjects.erase(it);
 	}
 }

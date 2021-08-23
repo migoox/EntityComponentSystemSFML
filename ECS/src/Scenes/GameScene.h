@@ -33,6 +33,9 @@ class GameScene : public Scene
 private:
 	GameObject m_Test;
 	GameObject m_Test2;
+	GameObject m_Test3;
+	GameObject m_Test4;
+
 public:
 	using Scene::Scene;
 	~GameScene();

@@ -16,6 +16,12 @@ namespace Basic {
 		bool Resolvable = true;
 	};
 
+	struct AABB
+	{
+		sf::Vector2f minPoint;
+		sf::Vector2f maxPoint;
+	};
+
 	class PlaneCollider;
 	class CircleCollider;
 	class PolygonCollider;
@@ -41,13 +47,18 @@ namespace Basic {
 
 		virtual float GetMomentOfInertia(const RigidBody& rb) const = 0;
 
-		virtual void DrawOnceOnVisualGizmos(const Transform& trans) const = 0;
-
 		// move collider relatively to game object's transform
 		virtual void MoveCollider(sf::Vector2f displacement) = 0;
 
 		// rotate collider around it's center of gravity (angle in degrees)
 		virtual void RotateCollider(float angle) { };
+
+		// get rectangle around collider shape
+		virtual AABB GetGlobalAABB(const Transform& trans) const = 0;
+
+		virtual void DrawOnceOnVisualGizmos(const Transform& trans) const = 0;
+
+		virtual void DrawAABBOnceOnVisualGizmos(const Transform& trans) const = 0;
 
 		virtual sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const = 0;
 

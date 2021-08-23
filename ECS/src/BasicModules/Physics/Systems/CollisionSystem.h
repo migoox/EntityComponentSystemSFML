@@ -23,6 +23,7 @@ class CollisionSystem : public ECSSystem
 private:
 	std::vector<std::unique_ptr<Solver>> m_Solvers;
 
+
 public:
 	void Init() override
 	{
@@ -166,5 +167,13 @@ public:
 		// collision resolving
 		for (auto& solver : m_Solvers)
 			solver->Solve(collisions, deltaTime);
+	}
+
+	void OnGameObjectAdded(GameObject gameObject)
+	{
+	}
+
+	void OnGameObjectRemoved(GameObject gameObject)
+	{
 	}
 };

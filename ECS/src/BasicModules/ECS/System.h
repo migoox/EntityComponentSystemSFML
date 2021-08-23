@@ -78,6 +78,10 @@ namespace Basic {
 
 		virtual void Render(sf::RenderTarget& target) {};
 
+		virtual void OnGameObjectAdded(GameObject gameObject) {};
+		
+		virtual void OnGameObjectRemoved(GameObject gameObject) {};
+
 		void RegisterWorld(World* world);
 
 		void TryToRegisterEntity(Entity entity);

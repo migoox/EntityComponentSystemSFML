@@ -4,6 +4,7 @@
 #include <list>
 #include <memory>
 #include <iostream>
+#include <limits>
 
 #include "ColliderItem.h"
 #include "../CollisionDetectionAlgorithms.h"
@@ -83,6 +84,8 @@ namespace Basic {
 
 		sf::Vector2f TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const;
 
+		AABB CountNewAABB();
+
 	public:
 		PolygonCollider();
 
@@ -109,7 +112,11 @@ namespace Basic {
 
 		float GetMomentOfInertia(const RigidBody& rb) const override;
 
+		AABB GetGlobalAABB(const Transform& trans) const override;
+
 		void DrawOnceOnVisualGizmos(const Transform& trans) const override;
+
+		void DrawAABBOnceOnVisualGizmos(const Transform& trans) const override;
 
 		const std::vector<sf::Vector2f>& GlobalVertices(const Transform& trans) const;
 
