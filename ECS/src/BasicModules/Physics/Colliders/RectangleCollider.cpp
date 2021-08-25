@@ -61,10 +61,10 @@ void Basic::RectangleCollider::DrawOnceOnVisualGizmos(const Transform& trans) co
 	arr[2] = m_GlobalVertices[2];
 	arr[3] = m_GlobalVertices[3];
 
-	arr[0].color = sf::Color::Blue;
-	arr[1].color = sf::Color::Blue;
-	arr[2].color = sf::Color::Blue;
-	arr[3].color = sf::Color::Blue;
+	arr[0].color = sf::Color(0.0f, 50.0f, 255.0f, 180.0f);
+	arr[1].color = sf::Color(0.0f, 50.0f, 255.0f, 180.0f);
+	arr[2].color = sf::Color(0.0f, 50.0f, 255.0f, 180.0f);
+	arr[3].color = sf::Color(0.0f, 50.0f, 255.0f, 180.0f);
 
 	CircleShape gCenter(2.0f);
 	gCenter.setFillColor(sf::Color::Red);

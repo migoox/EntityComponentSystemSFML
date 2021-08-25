@@ -4,16 +4,15 @@
 #include <list>
 #include <memory>
 #include <iostream>
-#include <limits>
 
 #include "ColliderItem.h"
 #include "../CollisionDetectionAlgorithms.h"
 #include <cassert>
 
 namespace Basic {
-	namespace Helpers{
+	namespace PolygonHelpers{
 		template<typename T>
-		T& GetItem(std::vector<T>& vector, int index)
+		static T& GetItem(std::vector<T>& vector, int index)
 		{
 			int n = vector.size();
 			if (index >= n)
@@ -25,7 +24,7 @@ namespace Basic {
 		}
 
 		template<typename T>
-		const T& GetItem(const std::vector<T>& vector, int index)
+		static const T& GetItem(const std::vector<T>& vector, int index)
 		{
 			int n = vector.size();
 			if (index >= n)
@@ -36,9 +35,19 @@ namespace Basic {
 				return vector[index];
 		}
 
-		bool PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p);
+		static int FixIndex(int index, int size)
+		{
+			if (index >= size)
+				return index % size;
+			else if (index < 0)
+				return index % size + size;
+			else
+				return index;
+		}
 
-		bool LinesIntersect(sf::Vector2f a, sf::Vector2f b, sf::Vector2f c, sf::Vector2f d);
+		static bool PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p);
+
+		static bool LinesIntersect(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d);
 	}
 
 	class PolygonCollider : public ColliderItem
@@ -84,8 +93,6 @@ namespace Basic {
 
 		sf::Vector2f TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const;
 
-		AABB CountNewAABB();
-
 	public:
 		PolygonCollider();
 
@@ -127,6 +134,14 @@ namespace Basic {
 		bool IsConvex() const { return m_Convex; }
 		
 		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override;
+
+		int FindFurthestPointInDirectionIndex(const Transform& transform, sf::Vector2f direction) const;
+
+		sf::Vector2f GetGlobalPoint(const Transform& transform, int index) const;
+
+		bool ContainsPoint(sf::Vector2f point);
+
+		ClippingAlgo::CPEdge GetTheBestClippingEdge(const Transform& transform, sf::Vector2f normal) const;
 
 		// collision tests
 		CollisionPoints TestCollision(

@@ -71,6 +71,8 @@ Basic::Game::Game()
 {
 	// init window
 	InitWindow();
+
+	m_BackgroundColor = sf::Color::White;
 }
 
 void Basic::Game::ISetScene(Scene* scene)
@@ -107,7 +109,7 @@ void Basic::Game::IRun()
 		Update();
 
 		// clear window
-		m_Window.clear(sf::Color::White);
+		m_Window.clear(m_BackgroundColor);
 
 		// render stuff
 		Render();
@@ -115,6 +117,11 @@ void Basic::Game::IRun()
 		// display stuff on window
 		m_Window.display();
 	}
+}
+
+void Basic::Game::ISetBackgroundColor(sf::Color color)
+{
+	m_BackgroundColor = color;
 }
 
 sf::Vector2f Basic::Game::IMouseWorldPosition()
@@ -150,4 +157,9 @@ sf::Vector2u Basic::Game::WindowSize()
 sf::Vector2f Basic::Game::MouseWorldPosition()
 {
 	return s_Instance.IMouseWorldPosition();
+}
+
+void Basic::Game::SetBackgroundColor(sf::Color color)
+{
+	s_Instance.ISetBackgroundColor(color);
 }

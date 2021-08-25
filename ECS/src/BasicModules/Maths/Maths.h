@@ -11,6 +11,7 @@ namespace Basic {
 		float IsUnderLine(sf::Vector2f point, sf::Vector2f lineA, sf::Vector2f lineB);
 
 		float Dot(sf::Vector2f vecA, sf::Vector2f vecB);
+		float Dot(sf::Vector3f vecA, sf::Vector3f vecB);
 
 		sf::Vector3f Cross(sf::Vector3f vecA, sf::Vector3f vecB);
 		sf::Vector2f Cross(float vecA, sf::Vector2f vecB);

@@ -2,12 +2,12 @@
 #include <math.h>
 #include <array>
 #include <list>
-#include <limits>
 
 #include "../Maths/Maths.h"
 #include "Colliders/ColliderItem.h"
 
 namespace Basic {
+
 	namespace GJK {
 		class Simplex
 		{
@@ -59,18 +59,26 @@ namespace Basic {
 
 		sf::Vector2f FindFurthestPointTriangle(const std::array<sf::Vector2f, 3>* triangle, sf::Vector2f direction);
 
-		sf::Vector2f SupportFunction(const ColliderItem* colliderA, const Transform& transformA,
-			const ColliderItem* colliderB, const Transform& transformB, sf::Vector2f direction);
+		sf::Vector2f SupportFunction(
+			const ColliderItem* colliderA, const Transform& transformA,
+			const ColliderItem* colliderB, const Transform& transformB, 
+			sf::Vector2f direction);
 
-		CollisionPoints AlgorithmWithEPA(const ColliderItem* colliderA, const Transform& transformA,
+		CollisionPoints AlgorithmWithEPA(
+			const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB);
 
-		bool Algorithm(const ColliderItem* colliderA, const Transform& transformA,
+		bool Algorithm(
+			const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB);
 	}
 
 	namespace EPA {
-		struct Edge
+
+		const size_t MAX_EPA_ITERATIONS = 1000;
+		const float TOLERANCE = 0.005f;
+
+		struct EPAEdge
 		{
 			sf::Vector2f A;
 			sf::Vector2f B;
@@ -79,18 +87,45 @@ namespace Basic {
 			size_t AIndex;
 		};
 
-		Edge FindClosestEdge(const std::vector<sf::Vector2f>& polytope);
+		EPAEdge FindClosestEdge(const std::vector<sf::Vector2f>& polytope);
 
-		CollisionPoints GetCollisionPoints(const ColliderItem* colliderA, const Transform& transformA,
+		CollisionPoints GetMTV(const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB,
-			const GJK::Simplex& simplex, float tolerance = 0.001f);
+			const GJK::Simplex& simplex);
 	}
 
 	namespace SAT {
 		bool Algorithm(
-			const std::vector<sf::Vector2f>* polygonA,
-			const std::vector<sf::Vector2f>* polygonB);
+			const std::vector<sf::Vector2f>& polygonA,
+			const std::vector<sf::Vector2f>& polygonB);
 
+		bool Algorithm(
+			const std::vector<sf::Vector2f>& polygon,
+			const std::array<sf::Vector2f, 3>& triangle);
+
+		bool Algorithm(
+			const std::array<sf::Vector2f, 3>& triangleA,
+			const std::array<sf::Vector2f, 3>& triangleB);
+	}
+
+	namespace ClippingAlgo {
+
+		struct CPEdge
+		{
+			sf::Vector2f A;
+			sf::Vector2f B;
+			sf::Vector2f Normal;
+			float Distance;
+			sf::Vector2f Max;
+		};
+
+		struct ClippedPoints
+		{
+			sf::Vector2f Points[2];
+			int Size = 0;
+		};
+
+		ClippedPoints Clip(const sf::Vector2f& vertex1, const sf::Vector2f& vertex2, const sf::Vector2f& refVec, float dotProduct);
 	}
 	namespace CollisionDetection {
 		CollisionPoints FindCircleCircleCollisionPoints(

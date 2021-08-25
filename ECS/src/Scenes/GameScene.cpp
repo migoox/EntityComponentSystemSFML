@@ -24,46 +24,50 @@ void GameScene::OnEnter()
 	// 3. Create GameObjects
 	m_Test = Instantiate();
 
-	//auto& coll1 = m_Test.AddComponent<Collider>(new CircleCollider(50.0f));
+	// auto& coll1 = m_Test.AddComponent<Collider>(new CircleCollider(50.0f));
 
-	auto& coll1 = m_Test.AddComponent<Collider>(new PolygonCollider(
-	{
-		sf::Vector2f(0.0f, 0.0f),
-		sf::Vector2f(300.0f, 100.0f),
-		sf::Vector2f(200.0f, 200.0f),
-		sf::Vector2f(10.0f, 50.0f)
-	}));
+	auto& coll1 = m_Test.AddComponent<Collider>(new RectangleCollider(sf::Vector2f(100.0f, 50.0f)));
 
 
-	//coll1.Item->RotateCollider(50.0f);
-	//coll1->MoveCollider(sf::Vector2f(30.0f, 30.0f));
+	// coll1.Item->RotateCollider(50.0f);
+	// coll1->MoveCollider(sf::Vector2f(30.0f, 30.0f));
 
 	m_Test.GetTransform().setPosition(300.0f, 300.0f);
 
 
 	m_Test2 = Instantiate();
 
-	auto& coll2 = m_Test2.AddComponent<Collider>(new RectangleCollider(sf::Vector2f(200.0f, 100.0f)));
-	//auto& coll2 = m_Test2.AddComponent<Collider>(new CircleCollider(100.0f));
+	/*auto& coll2 = m_Test2.AddComponent<Collider>(new PolygonCollider(
+		{
+			sf::Vector2f(0.0f, 0.0f),
+			sf::Vector2f(300.0f, 100.0f),
+			sf::Vector2f(200.0f, 200.0f),
+			sf::Vector2f(10.0f, 50.0f)
+		}));*/
+
+	auto& coll2 = m_Test2.AddComponent<Collider>(new RectangleCollider(sf::Vector2f(100.0f, 120.0f)));
 	//coll1.Item->RotateCollider(50.0f);
 	//coll2->MoveCollider(sf::Vector2f(30.0f, 30.0f));
 	
 	m_Test2.GetTransform().setPosition(500.0f, 400.0f);
 
-	m_Test3 = Instantiate();
+	//m_Test3 = Instantiate();
 
-	auto& coll3 = m_Test3.AddComponent<Collider>(new CircleCollider(60.0f));
+	//auto& coll3 = m_Test3.AddComponent<Collider>(new CircleCollider(60.0f));
 
-	m_Test3.GetTransform().setPosition(sf::Vector2f(100.0, 100.0f));
+	//m_Test3.GetTransform().setPosition(sf::Vector2f(100.0, 100.0f));
 
-	m_Test4 = Instantiate();
+	//m_Test4 = Instantiate();
 
-	auto& coll4 = m_Test4.AddComponent<Collider>(new PlaneCollider(100.0f));
+	//auto& coll4 = m_Test4.AddComponent<Collider>(new PlaneCollider(400.0f));
 
-	m_Test4.GetTransform().setPosition(sf::Vector2f(600.0f, 100.0f));
+	//m_Test4.GetTransform().setPosition(sf::Vector2f(300.0f, 300.0f));
 
-	auto& rb = m_Test4.AddComponent<RigidBody>(RigidBody());
-	rb.AngleVelocity = 0.05f;
+	// m_Test4.GetTransform().rotate(30.0f);
+
+
+	// auto& rb = m_Test4.AddComponent<RigidBody>(RigidBody());
+	// rb.AngleVelocity = 0.05f;
 }
 
 void GameScene::Update()
@@ -71,13 +75,13 @@ void GameScene::Update()
 	const sf::Time& deltaTime = Game::DeltaTime();
 
 	m_Test.GetComponent<Collider>()->DrawOnceOnVisualGizmos(m_Test.GetTransform());
-	m_Test.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test.GetTransform());
+	//m_Test.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test.GetTransform());
 	m_Test2.GetComponent<Collider>()->DrawOnceOnVisualGizmos(m_Test2.GetTransform());
-	m_Test2.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test2.GetTransform());
-	m_Test3.GetComponent<Collider>()->DrawOnceOnVisualGizmos(m_Test3.GetTransform());
-	m_Test3.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test3.GetTransform());
-	m_Test4.GetComponent<Collider>()->DrawOnceOnVisualGizmos(m_Test4.GetTransform());
-	m_Test4.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test4.GetTransform());
+	//m_Test2.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test2.GetTransform());
+	//m_Test3.GetComponent<Collider>()->DrawOnceOnVisualGizmos(m_Test3.GetTransform());
+	//m_Test3.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test3.GetTransform());
+	//m_Test4.GetComponent<Collider>()->DrawOnceOnVisualGizmos(m_Test4.GetTransform());
+	//m_Test4.GetComponent<Collider>()->DrawAABBOnceOnVisualGizmos(m_Test4.GetTransform());
 
 	/*CircleShape center(1.0f);
 	center.setFillColor(sf::Color::Green);

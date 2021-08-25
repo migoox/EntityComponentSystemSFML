@@ -157,5 +157,14 @@ sf::Vector2f Basic::PlaneCollider::GetGlobalBPoint(const Transform& trans) const
 
 sf::Vector2f Basic::PlaneCollider::FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const
 {
-	return sf::Vector2f();
+	using MathFunctions::Dot;
+
+	// prepare values
+	sf::Vector2f aPoint = GetGlobalAPoint(transform);
+	sf::Vector2f bPoint = GetGlobalBPoint(transform);
+
+	if (Dot(aPoint, direction) > Dot(bPoint, direction))
+		return aPoint;
+	else
+		return bPoint;
 }

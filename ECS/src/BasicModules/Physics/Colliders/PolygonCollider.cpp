@@ -1,6 +1,6 @@
 #include "PolygonCollider.h"
 #include <iostream>
-bool Basic::Helpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p)
+bool Basic::PolygonHelpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p)
 {
 	using MathFunctions::Cross;
 
@@ -12,7 +12,7 @@ bool Basic::Helpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& 
 	return false;
 }
 
-bool Basic::Helpers::LinesIntersect(sf::Vector2f a, sf::Vector2f b, sf::Vector2f c, sf::Vector2f d)
+bool Basic::PolygonHelpers::LinesIntersect(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d)
 {
 	if (a == c && b == d)
 		return true;
@@ -101,7 +101,7 @@ bool Basic::PolygonCollider::IsSimple(const std::vector<sf::Vector2f>& vertices)
 			std::pair<sf::Vector2f, sf::Vector2f>
 			(
 			vertices[i], 
-			Helpers::GetItem<sf::Vector2f>(vertices, i + 1)
+			PolygonHelpers::GetItem<sf::Vector2f>(vertices, i + 1)
 			)
 		);
 
@@ -114,7 +114,7 @@ bool Basic::PolygonCollider::IsSimple(const std::vector<sf::Vector2f>& vertices)
 			if (i == 0 && j == lines.size() - 1) continue;
 
 			// check intersections
-			if (Helpers::LinesIntersect(lines[i].first, lines[i].second,
+			if (PolygonHelpers::LinesIntersect(lines[i].first, lines[i].second,
 				lines[j].first, lines[j].second))
 				return false;
 		}
@@ -131,9 +131,9 @@ bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2
 	for (int i = 0; i < vertices.size(); i++)
 	{
 		// get points
-		auto& prev = Helpers::GetItem<sf::Vector2f>(vertices, i - 1);
-		auto& curr = Helpers::GetItem<sf::Vector2f>(vertices, i);
-		auto& next = Helpers::GetItem<sf::Vector2f>(vertices, i + 1);
+		auto& prev = PolygonHelpers::GetItem<sf::Vector2f>(vertices, i - 1);
+		auto& curr = PolygonHelpers::GetItem<sf::Vector2f>(vertices, i);
+		auto& next = PolygonHelpers::GetItem<sf::Vector2f>(vertices, i + 1);
 
 		// count vectors
 		sf::Vector2f vectorCurrToPrev = prev - curr;
@@ -168,8 +168,8 @@ bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& ve
 	sf::Vector2f neighbours[2];
 
 	// getting neighbours
-	neighbours[0] = Helpers::GetItem<sf::Vector2f>(vertices, 0 - 1);
-	neighbours[1] = Helpers::GetItem<sf::Vector2f>(vertices, 0 + 1);
+	neighbours[0] = PolygonHelpers::GetItem<sf::Vector2f>(vertices, 0 - 1);
+	neighbours[1] = PolygonHelpers::GetItem<sf::Vector2f>(vertices, 0 + 1);
 
 	// create vectors
 	sf::Vector2f n1P = vertices[0] - neighbours[0]; // neighbour[0] -> curr point
@@ -182,8 +182,8 @@ bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& ve
 	for (int i = 1; i < n; i++)
 	{
 		// getting neighbours
-		neighbours[0] = Helpers::GetItem<sf::Vector2f>(vertices, i - 1);
-		neighbours[1] = Helpers::GetItem<sf::Vector2f>(vertices, i + 1);
+		neighbours[0] = PolygonHelpers::GetItem<sf::Vector2f>(vertices, i - 1);
+		neighbours[1] = PolygonHelpers::GetItem<sf::Vector2f>(vertices, i + 1);
 
 		// create vectors
 		n1P = vertices[i] - neighbours[0]; // neighbour[0] -> curr point
@@ -225,9 +225,9 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 		for (int i = 0; i < indexVector.size(); i++)
 		{
 			// get prev, curr and next indexes of array
-			size_t prevIndex = Helpers::GetItem<int>(indexVector, i - 1);
+			size_t prevIndex = PolygonHelpers::GetItem<int>(indexVector, i - 1);
 			size_t currIndex = indexVector[i];
-			size_t nextIndex = Helpers::GetItem<int>(indexVector, i + 1);
+			size_t nextIndex = PolygonHelpers::GetItem<int>(indexVector, i + 1);
 
 			// get points
 			auto& prev = vertices[prevIndex];
@@ -250,7 +250,7 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 				if (j == prevIndex || j == currIndex || j == nextIndex) continue;
 
 				// if there is a point in triangle
-				if (Helpers::PointInTriangle(prev, curr, next, vertices[j]))
+				if (PolygonHelpers::PointInTriangle(prev, curr, next, vertices[j]))
 				{
 					// raise the flag and break the loop
 					pointInTriangleExists = true;
@@ -417,8 +417,8 @@ float Basic::PolygonCollider::GetMomentOfInertia(const RigidBody& rb) const
 
 Basic::AABB Basic::PolygonCollider::GetGlobalAABB(const Transform& trans) const
 {
-	sf::Vector2f min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-	sf::Vector2f max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+	sf::Vector2f min(FLT_MAX, FLT_MAX);
+	sf::Vector2f max(-FLT_MAX, -FLT_MAX);
 
 	for (size_t i = 0; i < m_Vertices.size(); i++)
 	{
@@ -536,5 +536,105 @@ sf::Vector2f Basic::PolygonCollider::FindFurthestPointInDirection(const Transfor
 	}
 
 	return maxPoint;
+}
+
+int Basic::PolygonCollider::FindFurthestPointInDirectionIndex(const Transform& transform, sf::Vector2f direction) const
+{
+	assert(m_Correct && "PhysicsEngine: Can't find furthest point, since polygon is incorrectly defined.");
+
+	assert(m_Convex && "PhysicsEngine: Can't find furthest point, since polygon is concave.");
+
+	using MathFunctions::Dot;
+
+
+	// prepare values
+	sf::Vector2f maxPoint = TranslateRelativePointToGlobal(m_Vertices[0], transform);
+	float maxDistance = Dot(maxPoint, direction);
+	int index = 0;
+
+	// find max point
+	for (int i = 1; i < m_Vertices.size(); i++)
+	{
+		sf::Vector2f currPoint = TranslateRelativePointToGlobal(m_Vertices[i], transform);
+		float distance = Dot(currPoint, direction);
+		if (distance > maxDistance)
+		{
+			maxDistance = distance;
+			maxPoint = currPoint;
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+sf::Vector2f Basic::PolygonCollider::GetGlobalPoint(const Transform& transform, int index) const
+{
+	assert(index < m_Vertices.size() && "Polygon's vertex array out of range.");
+
+	return TranslateRelativePointToGlobal(m_Vertices[index], transform);
+}
+
+bool Basic::PolygonCollider::ContainsPoint(sf::Vector2f point)
+{
+	return false;
+}
+
+Basic::ClippingAlgo::CPEdge Basic::PolygonCollider::GetTheBestClippingEdge(const Transform& transform, sf::Vector2f normal) const
+{
+	using MathFunctions::Dot;
+	using MathFunctions::NormalizeVector;
+
+	// update global vertex array
+	UpdateGlobalVertices(transform);
+
+	// find the furthest vertex along the collision normal for both shapes
+	int index = FindFurthestPointInDirectionIndex(transform, normal);
+
+	sf::Vector2f furthestPoint = m_GlobalVertices[index];
+
+	// find reference and indicate edges - reference edge is the most perpendicular to the normal
+	// we consider only these edges which contain the furthest point
+	sf::Vector2f prev = PolygonHelpers::GetItem<sf::Vector2f>(m_GlobalVertices, index - 1);
+	sf::Vector2f next = PolygonHelpers::GetItem<sf::Vector2f>(m_GlobalVertices, index + 1);
+	
+	sf::Vector2f v0 = NormalizeVector(furthestPoint - prev);
+	sf::Vector2f v1 = NormalizeVector(next - furthestPoint);
+
+	ClippingAlgo::CPEdge result;
+	if (Dot(v0, normal) < Dot(v1, normal))
+	{
+		// clockwise winding!
+		result.A = prev;
+		result.B = furthestPoint;
+
+		sf::Vector2f AB = sf::Vector2f(result.B - result.A);
+
+		// normal of edge is in opposite direction to it's face
+		result.Normal = sf::Vector2f(-AB.y, AB.x);
+
+		
+
+		result.Distance = MathFunctions::Distance(result.A, result.B);
+		result.Max = furthestPoint;
+	}
+	else
+	{
+		// clockwise winding!
+		result.A = furthestPoint;
+		result.B = next;
+
+		sf::Vector2f AB = sf::Vector2f(result.B - result.A);
+
+		// normal of edge is in opposite direction to it's face
+		result.Normal = sf::Vector2f(-AB.y, AB.x);
+
+		
+
+		result.Distance = MathFunctions::Distance(result.A, result.B);
+		result.Max = furthestPoint;
+	}
+
+	return result;
 }
 

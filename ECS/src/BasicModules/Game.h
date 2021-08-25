@@ -19,6 +19,8 @@ namespace Basic {
 		sf::Event m_Event;
 		sf::Clock m_Timer;
 
+		sf::Color m_BackgroundColor;
+
 		sf::RenderWindow m_Window;
 
 		static Scene* s_CurrentScene;
@@ -38,9 +40,11 @@ namespace Basic {
 
 		// Functionality
 		void IReloadWindow();
-
+		
 		void ISetScene(Scene* scene);
 		void IRun();
+
+		void ISetBackgroundColor(sf::Color color);
 
 		sf::Vector2f IMouseWorldPosition();
 
@@ -56,5 +60,7 @@ namespace Basic {
 		static sf::Vector2u WindowSize();
 
 		static sf::Vector2f MouseWorldPosition();
+
+		static void SetBackgroundColor(sf::Color color);
 	};
 }

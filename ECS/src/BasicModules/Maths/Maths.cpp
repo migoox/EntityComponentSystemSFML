@@ -54,6 +54,11 @@ float Basic::MathFunctions::Dot(sf::Vector2f vecA, sf::Vector2f vecB)
 	return vecA.x * vecB.x + vecA.y * vecB.y;
 }
 
+float Basic::MathFunctions::Dot(sf::Vector3f vecA, sf::Vector3f vecB)
+{
+	return vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z;
+}
+
 sf::Vector3f Basic::MathFunctions::Cross(sf::Vector3f vecA, sf::Vector3f vecB)
 {
 	return sf::Vector3f(vecA.y * vecB.z - vecA.z * vecB.y, 
