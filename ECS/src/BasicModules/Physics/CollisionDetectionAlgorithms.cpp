@@ -17,15 +17,15 @@ bool Basic::GJK::HandleSimplex(
 		return LineCase(points, direction);
 
 	// if simplex contains 3 points, that means that it is a triangle and
-	// we have to find out in which region lies origin
+	// we have to find out in which region origin lies
 	return TriangleCase(points, direction);
 }
 
 bool Basic::GJK::LineCase(
 	Simplex& points, sf::Vector2f& direction)
 {
-	using MathFunctions::TripleProduct;
-	using MathFunctions::Dot;
+	using Maths::TripleProduct;
+	using Maths::Dot;
 
 	// get required points
 	// in our data structure, first point in the row 
@@ -35,21 +35,23 @@ bool Basic::GJK::LineCase(
 
 	// count vectors
 	sf::Vector2f abVec = b - a;
-	sf::Vector2f aoVec = sf::Vector2f(0.0f, 0.0f) - a; // origin - a
+	sf::Vector2f aoVec = -a; // origin - a
 
 	// count ab perpendicular vector in correct direction(to origin)
 	// using triple product
 	sf::Vector2f abVecPerpendicular = TripleProduct(abVec, aoVec, abVec);
 
+	// origin lies in the direction of ab perp vector
 	if (Dot(abVec, aoVec) > 0.0f)
 	{
-		// set our direction
-		direction = MathFunctions::NormalizeVector(abVecPerpendicular);
+		// set new direction
+		direction = Maths::NormalizeVector(abVecPerpendicular);
 	}
 	else
 	{
+		// origin lies either on edge or in the opposite direction of ab perp vector
 		points = { a };
-		direction = MathFunctions::NormalizeVector(aoVec);
+		direction = Maths::NormalizeVector(aoVec);
 	}
 
 	// return false as there is no possibility to find out
@@ -60,12 +62,13 @@ bool Basic::GJK::LineCase(
 bool Basic::GJK::TriangleCase(
 	Simplex& points, sf::Vector2f& direction)
 {
-	using MathFunctions::TripleProduct;
-	using MathFunctions::Dot;
-	using MathFunctions::Cross;
-
+	using Maths::TripleProduct;
+	using Maths::NormalizeVector;
+	using Maths::Dot;
+	using Maths::Cross;
+	
 	// get requied points
-	// in our data structure, first point in the row
+	// in our data structure, first point in the simplex
 	// is recently added point
 	sf::Vector2f a = points[0];
 	sf::Vector2f b = points[1];
@@ -74,15 +77,15 @@ bool Basic::GJK::TriangleCase(
 	// count vectors
 	sf::Vector2f abVec = b - a;
 	sf::Vector2f acVec = c - a;
-	sf::Vector2f aoVec = sf::Vector2f(0.0f, 0.0f) - a; // origin - a
+	sf::Vector2f aoVec = -a; // origin - a
 
 	// count ab perpendicular vector in correct direction(to origin)
-	sf::Vector2f abVecPerpendicular =
-		MathFunctions::TripleProduct(acVec, abVec, abVec);
+	sf::Vector2f abVecPerpendicular = 
+		Maths::TripleProduct(acVec, abVec, abVec);
 
 	// count ac perpendicular vector in correct direction(to origin)
-	sf::Vector2f acVecPerpendicular =
-		MathFunctions::TripleProduct(abVec, acVec, acVec);
+	sf::Vector2f acVecPerpendicular = 
+		Maths::TripleProduct(abVec, acVec, acVec);
 
 	// if origin lies in AB region
 	if (Dot(abVecPerpendicular, aoVec) > 0.0f)
@@ -92,7 +95,7 @@ bool Basic::GJK::TriangleCase(
 		points = { a, b };
 
 		// set direction
-		direction = MathFunctions::NormalizeVector(abVecPerpendicular);
+		direction = Maths::NormalizeVector(abVecPerpendicular);
 
 		return false;
 	}
@@ -104,12 +107,12 @@ bool Basic::GJK::TriangleCase(
 		points = { a, c };
 
 		// set direction
-		direction = MathFunctions::NormalizeVector(acVecPerpendicular);
+		direction = Maths::NormalizeVector(acVecPerpendicular);
 
 		return false;
 	}
 
-	// origin is in the region ABC and collision is detected
+	// origin is in the region ABC(inside the triangle) and collision is detected*/
 	return true;
 }
 
@@ -117,7 +120,7 @@ sf::Vector2f Basic::GJK::FindFurthestPointTriangle(
 	const std::array<sf::Vector2f, 3>* triangle,
 	sf::Vector2f direction)
 {
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 	// prepare values
 	sf::Vector2f maxPoint = triangle->at(0);
@@ -150,13 +153,13 @@ Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
 	const ColliderItem* colliderA, const Transform& transformA,
 	const ColliderItem* colliderB, const Transform& transformB)
 {
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 	CollisionPoints collPoints;
 	collPoints.HasCollision = false;
 
 	// first direction - vector from center of A to B
-	sf::Vector2f direction = MathFunctions::NormalizeVector(
+	sf::Vector2f direction = Maths::NormalizeVector(
 		colliderB->GetGlobalCenterOfGravity(transformB) -
 		colliderA->GetGlobalCenterOfGravity(transformA));
 
@@ -164,14 +167,11 @@ Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
 	// on direction counted above
 	// simplex is a data structure with max_size = 3
 	Simplex simplex;
-	simplex.PushFront(
-		SupportFunction(colliderA, transformA,
-			colliderB, transformB,
-			direction));
+	simplex.PushFront(SupportFunction(colliderA, transformA,
+									  colliderB, transformB, direction));
 
 	// changing direction to be towards the origin ( (0, 0) point )
-	direction = MathFunctions::NormalizeVector(
-		sf::Vector2f(0.0f, 0.0f) - simplex[0]);
+	direction = Maths::NormalizeVector(-simplex[0]); // direction = origin - simplex[0]
 
 	while (true)
 	{
@@ -181,8 +181,8 @@ Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
 			direction);
 
 		// if point is not the proper region,
-		// end algorithm with false
-		if (Dot(A, direction) < 0.0f)
+		// finish algorithm with false result
+		if (Dot(A, direction) <= 0.0f)
 		{
 			// there is no collision
 			return collPoints;
@@ -198,10 +198,13 @@ Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
 		{
 			// triangle(simplex) which contains point (0, 0) is found,
 			// so that collision occured
-
-			collPoints = EPA::GetMTV(colliderA, transformA,
+			// using EPA, minimum translation vector will be found
+			 
+			std::cout << "collision!" << Game::DeltaTime().asSeconds() << "\n";
+			
+			collPoints = EPA::GetMTV(
+				colliderA, transformA,
 				colliderB, transformB, simplex);
-			collPoints.HasCollision = true;
 
 			return collPoints;
 		}
@@ -215,10 +218,10 @@ bool Basic::GJK::Algorithm(
 	const ColliderItem* colliderA, const Transform& transformA,
 	const ColliderItem* colliderB, const Transform& transformB)
 {
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 	// first direction - vector from center of A to B
-	sf::Vector2f direction = MathFunctions::NormalizeVector(
+	sf::Vector2f direction = Maths::NormalizeVector(
 		colliderB->GetGlobalCenterOfGravity(transformB) -
 		colliderA->GetGlobalCenterOfGravity(transformA));
 
@@ -232,7 +235,7 @@ bool Basic::GJK::Algorithm(
 			direction));
 
 	// changing direction to be towards the origin ( (0, 0) point )
-	direction = MathFunctions::NormalizeVector(
+	direction = Maths::NormalizeVector(
 		sf::Vector2f(0.0f, 0.0f) - simplex[0]);
 
 	while (true)
@@ -272,8 +275,8 @@ bool Basic::GJK::Algorithm(
 Basic::EPA::EPAEdge Basic::EPA::FindClosestEdge(
 	const std::vector<sf::Vector2f>& polytope)
 {
-	using MathFunctions::Dot;
-	using MathFunctions::NormalizeVector;
+	using Maths::Dot;
+	using Maths::NormalizeVector;
 
 	// prepare containers and values
 	EPAEdge closestEdge;
@@ -319,7 +322,7 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 	const ColliderItem* colliderB, const Transform& transformB,
 	const GJK::Simplex& simplex)
 {
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 	CollisionPoints collPoints;
 
@@ -333,7 +336,10 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 	{
 		if (iterationsCount > MAX_EPA_ITERATIONS)
 		{
-			break;
+			// infinite loop
+			collPoints.Normal = sf::Vector2f(0.0f, 0.0f);
+			collPoints.Depth = 0.0f;
+			return collPoints;
 		}
 		iterationsCount++;
 
@@ -342,16 +348,27 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 
 		// find minkowski's difference vertex in normal's edge direction
 		// this support point will be called p
-		sf::Vector2f p = GJK::SupportFunction(
+		sf::Vector2f supportPoint = GJK::SupportFunction(
 			colliderA, transformA,
 			colliderB, transformB,
 			closestEdge.Normal);
 
 		// prepare vector
-		sf::Vector2f opVec = p - sf::Vector2f(0.0f, 0.0f); // p - origin
 
 		// prepare support point's edge distance 
-		float newDistance = Dot(opVec, closestEdge.Normal);
+		// first argument is supportPoint - origin (origin->supportPoint vector)
+		if(closestEdge.Distance < DISTANCE_TOLERANCE)
+		{
+			// set coll points
+			collPoints.HasCollision = true;
+			collPoints.Normal = -closestEdge.Normal;
+			collPoints.Depth = closestEdge.Distance;
+
+			// end of algorithm
+			return collPoints;
+		}
+
+		float newDistance = Dot(supportPoint, closestEdge.Normal); 
 
 		// if we found proper coll points
 		if (newDistance - closestEdge.Distance < TOLERANCE)
@@ -367,7 +384,7 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 
 		// if condition wasn't met, expand our polytope
 		// pass new support point between A and B of curr closest edge
-		polytope.insert(polytope.begin() + closestEdge.AIndex + 1, p);
+		polytope.insert(polytope.begin() + closestEdge.AIndex + 1, supportPoint);
 	}
 
 	// shouldn't happen
@@ -379,7 +396,7 @@ bool Basic::SAT::Algorithm(
 	const std::vector<sf::Vector2f>& polygonB)
 {
 	// SAT algorithm
-	using MathFunctions::Dot;
+	using Maths::Dot;
 	const std::vector<sf::Vector2f>* poly1 = &polygonA;
 	const std::vector<sf::Vector2f>* poly2 = &polygonB;
 
@@ -405,7 +422,7 @@ bool Basic::SAT::Algorithm(
 			sf::Vector2f currNextVec = next - curr;
 
 			// create axis(normal of current edge)
-			sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / MathFunctions::VectorDistance(currNextVec);
+			sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / Maths::VectorDistance(currNextVec);
 
 			// find min and max 1d points(on axis) for shape 1
 			float min1 = Dot(poly1->at(0), axis), max1 = Dot(poly1->at(0), axis);
@@ -444,7 +461,7 @@ bool Basic::SAT::Algorithm(
 bool Basic::SAT::Algorithm(const std::vector<sf::Vector2f>& polygon, const std::array<sf::Vector2f, 3>& triangle)
 {
 	// SAT algorithm
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 	// iterate trough all of the vertices of polygon
 	for (int currVertex = 0; currVertex < polygon.size(); currVertex++)
@@ -460,7 +477,7 @@ bool Basic::SAT::Algorithm(const std::vector<sf::Vector2f>& polygon, const std::
 		sf::Vector2f currNextVec = next - curr;
 
 		// create axis(normal of current edge)
-		sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / MathFunctions::VectorDistance(currNextVec);
+		sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / Maths::VectorDistance(currNextVec);
 
 		// find min and max 1d points(on axis) for shape 1
 		float min1 = Dot(polygon.at(0), axis), max1 = Dot(polygon[0], axis);
@@ -505,7 +522,7 @@ bool Basic::SAT::Algorithm(const std::vector<sf::Vector2f>& polygon, const std::
 		sf::Vector2f currNextVec = next - curr;
 
 		// create axis(normal of current edge)
-		sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / MathFunctions::VectorDistance(currNextVec);
+		sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / Maths::VectorDistance(currNextVec);
 
 		// find min and max 1d points(on axis) for shape 1
 		float min1 = Dot(triangle[0], axis), max1 = Dot(triangle[0], axis);
@@ -543,7 +560,7 @@ bool Basic::SAT::Algorithm(const std::vector<sf::Vector2f>& polygon, const std::
 bool Basic::SAT::Algorithm(const std::array<sf::Vector2f, 3>& triangleA, const std::array<sf::Vector2f, 3>& triangleB)
 {
 	// SAT algorithm
-	using MathFunctions::Dot;
+	using Maths::Dot;
 	const std::array<sf::Vector2f, 3>* poly1 = &triangleA;
 	const std::array<sf::Vector2f, 3>* poly2 = &triangleB;
 
@@ -569,7 +586,7 @@ bool Basic::SAT::Algorithm(const std::array<sf::Vector2f, 3>& triangleA, const s
 			sf::Vector2f currNextVec = next - curr;
 
 			// create axis(normal of current edge)
-			sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / MathFunctions::VectorDistance(currNextVec);
+			sf::Vector2f axis = sf::Vector2f(-currNextVec.y, currNextVec.x) / Maths::VectorDistance(currNextVec);
 
 			// find min and max 1d points(on axis) for shape 1
 			float min1 = Dot(poly1->at(0), axis), max1 = Dot(poly1->at(0), axis);
@@ -623,8 +640,8 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoint
 	{
 		// collision
 		collPoints.HasCollision = true;
-		collPoints.Normal = MathFunctions::NormalizeVector(globalPosition1 - globalPosition2);
-		collPoints.Depth = circleA->Radius() + circleB->Radius() - MathFunctions::Distance(globalPosition1, globalPosition2);
+		collPoints.Normal = Maths::NormalizeVector(globalPosition1 - globalPosition2);
+		collPoints.Depth = circleA->Radius() + circleB->Radius() - Maths::Distance(globalPosition1, globalPosition2);
 		collPoints.A = globalPosition1 - collPoints.Normal * circleA->Radius();
 		collPoints.B = globalPosition2 + collPoints.Normal * circleB->Radius();
 	}
@@ -648,67 +665,67 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 
 	sf::Vector2f ABVector = pointB - pointA;
 
-	sf::Vector2f ShadowVector = MathFunctions::Dot(MathFunctions::NormalizeVector(ABVector), PointACenterVector) * MathFunctions::NormalizeVector(ABVector);
+	sf::Vector2f ShadowVector = Maths::Dot(Maths::NormalizeVector(ABVector), PointACenterVector) * Maths::NormalizeVector(ABVector);
 
 	sf::Vector2f CenterPlaneVector = ShadowVector - PointACenterVector;
 	// create collision points
 	CollisionPoints collPoints;
 
-	if (MathFunctions::Distance(center, pointA) <= circleA->Radius()) // one of the points of edge is inside the circle
+	if (Maths::Distance(center, pointA) <= circleA->Radius()) // one of the points of edge is inside the circle
 	{
 		collPoints.HasCollision = true;
 
 		// counting collision points
-		if (MathFunctions::VectorDistance(ShadowVector) >= planeB->Distance() ||
+		if (Maths::VectorDistance(ShadowVector) >= planeB->Distance() ||
 			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
 		{
 			collPoints.B = pointA;
-			collPoints.A = center + MathFunctions::NormalizeVector(collPoints.B - center) * circleA->Radius();
-			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
+			collPoints.A = center + Maths::NormalizeVector(collPoints.B - center) * circleA->Radius();
+			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
+			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
 		}
 		else // if circle is between points A and B
 		{
-			collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circleA->Radius();
+			collPoints.A = center + Maths::NormalizeVector(CenterPlaneVector) * circleA->Radius();
 			collPoints.B = center + CenterPlaneVector;
-			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
+			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
+			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
 		}
 	}
-	else if (MathFunctions::Distance(center, pointB) <= circleA->Radius()) // one of the points of edge is inside the circle
+	else if (Maths::Distance(center, pointB) <= circleA->Radius()) // one of the points of edge is inside the circle
 	{
 		collPoints.HasCollision = true;
 
 		// counting collision points
-		if (MathFunctions::VectorDistance(ShadowVector) >= planeB->Distance() ||
+		if (Maths::VectorDistance(ShadowVector) >= planeB->Distance() ||
 			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
 		{
 			collPoints.B = pointB;
-			collPoints.A = center + MathFunctions::NormalizeVector(collPoints.B - center) * circleA->Radius();
-			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
+			collPoints.A = center + Maths::NormalizeVector(collPoints.B - center) * circleA->Radius();
+			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
+			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
 		}
 		else
 		{
-			collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circleA->Radius();
+			collPoints.A = center + Maths::NormalizeVector(CenterPlaneVector) * circleA->Radius();
 			collPoints.B = center + CenterPlaneVector;
-			collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
+			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
+			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
 		}
 	}
 	else // if circle collides with the line (not with it's points)
 	{
-		if (MathFunctions::VectorDistance(CenterPlaneVector) <= circleA->Radius())
+		if (Maths::VectorDistance(CenterPlaneVector) <= circleA->Radius())
 		{
-			if (MathFunctions::VectorDistance(ShadowVector) <= planeB->Distance() &&
+			if (Maths::VectorDistance(ShadowVector) <= planeB->Distance() &&
 				ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
 			{
 				collPoints.HasCollision = true;
 
-				collPoints.A = center + MathFunctions::NormalizeVector(CenterPlaneVector) * circleA->Radius();
+				collPoints.A = center + Maths::NormalizeVector(CenterPlaneVector) * circleA->Radius();
 				collPoints.B = center + CenterPlaneVector;
-				collPoints.Normal = MathFunctions::NormalizeVector(collPoints.B - collPoints.A);
-				collPoints.Depth = MathFunctions::Distance(collPoints.A, collPoints.B);
+				collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
+				collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
 			}
 		}
 	}*/
@@ -871,8 +888,8 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	const PolygonCollider* polygonA, const Transform& polygonATransform,
 	const PolygonCollider* polygonB, const Transform& polygonBTransform)
 {
-	using MathFunctions::Dot;
-	using MathFunctions::NormalizeVector;
+	using Maths::Dot;
+	using Maths::NormalizeVector;
 
 	CollisionPoints collPoints;
 
@@ -955,13 +972,26 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	collPoints = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		polygonB, polygonBTransform);
 
-	return collPoints;
 
-	/*
+	//collPoints.HasCollision = false;
+
+	/*sf::VertexArray arr(sf::PrimitiveType::Lines, 2);
+
+	arr[0].position = polygonATransform.getPosition();
+	arr[1].position = polygonATransform.getPosition() + collPoints.Normal * collPoints.Depth;
+
+	arr[0].color = sf::Color::Black;
+	arr[1].color = sf::Color::Green;
+
+	VisualGizmos::DrawOnce(arr);
+
+	return collPoints;*/
+
+	
 	// if there is no collision - end function
 	if (!collPoints.HasCollision)
 		return collPoints;
-	*/
+	
 
 	// else - get collision contact points(manifold points)
 
@@ -974,11 +1004,11 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	// but in clipping we need normal which points from A shape to B shape
 	// so that we have to reverse current normal 
 
-	//f::Vector2f normal = -collPoints.Normal;
+	sf::Vector2f normal = -collPoints.Normal;
 
 	// find the best edges
 	// note that normal goes from A body to B, so we have to reverse normal for polygon B
-	/*ClippingAlgo::CPEdge ref = polygonA->GetTheBestClippingEdge(polygonATransform, normal);
+	ClippingAlgo::CPEdge ref = polygonA->GetTheBestClippingEdge(polygonATransform, normal);
 	ClippingAlgo::CPEdge inc = polygonB->GetTheBestClippingEdge(polygonBTransform, -normal);
 	
 	bool flip = false; // if A is inc and B is ref than we will have to flip normal in further code
@@ -1030,13 +1060,12 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	{
 		clippedPoinst.Size--;
 	}
+
 	/*Line refLine(ref.A, ref.B, 4.0f, sf::Color(200.0f, 0.0f, 50.0f, 160.0f));
 	Line incLine(inc.A, inc.B, 4.0f, sf::Color(0.0f, 200.0f, 50.0f, 160.0f));
 
 	VisualGizmos::DrawOnce(refLine);
 	VisualGizmos::DrawOnce(incLine);*/
-
-
 
 
 	/*sf::VertexArray arr(sf::PrimitiveType::Lines, 2);
@@ -1047,7 +1076,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	arr[0].color = sf::Color::Black;
 	arr[1].color = sf::Color::Green;
 
-	VisualGizmos::DrawOnce(arr);
+	VisualGizmos::DrawOnce(arr);*/
 
 	if (clippedPoinst.Size == 1)
 	{
@@ -1202,7 +1231,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePolygonCollisionPoint
 Basic::ClippingAlgo::ClippedPoints Basic::ClippingAlgo::Clip(
 	const sf::Vector2f& vertex1, const sf::Vector2f& vertex2, const sf::Vector2f& refVec, float dotProduct)
 {
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 	ClippedPoints clippedPoints;
 

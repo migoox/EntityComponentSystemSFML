@@ -77,6 +77,7 @@ namespace Basic {
 
 		const size_t MAX_EPA_ITERATIONS = 1000;
 		const float TOLERANCE = 0.005f;
+		const float DISTANCE_TOLERANCE = 0.01f;
 
 		struct EPAEdge
 		{

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 namespace Basic {
-	namespace MathFunctions {
+	namespace Maths {
 		float DistanceFromLine(sf::Vector2f point, sf::Vector2f lineA, sf::Vector2f lineB);
 		float Distance(sf::Vector2f pointA, sf::Vector2f pointB);
 		float VectorDistance(sf::Vector2f vector);

@@ -63,8 +63,8 @@ namespace Basic {
 
 				sf::Vector2f n = collision.Points.Normal; // collision normal
 
-				using MathFunctions::Cross;
-				using MathFunctions::Dot;
+				using Maths::Cross;
+				using Maths::Dot;
 
 				// find out which of the items are solid and fix their positions
 				if (colliderA.Item->Movable && colliderB.Item->Movable)

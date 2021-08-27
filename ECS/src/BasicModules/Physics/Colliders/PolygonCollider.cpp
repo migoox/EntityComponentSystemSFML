@@ -2,7 +2,7 @@
 #include <iostream>
 bool Basic::PolygonHelpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p)
 {
-	using MathFunctions::Cross;
+	using Maths::Cross;
 
 	if (Cross(b - a, p - a) <= 0.0f &&
 		Cross(c - b, p - b) <= 0.0f &&
@@ -125,7 +125,7 @@ bool Basic::PolygonCollider::IsSimple(const std::vector<sf::Vector2f>& vertices)
 
 bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2f>& vertices)
 {
-	using MathFunctions::Cross;
+	using Maths::Cross;
 
 	// going through all of the vertices
 	for (int i = 0; i < vertices.size(); i++)
@@ -149,7 +149,7 @@ bool Basic::PolygonCollider::ContainsColinearEdges(const std::vector<sf::Vector2
 
 bool Basic::PolygonCollider::IsPolygonConvex(const std::vector<sf::Vector2f>& vertices)
 {
-	using MathFunctions::Cross;
+	using Maths::Cross;
 
 	// algorithm is going to check if there is a angle inside of the polygon
 	// which is greater than 90 degrees
@@ -205,7 +205,7 @@ void Basic::PolygonCollider::Triangulate(const std::vector<sf::Vector2f>& vertic
 {
 	// ear clipping algorithm
 	// this method expects correct polygon!
-	using MathFunctions::Cross;
+	using Maths::Cross;
 
 	// clear triangles
 	triangles.clear();
@@ -516,7 +516,7 @@ sf::Vector2f Basic::PolygonCollider::FindFurthestPointInDirection(const Transfor
 
 	assert(m_Convex && "PhysicsEngine: Can't find furthest point, since polygon is concave.");
 
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 
 	// prepare values
@@ -544,7 +544,7 @@ int Basic::PolygonCollider::FindFurthestPointInDirectionIndex(const Transform& t
 
 	assert(m_Convex && "PhysicsEngine: Can't find furthest point, since polygon is concave.");
 
-	using MathFunctions::Dot;
+	using Maths::Dot;
 
 
 	// prepare values
@@ -582,8 +582,8 @@ bool Basic::PolygonCollider::ContainsPoint(sf::Vector2f point)
 
 Basic::ClippingAlgo::CPEdge Basic::PolygonCollider::GetTheBestClippingEdge(const Transform& transform, sf::Vector2f normal) const
 {
-	using MathFunctions::Dot;
-	using MathFunctions::NormalizeVector;
+	using Maths::Dot;
+	using Maths::NormalizeVector;
 
 	// update global vertex array
 	UpdateGlobalVertices(transform);
@@ -615,7 +615,7 @@ Basic::ClippingAlgo::CPEdge Basic::PolygonCollider::GetTheBestClippingEdge(const
 
 		
 
-		result.Distance = MathFunctions::Distance(result.A, result.B);
+		result.Distance = Maths::Distance(result.A, result.B);
 		result.Max = furthestPoint;
 	}
 	else
@@ -631,7 +631,7 @@ Basic::ClippingAlgo::CPEdge Basic::PolygonCollider::GetTheBestClippingEdge(const
 
 		
 
-		result.Distance = MathFunctions::Distance(result.A, result.B);
+		result.Distance = Maths::Distance(result.A, result.B);
 		result.Max = furthestPoint;
 	}
 
