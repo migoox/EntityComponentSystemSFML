@@ -64,7 +64,7 @@ namespace Basic {
 			const ColliderItem* colliderB, const Transform& transformB, 
 			sf::Vector2f direction);
 
-		CollisionPoints AlgorithmWithEPA(
+		CollisionManifold AlgorithmWithEPA(
 			const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB);
 
@@ -90,7 +90,7 @@ namespace Basic {
 
 		EPAEdge FindClosestEdge(const std::vector<sf::Vector2f>& polytope);
 
-		CollisionPoints GetMTV(const ColliderItem* colliderA, const Transform& transformA,
+		CollisionManifold GetMTV(const ColliderItem* colliderA, const Transform& transformA,
 			const ColliderItem* colliderB, const Transform& transformB,
 			const GJK::Simplex& simplex);
 	}
@@ -129,39 +129,39 @@ namespace Basic {
 		ClippedPoints Clip(const sf::Vector2f& vertex1, const sf::Vector2f& vertex2, const sf::Vector2f& refVec, float dotProduct);
 	}
 	namespace CollisionDetection {
-		CollisionPoints FindCircleCircleCollisionPoints(
+		CollisionManifold FindCircleCircleCollisionPoints(
 			const CircleCollider* circleA, const Transform& transformA,
 			const CircleCollider* circleB, const Transform& transformB);
 
-		CollisionPoints FindCirclePlaneCollisionPoints(
+		CollisionManifold FindCirclePlaneCollisionPoints(
 			const CircleCollider* circleA, const Transform& circleATransform,
 			const PlaneCollider* planeA, const Transform& planeBTransform);
 
-		CollisionPoints FindPlaneCircleCollisionPoints(
+		CollisionManifold FindPlaneCircleCollisionPoints(
 			const PlaneCollider* planeA, const Transform& planeATransform,
 			const CircleCollider* circleB, const Transform& circleBTransform);
 
-		CollisionPoints FindPlanePlaneCollisionPoints(
+		CollisionManifold FindPlanePlaneCollisionPoints(
 			const PlaneCollider* planeA, const Transform& planeATransform,
 			const PlaneCollider* planeB, const Transform& planeBTransform);
 
-		CollisionPoints FindPolygonPolygonCollisionPoints(
+		CollisionManifold FindPolygonPolygonCollisionPoints(
 			const PolygonCollider* polygonA, const Transform& polygonATransform,
 			const PolygonCollider* polygonB, const Transform& polygonBTransform);
 
-		CollisionPoints FindPolygonCircleCollisionPoints(
+		CollisionManifold FindPolygonCircleCollisionPoints(
 			const PolygonCollider* polygonA, const Transform& polygonATransform,
 			const CircleCollider* circleB, const Transform& circleBTransform);
 
-		CollisionPoints FindCirclePolygonCollisionPoints(
+		CollisionManifold FindCirclePolygonCollisionPoints(
 			const CircleCollider* circleA, const Transform& circleBTransform,
 			const PolygonCollider* polygonB, const Transform& polygonBTransform);
 
-		CollisionPoints FindPolygonPlaneCollisionPoints(
+		CollisionManifold FindPolygonPlaneCollisionPoints(
 			const PolygonCollider* polygonA, const Transform& polygonATransform,
 			const PlaneCollider* planeB, const Transform& planeBTransform);
 
-		CollisionPoints FindPlanePolygonCollisionPoints(
+		CollisionManifold FindPlanePolygonCollisionPoints(
 			const PlaneCollider* planeA, const Transform& planeATransform,
 			const PolygonCollider* polygonB, const Transform& polygonBTransform);
 	}

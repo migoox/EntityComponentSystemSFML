@@ -44,7 +44,7 @@ namespace Basic {
 		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override;
 
 		// collision tests
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const ColliderItem* collider,
 			const Transform& colliderTransform) const override
@@ -52,7 +52,7 @@ namespace Basic {
 			return collider->TestCollision(colliderTransform, this, transform);
 		}
 
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const CircleCollider* circleCollider,
 			const Transform& circleTransform) const override
@@ -60,7 +60,7 @@ namespace Basic {
 			return CollisionDetection::FindCirclePlaneCollisionPoints(circleCollider, circleTransform, this, transform);
 		}
 
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const override
@@ -68,7 +68,7 @@ namespace Basic {
 			return CollisionDetection::FindPlanePlaneCollisionPoints(planeCollider, planeTransform, this, transform);
 		}
 
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const PolygonCollider* polygonCollider,
 			const Transform& polygonTransform) const override

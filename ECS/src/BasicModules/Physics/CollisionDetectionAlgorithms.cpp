@@ -149,14 +149,14 @@ sf::Vector2f Basic::GJK::SupportFunction(
 		- colliderB->FindFurthestPointInDirection(transformB, -direction);
 }
 
-Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
+Basic::CollisionManifold Basic::GJK::AlgorithmWithEPA(
 	const ColliderItem* colliderA, const Transform& transformA,
 	const ColliderItem* colliderB, const Transform& transformB)
 {
 	using Maths::Dot;
 
-	CollisionPoints collPoints;
-	collPoints.HasCollision = false;
+	CollisionManifold manifold;
+	manifold.HasCollision = false;
 
 	// first direction - vector from center of A to B
 	sf::Vector2f direction = Maths::NormalizeVector(
@@ -185,7 +185,7 @@ Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
 		if (Dot(A, direction) <= 0.0f)
 		{
 			// there is no collision
-			return collPoints;
+			return manifold;
 		}
 
 		// if point is in proper region,
@@ -202,16 +202,16 @@ Basic::CollisionPoints Basic::GJK::AlgorithmWithEPA(
 			 
 			std::cout << "collision!" << Game::DeltaTime().asSeconds() << "\n";
 			
-			collPoints = EPA::GetMTV(
+			manifold = EPA::GetMTV(
 				colliderA, transformA,
 				colliderB, transformB, simplex);
 
-			return collPoints;
+			return manifold;
 		}
 	}
 
 	// shouldn't happen
-	return collPoints;
+	return manifold;
 }
 
 bool Basic::GJK::Algorithm(
@@ -318,13 +318,13 @@ Basic::EPA::EPAEdge Basic::EPA::FindClosestEdge(
 	return closestEdge;
 }
 
-Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const Transform& transformA,
+Basic::CollisionManifold Basic::EPA::GetMTV(const ColliderItem* colliderA, const Transform& transformA,
 	const ColliderItem* colliderB, const Transform& transformB,
 	const GJK::Simplex& simplex)
 {
 	using Maths::Dot;
 
-	CollisionPoints collPoints;
+	CollisionManifold manifold;
 
 	// pass simplex to polytope's points container
 	std::vector<sf::Vector2f> polytope(simplex.begin(), simplex.end());
@@ -337,9 +337,9 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 		if (iterationsCount > MAX_EPA_ITERATIONS)
 		{
 			// infinite loop
-			collPoints.Normal = sf::Vector2f(0.0f, 0.0f);
-			collPoints.Depth = 0.0f;
-			return collPoints;
+			manifold.Normal = sf::Vector2f(0.0f, 0.0f);
+			manifold.Depth = 0.0f;
+			return manifold;
 		}
 		iterationsCount++;
 
@@ -360,12 +360,12 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 		if(closestEdge.Distance < DISTANCE_TOLERANCE)
 		{
 			// set coll points
-			collPoints.HasCollision = true;
-			collPoints.Normal = -closestEdge.Normal;
-			collPoints.Depth = closestEdge.Distance;
+			manifold.HasCollision = true;
+			manifold.Normal = -closestEdge.Normal;
+			manifold.Depth = closestEdge.Distance;
 
 			// end of algorithm
-			return collPoints;
+			return manifold;
 		}
 
 		float newDistance = Dot(supportPoint, closestEdge.Normal); 
@@ -374,12 +374,12 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 		if (newDistance - closestEdge.Distance < TOLERANCE)
 		{
 			//  set coll points
-			collPoints.HasCollision = true;
-			collPoints.Normal = -closestEdge.Normal;
-			collPoints.Depth = closestEdge.Distance;
+			manifold.HasCollision = true;
+			manifold.Normal = -closestEdge.Normal;
+			manifold.Depth = closestEdge.Distance;
 
 			// end of algorithm
-			return collPoints;
+			return manifold;
 		}
 
 		// if condition wasn't met, expand our polytope
@@ -388,7 +388,7 @@ Basic::CollisionPoints Basic::EPA::GetMTV(const ColliderItem* colliderA, const T
 	}
 
 	// shouldn't happen
-	return collPoints;
+	return manifold;
 }
 
 bool Basic::SAT::Algorithm(
@@ -624,7 +624,7 @@ bool Basic::SAT::Algorithm(const std::array<sf::Vector2f, 3>& triangleA, const s
 
 // COLLISION DETECTION FUNCTIONS
 
-Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindCircleCircleCollisionPoints(
 	const CircleCollider* circleA, const Transform& transformA,
 	const CircleCollider* circleB, const Transform& transformB)
 {
@@ -634,22 +634,22 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCircleCircleCollisionPoint
 	float distanceBetweenCenters = sqrt(pow(globalPosition1.x - globalPosition2.x, 2) +
 		pow(globalPosition1.y - globalPosition2.y, 2));
 
-	CollisionPoints collPoints; // default parameters
+	CollisionManifold manifold; // default parameters
 
 	if (distanceBetweenCenters <= circleA->Radius() + circleB->Radius())
 	{
 		// collision
-		collPoints.HasCollision = true;
-		collPoints.Normal = Maths::NormalizeVector(globalPosition1 - globalPosition2);
-		collPoints.Depth = circleA->Radius() + circleB->Radius() - Maths::Distance(globalPosition1, globalPosition2);
-		collPoints.A = globalPosition1 - collPoints.Normal * circleA->Radius();
-		collPoints.B = globalPosition2 + collPoints.Normal * circleB->Radius();
+		manifold.HasCollision = true;
+		manifold.Normal = Maths::NormalizeVector(globalPosition1 - globalPosition2);
+		manifold.Depth = circleA->Radius() + circleB->Radius() - Maths::Distance(globalPosition1, globalPosition2);
+		manifold.A = globalPosition1 - manifold.Normal * circleA->Radius();
+		manifold.B = globalPosition2 + manifold.Normal * circleB->Radius();
 	}
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindCirclePlaneCollisionPoints(
 	const CircleCollider* circleA, const Transform& circleATransform,
 	const PlaneCollider* planeB, const Transform& planeBTransform)
 {
@@ -730,7 +730,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 		}
 	}*/
 
-	CollisionPoints collPoints;
+	CollisionManifold manifold;
 
 	// collision detection without resolution
 	// if one of the colliders is described as not to solve
@@ -739,34 +739,34 @@ Basic::CollisionPoints Basic::CollisionDetection::FindCirclePlaneCollisionPoints
 		/*collPoints.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
 			&polygon2->GlobalVertices(polygon2Transform));*/
 
-		collPoints.HasCollision = GJK::Algorithm(circleA, circleATransform,
+		manifold.HasCollision = GJK::Algorithm(circleA, circleATransform,
 			planeB, planeBTransform);
 
-		collPoints.Resolvable = false;
+		manifold.Resolvable = false;
 
-		return collPoints;
+		return manifold;
 	}
 
 	// collision detection, with resolution
-	collPoints = GJK::AlgorithmWithEPA(circleA, circleATransform,
+	manifold = GJK::AlgorithmWithEPA(circleA, circleATransform,
 		planeB, planeBTransform);
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPlaneCircleCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindPlaneCircleCollisionPoints(
 	const PlaneCollider* planeA, const Transform& planeATransform,
 	const CircleCollider* circleB, const Transform& circleBTransform)
 {
-	CollisionPoints collPoints = FindCirclePlaneCollisionPoints(circleB, circleBTransform, planeA, planeATransform);
+	CollisionManifold manifold = FindCirclePlaneCollisionPoints(circleB, circleBTransform, planeA, planeATransform);
 
-	std::swap(collPoints.A, collPoints.B);
-	collPoints.Normal *= (-1.0f);
+	std::swap(manifold.A, manifold.B);
+	manifold.Normal *= (-1.0f);
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 	const PlaneCollider* planeA, const Transform& planeATransform,
 	const PlaneCollider* planeB, const Transform& planeBTransform)
 {
@@ -779,12 +779,12 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 	sf::Vector2f pointB2 = planeB->GetGlobalBPoint(planeBTransform);
 
 	// creating collision points
-	CollisionPoints collPoints;
-	collPoints.Resolvable = false; // since that, it is not necessary to count collision points
+	CollisionManifold manifold;
+	manifold.Resolvable = false; // since that, it is not necessary to count collision points
 
 	if (pointA1.x == pointB1.x && pointA2.x == pointB2.x) // no intersection (both are vertical)
 	{
-		collPoints.HasCollision = false;
+		manifold.HasCollision = false;
 	}
 	else
 	{
@@ -809,7 +809,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 					if (intersectionPoint.y >= pointA2.y && intersectionPoint.y <= pointB2.y ||
 						intersectionPoint.y <= pointA2.y && intersectionPoint.y >= pointB2.y)
 					{
-						collPoints.HasCollision = true;
+						manifold.HasCollision = true;
 					}
 				}
 			}
@@ -835,7 +835,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 					if (intersectionPoint.y >= pointA1.y && intersectionPoint.y <= pointB1.y ||
 						intersectionPoint.y <= pointA1.y && intersectionPoint.y >= pointB1.y)
 					{
-						collPoints.HasCollision = true;
+						manifold.HasCollision = true;
 					}
 				}
 			}
@@ -848,7 +848,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 
 			if (a1 == a2) // no intersection (they are in parallel to each other) 
 			{
-				collPoints.HasCollision = false;
+				manifold.HasCollision = false;
 			}
 			else // line functions are intersecting with each other
 			{
@@ -872,7 +872,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 							if (intersectionPoint.y >= pointA1.y && intersectionPoint.y <= pointB1.y ||
 								intersectionPoint.y <= pointA1.y && intersectionPoint.y >= pointB1.y)
 							{
-								collPoints.HasCollision = true;
+								manifold.HasCollision = true;
 							}
 						}
 					}
@@ -881,23 +881,23 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPlanePlaneCollisionPoints(
 		}
 	}
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPolygonCollisionPoints(
 	const PolygonCollider* polygonA, const Transform& polygonATransform,
 	const PolygonCollider* polygonB, const Transform& polygonBTransform)
 {
 	using Maths::Dot;
 	using Maths::NormalizeVector;
 
-	CollisionPoints collPoints;
+	CollisionManifold manifold;
 
 	// convex collision detection (without resolving it)
 	if (!polygonA->IsConvex())
 	{
-		collPoints.HasCollision = false;
-		collPoints.Resolvable = false;
+		manifold.HasCollision = false;
+		manifold.Resolvable = false;
 
 		auto& triangles = polygonA->GlobalTriangles(polygonATransform);
 		auto& vertices = polygonB->GlobalVertices(polygonBTransform);
@@ -905,17 +905,17 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 		{
 			if (SAT::Algorithm(vertices, triangle))
 			{
-				collPoints.HasCollision = true;
+				manifold.HasCollision = true;
 				break;
 			}
 		}
 
-		return collPoints;
+		return manifold;
 	}
 	else if (!polygonB->IsConvex())
 	{
-		collPoints.HasCollision = false;
-		collPoints.Resolvable = false;
+		manifold.HasCollision = false;
+		manifold.Resolvable = false;
 
 		auto& triangles = polygonB->GlobalTriangles(polygonBTransform);
 		auto& vertices = polygonA->GlobalVertices(polygonATransform);
@@ -923,17 +923,17 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 		{
 			if (SAT::Algorithm(vertices, triangle))
 			{
-				collPoints.HasCollision = true;
+				manifold.HasCollision = true;
 				break;
 			}
 		}
 
-		return collPoints;
+		return manifold;
 	}
 	else if(!polygonA->IsConvex() && !polygonB->IsConvex()) // both colliders aren't convex
 	{
-		collPoints.HasCollision = false;
-		collPoints.Resolvable = false;
+		manifold.HasCollision = false;
+		manifold.Resolvable = false;
 
 		auto& trianglesA = polygonA->GlobalTriangles(polygonATransform);
 		auto& trianglesB = polygonB->GlobalTriangles(polygonBTransform);
@@ -944,13 +944,13 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 			{
 				if (SAT::Algorithm(triangleA, triangleB))
 				{
-					collPoints.HasCollision = true;
+					manifold.HasCollision = true;
 					break;
 				}
 			}
 		}
 
-		return collPoints;
+		return manifold;
 	}
 
 	// convex vs convex collision detection, without resolving
@@ -960,16 +960,16 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 		/*collPoints.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
 			&polygon2->GlobalVertices(polygon2Transform));*/
 
-		collPoints.HasCollision = GJK::Algorithm(polygonA, polygonATransform,
+		manifold.HasCollision = GJK::Algorithm(polygonA, polygonATransform,
 			polygonB, polygonBTransform);
 
-		collPoints.Resolvable = false;
+		manifold.Resolvable = false;
 
-		return collPoints;
+		return manifold;
 	}
 
 	// convex vs convex collision detection, with resolving
-	collPoints = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
+	manifold = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		polygonB, polygonBTransform);
 
 
@@ -989,8 +989,8 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 
 	
 	// if there is no collision - end function
-	if (!collPoints.HasCollision)
-		return collPoints;
+	if (!manifold.HasCollision)
+		return manifold;
 	
 
 	// else - get collision contact points(manifold points)
@@ -1004,7 +1004,7 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	// but in clipping we need normal which points from A shape to B shape
 	// so that we have to reverse current normal 
 
-	sf::Vector2f normal = -collPoints.Normal;
+	sf::Vector2f normal = -manifold.Normal;
 
 	// find the best edges
 	// note that normal goes from A body to B, so we have to reverse normal for polygon B
@@ -1121,22 +1121,22 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPolygonCollisionPoi
 	VisualGizmos::DrawOnce(circle2);
 	*/
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPolygonCircleCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindPolygonCircleCollisionPoints(
 	const PolygonCollider* polygonA, const Transform& polygonATransform,
 	const CircleCollider* circleB, const Transform& circleBTransform)
 {
-	CollisionPoints collPoints;
+	CollisionManifold manifold;
 
 	// concave polygon vs circle, whitout resolution
 	if (!polygonA->IsConvex())
 	{
-		collPoints.HasCollision = false;
-		collPoints.Resolvable = false;
+		manifold.HasCollision = false;
+		manifold.Resolvable = false;
 
-		return collPoints;
+		return manifold;
 	}
 
 
@@ -1144,51 +1144,51 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonCircleCollisionPoin
 	// if one of the colliders is described as not to solve
 	if (!polygonA->Solve || !circleB->Solve)
 	{
-		/*collPoints.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
+		/*manifold.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
 			&polygon2->GlobalVertices(polygon2Transform));*/
 
-		collPoints.HasCollision = GJK::Algorithm(polygonA, polygonATransform,
+		manifold.HasCollision = GJK::Algorithm(polygonA, polygonATransform,
 			circleB, circleBTransform);
 
-		collPoints.Resolvable = false;
+		manifold.Resolvable = false;
 
-		return collPoints;
+		return manifold;
 	}
 
 	// collision detection, with resolution
-	collPoints = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
+	manifold = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		circleB, circleBTransform);
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindCirclePolygonCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindCirclePolygonCollisionPoints(
 	const CircleCollider* circleA, const Transform& circleATransform,
 	const PolygonCollider* polygonB, const Transform& polygonBTransform)
 {
-	CollisionPoints collPoints = FindPolygonCircleCollisionPoints(
+	CollisionManifold manifold = FindPolygonCircleCollisionPoints(
 		polygonB, polygonBTransform, 
 		circleA, circleATransform);
 
-	std::swap(collPoints.A, collPoints.B);
-	collPoints.Normal = -collPoints.Normal;
+	std::swap(manifold.A, manifold.B);
+	manifold.Normal = -manifold.Normal;
 	
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPlaneCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPlaneCollisionPoints(
 	const PolygonCollider* polygonA, const Transform& polygonATransform,
 	const PlaneCollider* planeB, const Transform& planeBTransform)
 {
-	CollisionPoints collPoints;
+	CollisionManifold manifold;
 
 	// concave polygon vs circle collision detection without resolution
 	if (!polygonA->IsConvex())
 	{
-		collPoints.HasCollision = false;
-		collPoints.Resolvable = false;
+		manifold.HasCollision = false;
+		manifold.Resolvable = false;
 
-		return collPoints;
+		return manifold;
 	}
 
 
@@ -1196,36 +1196,36 @@ Basic::CollisionPoints Basic::CollisionDetection::FindPolygonPlaneCollisionPoint
 	// if one of the colliders is described as not to solve
 	if (!polygonA->Solve || !planeB->Solve)
 	{
-		/*collPoints.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
+		/*manifold.HasCollision = SAT::Algorithm(&polygon1->GlobalVertices(polygon1Transform),
 			&polygon2->GlobalVertices(polygon2Transform));*/
 
-		collPoints.HasCollision = GJK::Algorithm(polygonA, polygonATransform,
+		manifold.HasCollision = GJK::Algorithm(polygonA, polygonATransform,
 			planeB, planeBTransform);
 
-		collPoints.Resolvable = false;
+		manifold.Resolvable = false;
 
-		return collPoints;
+		return manifold;
 	}
 
 	// collision detection, with resolution
-	collPoints = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
+	manifold = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		planeB, planeBTransform);
 
-	return collPoints;
+	return manifold;
 }
 
-Basic::CollisionPoints Basic::CollisionDetection::FindPlanePolygonCollisionPoints(
+Basic::CollisionManifold Basic::CollisionDetection::FindPlanePolygonCollisionPoints(
 	const PlaneCollider* planeA, const Transform& planeATransform,
 	const PolygonCollider* polygonB, const Transform& polygonBTransform)
 {
-	CollisionPoints collPoints = FindPolygonPlaneCollisionPoints(
+	CollisionManifold manifold = FindPolygonPlaneCollisionPoints(
 		polygonB, polygonBTransform,
 		planeA, planeATransform);
 
-	std::swap(collPoints.A, collPoints.B);
-	collPoints.Normal = -collPoints.Normal;
+	std::swap(manifold.A, manifold.B);
+	manifold.Normal = -manifold.Normal;
 
-	return collPoints;
+	return manifold;
 }
 
 Basic::ClippingAlgo::ClippedPoints Basic::ClippingAlgo::Clip(

@@ -32,12 +32,12 @@ namespace Basic {
 				// find out which of the items are solid and fix their positions
 				if (colliderA.Item->Movable)
 				{
-					fixer = collision.Points.Depth * collision.Points.Normal / 2.0f;
+					fixer = collision.Manifold.Depth * collision.Manifold.Normal / 2.0f;
 					collision.ObjectA.GetTransform().move(fixer);
 				}
 				else
 				{
-					fixer = collision.Points.Depth * collision.Points.Normal;
+					fixer = collision.Manifold.Depth * collision.Manifold.Normal;
 					collision.ObjectA.GetTransform().move(fixer);
 				}
 			}

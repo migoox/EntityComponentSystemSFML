@@ -61,7 +61,7 @@ namespace Basic {
 				sf::Vector2f gA = colliderA.Item->GetGlobalCenterOfGravity(collision.ObjectA.GetTransform());
 				sf::Vector2f gB = colliderB.Item->GetGlobalCenterOfGravity(collision.ObjectB.GetTransform());
 
-				sf::Vector2f n = collision.Points.Normal; // collision normal
+				sf::Vector2f n = collision.Manifold.Normal; // collision normal
 
 				using Maths::Cross;
 				using Maths::Dot;
@@ -70,7 +70,7 @@ namespace Basic {
 				if (colliderA.Item->Movable && colliderB.Item->Movable)
 				{
 					// find point of contact:
-					sf::Vector2f pointOfContact = collision.Points.A + collision.Points.Depth * collision.Points.Normal / 2.0f;
+					sf::Vector2f pointOfContact = collision.Manifold.A + collision.Manifold.Depth * collision.Manifold.Normal / 2.0f;
 
 					// vector from center of gravity to point of contact for both bodies
 					sf::Vector2f rA = pointOfContact - gA, rB = pointOfContact - gB;
@@ -159,7 +159,7 @@ namespace Basic {
 				else if (colliderA.Item->Movable)
 				{
 					// find point of contact:
-					sf::Vector2f pointOfContact = collision.Points.B;
+					sf::Vector2f pointOfContact = collision.Manifold.B;
 
 					// vector from center of gravity to point of contact for both bodies
 					sf::Vector2f rA = pointOfContact - gA, rB = pointOfContact - gB;
@@ -240,7 +240,7 @@ namespace Basic {
 				else if (colliderB.Item->Movable)
 				{
 					// find point of contact:
-					sf::Vector2f pointOfContact = collision.Points.A;
+					sf::Vector2f pointOfContact = collision.Manifold.A;
 
 					// vector from center of gravity to point of contact for both bodies
 					sf::Vector2f rA = pointOfContact - gA, rB = pointOfContact - gB;

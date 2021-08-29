@@ -144,7 +144,7 @@ namespace Basic {
 		ClippingAlgo::CPEdge GetTheBestClippingEdge(const Transform& transform, sf::Vector2f normal) const;
 
 		// collision tests
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const ColliderItem* collider,
 			const Transform& colliderTransform) const override
@@ -152,7 +152,7 @@ namespace Basic {
 			return collider->TestCollision(colliderTransform, this, transform);
 		}
 
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const CircleCollider* circleCollider,
 			const Transform& circleTransform) const override
@@ -160,7 +160,7 @@ namespace Basic {
 			return CollisionDetection::FindCirclePolygonCollisionPoints(circleCollider, circleTransform, this, transform);
 		}
 
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const PlaneCollider* planeCollider,
 			const Transform& planeTransform) const override
@@ -168,7 +168,7 @@ namespace Basic {
 			return CollisionDetection::FindPlanePolygonCollisionPoints(planeCollider, planeTransform, this, transform);
 		}
 
-		CollisionPoints TestCollision(
+		CollisionManifold TestCollision(
 			const Transform& transform,
 			const PolygonCollider* polygonCollider,
 			const Transform& polygonTransform) const override

@@ -11,7 +11,7 @@ using ECSSystem = Basic::System;
 using Basic::GameObject;
 using Basic::Entity;
 
-using Basic::CollisionPoints;
+using Basic::CollisionManifold;
 using Basic::CollisionInfo;
 
 using Basic::Solver;
@@ -75,7 +75,7 @@ public:
 						auto& transformB = gameObjectB.GetTransform();
 
 						// collider A collides with collider B and returns collision points
-						CollisionPoints collPoints1 = colliderA->TestCollision(
+						CollisionManifold collPoints1 = colliderA->TestCollision(
 							transformA, colliderB.Item, transformB);
 
 						// if collision is detected
@@ -97,7 +97,7 @@ public:
 							collisions.emplace_back(gameObjectA, gameObjectB, collPoints1);
 
 							// reversed collision points
-							CollisionPoints collPoints2; 
+							CollisionManifold collPoints2;
 							collPoints2.A = collPoints1.B;
 							collPoints2.B = collPoints1.A;
 							collPoints2.Depth = collPoints1.Depth;
