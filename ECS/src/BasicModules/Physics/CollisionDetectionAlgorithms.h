@@ -77,7 +77,6 @@ namespace Basic {
 
 		const size_t MAX_EPA_ITERATIONS = 1000;
 		const float TOLERANCE = 0.005f;
-		const float DISTANCE_TOLERANCE = 0.01f;
 
 		struct EPAEdge
 		{
@@ -127,6 +126,8 @@ namespace Basic {
 			const sf::Vector2f& incA, const sf::Vector2f& incB, ContactPoints& points);
 	}
 	namespace CollisionDetection {
+		const float DEPTH_TOLERANCE = 0.01f;
+
 		CollisionManifold FindCircleCircleCollisionPoints(
 			const CircleCollider* circleA, const Transform& transformA,
 			const CircleCollider* circleB, const Transform& transformB);

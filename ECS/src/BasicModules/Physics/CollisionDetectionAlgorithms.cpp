@@ -355,7 +355,7 @@ Basic::CollisionManifold Basic::EPA::GetMTV(const ColliderItem* colliderA, const
 
 		// prepare support point's edge distance 
 		// first argument is supportPoint - origin (origin->supportPoint vector)
-		if(closestEdge.Distance < DISTANCE_TOLERANCE)
+		if(closestEdge.Distance < CollisionDetection::DEPTH_TOLERANCE)
 		{
 			// set coll points
 			manifold.HasCollision = true;
@@ -640,8 +640,37 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCircleCircleCollisionPoi
 		manifold.HasCollision = true;
 		manifold.Normal = Maths::NormalizeVector(globalPosition1 - globalPosition2);
 		manifold.Depth = circleA->Radius() + circleB->Radius() - Maths::Distance(globalPosition1, globalPosition2);
-		manifold.A = globalPosition1 - manifold.Normal * circleA->Radius();
-		manifold.B = globalPosition2 + manifold.Normal * circleB->Radius();
+		
+		// objects are touching and not colliding
+		if (manifold.Depth < DEPTH_TOLERANCE)
+			manifold.Depth = 0.0f;
+
+		if (manifold.Depth == 0.0f)
+			return manifold;
+
+		// find contact point
+		ContactPoints contactPoints = 
+		{ circleB->GetGlobalCenterOfGravity(transformB) + circleB->Radius() * manifold.Normal };
+
+		// fix contact point
+		if (circleB->Movable)
+		{
+			sf::Vector2f fixer = -manifold.Depth * manifold.Normal;
+
+			if (circleA->Movable)
+				fixer *= 0.5f;
+
+			contactPoints[0] += fixer;
+
+			CircleShape circle(2.0f);
+			circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+			circle.setOrigin(2.0f, 2.0f);
+			circle.setPosition(contactPoints[0]);
+
+			VisualGizmos::DrawOnce(circle);
+		}
+
+		manifold.Points = contactPoints;
 	}
 
 	return manifold;
@@ -651,83 +680,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCirclePlaneCollisionPoin
 	const CircleCollider* circleA, const Transform& circleATransform,
 	const PlaneCollider* planeB, const Transform& planeBTransform)
 {
-	/*float pi = 3.141592653f;
-
-	// counting points
-	sf::Vector2f pointA = planeB->GetGlobalAPoint(planeBTransform);
-	sf::Vector2f pointB = planeB->GetGlobalBPoint(planeBTransform);
-	sf::Vector2f center = circleA->GetGlobalCenterOfGravity(circleATransform);
-
-	// counting vectors
-	sf::Vector2f PointACenterVector = center - pointA;
-
-	sf::Vector2f ABVector = pointB - pointA;
-
-	sf::Vector2f ShadowVector = Maths::Dot(Maths::NormalizeVector(ABVector), PointACenterVector) * Maths::NormalizeVector(ABVector);
-
-	sf::Vector2f CenterPlaneVector = ShadowVector - PointACenterVector;
-	// create collision points
-	CollisionPoints collPoints;
-
-	if (Maths::Distance(center, pointA) <= circleA->Radius()) // one of the points of edge is inside the circle
-	{
-		collPoints.HasCollision = true;
-
-		// counting collision points
-		if (Maths::VectorDistance(ShadowVector) >= planeB->Distance() ||
-			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
-		{
-			collPoints.B = pointA;
-			collPoints.A = center + Maths::NormalizeVector(collPoints.B - center) * circleA->Radius();
-			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
-		}
-		else // if circle is between points A and B
-		{
-			collPoints.A = center + Maths::NormalizeVector(CenterPlaneVector) * circleA->Radius();
-			collPoints.B = center + CenterPlaneVector;
-			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
-		}
-	}
-	else if (Maths::Distance(center, pointB) <= circleA->Radius()) // one of the points of edge is inside the circle
-	{
-		collPoints.HasCollision = true;
-
-		// counting collision points
-		if (Maths::VectorDistance(ShadowVector) >= planeB->Distance() ||
-			ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y <= 0) // if circle is "outside"
-		{
-			collPoints.B = pointB;
-			collPoints.A = center + Maths::NormalizeVector(collPoints.B - center) * circleA->Radius();
-			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
-		}
-		else
-		{
-			collPoints.A = center + Maths::NormalizeVector(CenterPlaneVector) * circleA->Radius();
-			collPoints.B = center + CenterPlaneVector;
-			collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
-			collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
-		}
-	}
-	else // if circle collides with the line (not with it's points)
-	{
-		if (Maths::VectorDistance(CenterPlaneVector) <= circleA->Radius())
-		{
-			if (Maths::VectorDistance(ShadowVector) <= planeB->Distance() &&
-				ABVector.x * ShadowVector.x + ABVector.y * ShadowVector.y >= 0)
-			{
-				collPoints.HasCollision = true;
-
-				collPoints.A = center + Maths::NormalizeVector(CenterPlaneVector) * circleA->Radius();
-				collPoints.B = center + CenterPlaneVector;
-				collPoints.Normal = Maths::NormalizeVector(collPoints.B - collPoints.A);
-				collPoints.Depth = Maths::Distance(collPoints.A, collPoints.B);
-			}
-		}
-	}*/
-
 	CollisionManifold manifold;
 
 	// collision detection without resolution
@@ -748,6 +700,36 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCirclePlaneCollisionPoin
 	// collision detection, with resolution
 	manifold = GJK::AlgorithmWithEPA(circleA, circleATransform,
 		planeB, planeBTransform);
+
+	if (!manifold.HasCollision)
+		return manifold;
+
+	if (manifold.Depth == 0.0f)
+		return manifold;
+
+	// find contact point
+	ContactPoints contactPoints =
+	{ circleA->GetGlobalCenterOfGravity(circleATransform) + circleA->Radius() * -manifold.Normal };
+
+	// fix contact point
+	if (circleA->Movable)
+	{
+		sf::Vector2f fixer = manifold.Depth * manifold.Normal;
+
+		if (planeB->Movable)
+			fixer *= 0.5f;
+
+		contactPoints[0] += fixer;
+
+		CircleShape circle(2.0f);
+		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle.setOrigin(2.0f, 2.0f);
+		circle.setPosition(contactPoints[0]);
+
+		VisualGizmos::DrawOnce(circle);
+	}
+
+	manifold.Points = contactPoints;
 
 	return manifold;
 }
@@ -1040,7 +1022,8 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPolygonCollisionP
 		float distance2 = Dot(ref.A - contactPoints[1], ref.Normal);
 
 		// if distance1 isn't similar to distance2 remove one point
-		if (!(distance1 < distance2 + 0.01f && distance1 > distance2 - 0.01f))
+		if (!(distance1 < distance2 + DEPTH_TOLERANCE
+			&& distance1 > distance2 - DEPTH_TOLERANCE))
 		{
 			if (distance1 > distance2)
 			{
@@ -1160,6 +1143,36 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonCircleCollisionPo
 	manifold = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		circleB, circleBTransform);
 
+	if (!manifold.HasCollision)
+		return manifold;
+
+	if (manifold.Depth == 0.0f)
+		return manifold;
+
+	// find contact point
+	ContactPoints contactPoints =
+	{ circleB->GetGlobalCenterOfGravity(circleBTransform) + circleB->Radius() * manifold.Normal };
+
+	// fix contact point
+	if (circleB->Movable)
+	{
+		sf::Vector2f fixer = -manifold.Depth * manifold.Normal;
+
+		if (polygonA->Movable)
+			fixer *= 0.5f;
+
+		contactPoints[0] += fixer;
+
+		CircleShape circle(2.0f);
+		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle.setOrigin(2.0f, 2.0f);
+		circle.setPosition(contactPoints[0]);
+
+		VisualGizmos::DrawOnce(circle);
+	}
+
+	manifold.Points = contactPoints;
+
 	return manifold;
 }
 
@@ -1181,6 +1194,8 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPlaneCollisionPoi
 	const PolygonCollider* polygonA, const Transform& polygonATransform,
 	const PlaneCollider* planeB, const Transform& planeBTransform)
 {
+	using Maths::Dot;
+
 	CollisionManifold manifold;
 
 	// concave polygon vs circle collision detection without resolution
@@ -1211,6 +1226,174 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPlaneCollisionPoi
 	// collision detection, with resolution
 	manifold = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		planeB, planeBTransform);
+
+	// if collision didn't occur return manifold
+	if (!manifold.HasCollision)
+		return manifold;
+
+	// do not count collision points if there is no depth of collision
+	// when there is no depth, objects are touching but not colliding
+	if (manifold.Depth == 0.0f)
+		return manifold;
+
+	// in other case start clipping algorithm in order to find contact points
+
+	// 1. Get the best walls of both polygons:
+
+	// it is worth noting that manifold.Normal is in direction in which
+	// object A should be moved to fix collision
+
+	ClippingAlgo::CPEdge ref = polygonA->GetTheBestClippingEdge(polygonATransform, -manifold.Normal);
+
+	// count plane edge
+	ClippingAlgo::CPEdge inc;
+	inc.A = planeB->GetGlobalAPoint(planeBTransform);
+	inc.B = planeB->GetGlobalBPoint(planeBTransform);
+	inc.Distance = Maths::Distance(inc.A, inc.B);
+	inc.FurthestPoint = planeB->GetGlobalAPoint(planeBTransform);
+
+	sf::Vector2f tempVec = inc.B - inc.A;
+
+	inc.Normal = sf::Vector2f(-tempVec.y, tempVec.x);
+
+	if (Dot(polygonA->GetGlobalCenterOfGravity(polygonATransform) - inc.A, inc.Normal) < 0.0f)
+	{
+		inc.Normal = -inc.Normal;
+	}
+
+	// 2. Finding ref and inc edges:
+
+	// by default body A is ref and B is inc
+	// if it's not the case, raise the flag below
+	bool refAndIncAreFlipped = false;
+
+	if (std::abs(Dot(ref.B - ref.A, manifold.Normal)) > std::abs(Dot(inc.B - inc.A, manifold.Normal)))
+	{
+		// if vector of first edge is more perpendicular to normal then second's edge
+		// swap ref and inc(now body A is inc and B is ref)
+		std::swap(ref, inc);
+		refAndIncAreFlipped = true;
+	}
+
+	// 3. Clipping inc edge:
+
+	// initialize contact points
+	ContactPoints contactPoints = { inc.A, inc.B };
+
+	ClippingAlgo::Clip(ref.A, ref.B, inc.A, inc.B, contactPoints);
+	ClippingAlgo::Clip(ref.B, ref.A, contactPoints[0], contactPoints[1], contactPoints);
+
+	// 4. Final Clipping:
+
+	// check if points are on the right side of the reference edge
+	if (Dot(contactPoints[0] - ref.A, ref.Normal) > 0.0f)
+	{
+		// remove first contact point if it's not on the right side of the edge
+		contactPoints = { contactPoints[1] };
+	}
+	if (Dot(contactPoints[1] - ref.A, ref.Normal) > 0.0f)
+	{
+		// remove second point if it's not on the right side of the edge
+		if (contactPoints.Size() == 2)
+		{
+			contactPoints = { contactPoints[0] };
+		}
+		else
+		{
+			contactPoints = { };
+		}
+	}
+
+	// if neither of points has been removed, check if they have the same
+	// distance from the reference edge
+	if (contactPoints.Size() == 2)
+	{
+		float distance1 = Dot(ref.A - contactPoints[0], ref.Normal);
+		float distance2 = Dot(ref.A - contactPoints[1], ref.Normal);
+
+		// if distance1 isn't similar to distance2 remove one point
+		if (!(distance1 < distance2 + DEPTH_TOLERANCE
+			&& distance1 > distance2 - DEPTH_TOLERANCE))
+		{
+			if (distance1 > distance2)
+			{
+				contactPoints = { contactPoints[0] };
+			}
+			else if (distance2 > distance1)
+			{
+				contactPoints = { contactPoints[1] };
+			}
+		}
+	}
+
+	// 5. Fix contact points position:
+
+	if (refAndIncAreFlipped)
+	{
+		// polygonB has ref edge
+		if (planeB->Movable)
+		{
+			// if polygonB is movable that means
+			// that we have to fix contact points
+			// since polygonB will change it's position
+			// after position solving
+
+			sf::Vector2f fixer = manifold.Depth * manifold.Normal;
+
+			if (polygonA->Movable)
+				fixer *= 0.5f;
+
+			for (int i = 0; i < contactPoints.Size(); i++)
+				contactPoints[i] += fixer;
+		}
+	}
+	else
+	{
+		// polygonA has ref edge
+		if (polygonA->Movable)
+		{
+			// if polygonA is movable that means
+			// that we have to fix contact points
+			// since polygonA will change it's position
+			// after position solving
+
+			sf::Vector2f fixer = -manifold.Depth * manifold.Normal;
+
+			if (planeB->Movable)
+				fixer *= 0.5f;
+
+			for (int i = 0; i < contactPoints.Size(); i++)
+				contactPoints[i] += fixer;
+		}
+	}
+
+	// assign counted contactPoints to manifold
+	manifold.Points = contactPoints;
+
+	if (contactPoints.Size() == 2)
+	{
+		CircleShape circle(2.0f);
+		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle.setOrigin(2.0f, 2.0f);
+		circle.setPosition(contactPoints[0]);
+
+		CircleShape circle2(2.0f);
+		circle2.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle2.setOrigin(2.0f, 2.0f);
+		circle2.setPosition(contactPoints[1]);
+
+		VisualGizmos::DrawOnce(circle);
+		VisualGizmos::DrawOnce(circle2);
+	}
+	else
+	{
+		CircleShape circle(2.0f);
+		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle.setOrigin(2.0f, 2.0f);
+		circle.setPosition(contactPoints[0]);
+
+		VisualGizmos::DrawOnce(circle);
+	}
 
 	return manifold;
 }
