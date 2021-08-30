@@ -200,8 +200,6 @@ Basic::CollisionManifold Basic::GJK::AlgorithmWithEPA(
 			// so that collision occured
 			// using EPA, minimum translation vector will be found
 			 
-			std::cout << "collision!" << Game::DeltaTime().asSeconds() << "\n";
-			
 			manifold = EPA::GetMTV(
 				colliderA, transformA,
 				colliderB, transformB, simplex);
@@ -362,7 +360,7 @@ Basic::CollisionManifold Basic::EPA::GetMTV(const ColliderItem* colliderA, const
 			// set coll points
 			manifold.HasCollision = true;
 			manifold.Normal = -closestEdge.Normal;
-			manifold.Depth = closestEdge.Distance;
+			manifold.Depth = 0.0f;
 
 			// end of algorithm
 			return manifold;
@@ -972,154 +970,157 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPolygonCollisionP
 	manifold = GJK::AlgorithmWithEPA(polygonA, polygonATransform,
 		polygonB, polygonBTransform);
 
-
-	//collPoints.HasCollision = false;
-
-	/*sf::VertexArray arr(sf::PrimitiveType::Lines, 2);
-
-	arr[0].position = polygonATransform.getPosition();
-	arr[1].position = polygonATransform.getPosition() + collPoints.Normal * collPoints.Depth;
-
-	arr[0].color = sf::Color::Black;
-	arr[1].color = sf::Color::Green;
-
-	VisualGizmos::DrawOnce(arr);
-
-	return collPoints;*/
-
-	
-	// if there is no collision - end function
+	// if collision didn't occur return manifold
 	if (!manifold.HasCollision)
 		return manifold;
+
+	// do not count collision points if there is no depth of collision
+	// when there is no depth, objects are touching but not colliding
+	if (manifold.Depth == 0.0f)
+		return manifold;
+
+	// in other case start clipping algorithm in order to find contact points
 	
-
-	// else - get collision contact points(manifold points)
-
-	// getting collision contact points using clipping method
-
-	// clipping collision normal
+	// 1. Get the best walls of both polygons:
 	
-	// when we have 2 colliding objects, collPoints.Normal shows direction
-	// in which A object should be moved to fix that collision,
-	// but in clipping we need normal which points from A shape to B shape
-	// so that we have to reverse current normal 
+	// it is worth noting that manifold.Normal is in direction in which
+	// object A should be moved to fix collision
 
-	sf::Vector2f normal = -manifold.Normal;
+	ClippingAlgo::CPEdge ref = polygonA->GetTheBestClippingEdge(polygonATransform, -manifold.Normal);
+	ClippingAlgo::CPEdge inc = polygonB->GetTheBestClippingEdge(polygonBTransform, manifold.Normal);
 
-	// find the best edges
-	// note that normal goes from A body to B, so we have to reverse normal for polygon B
-	ClippingAlgo::CPEdge ref = polygonA->GetTheBestClippingEdge(polygonATransform, normal);
-	ClippingAlgo::CPEdge inc = polygonB->GetTheBestClippingEdge(polygonBTransform, -normal);
-	
-	bool flip = false; // if A is inc and B is ref than we will have to flip normal in further code
+	// 2. Finding ref and inc edges:
 
-	sf::Vector2f refVec = NormalizeVector(ref.B - ref.A);
-	sf::Vector2f incVec = NormalizeVector(inc.B - inc.A);
+	// by default body A is ref and B is inc
+	// if it's not the case, raise the flag below
+	bool refAndIncAreFlipped = false;
 
-	// swap ref and inc if it is necessary
-	if (std::abs(Dot(refVec, normal)) > std::abs(Dot(incVec, normal)))
+	if (std::abs(Dot(ref.B - ref.A, manifold.Normal)) > std::abs(Dot(inc.B - inc.A, manifold.Normal)))
 	{
+		// if vector of first edge is more perpendicular to normal then second's edge
+		// swap ref and inc(now body A is inc and B is ref)
 		std::swap(ref, inc);
-		std::swap(refVec, incVec);
-
-		flip = true;
+		refAndIncAreFlipped = true;
 	}
 
-	// clipping time
+	// 3. Clipping inc edge:
 
-	// first clip
-	ClippingAlgo::ClippedPoints clippedPoinst = ClippingAlgo::Clip(inc.A, inc.B, refVec, Dot(refVec, ref.A));
+	// initialize contact points
+	ContactPoints contactPoints = { inc.A, inc.B };
 
-	// if clipping failed return unresolvable collision result
-	if (clippedPoinst.Size < 2)
+	ClippingAlgo::Clip(ref.A, ref.B, inc.A, inc.B, contactPoints);
+	ClippingAlgo::Clip(ref.B, ref.A, contactPoints[0], contactPoints[1], contactPoints);
+
+	// 4. Final Clipping:
+
+	// check if points are on the right side of the reference edge
+	if (Dot(contactPoints[0] - ref.A, ref.Normal) > 0.0f)
 	{
-		//return collPoints;
+		// remove first contact point if it's not on the right side of the edge
+		contactPoints = { contactPoints[1] };
+	}
+	if (Dot(contactPoints[1] - ref.A, ref.Normal) > 0.0f)
+	{
+		// remove second point if it's not on the right side of the edge
+		if (contactPoints.Size() == 2)
+		{
+			contactPoints = { contactPoints[0] };
+		}
+		else
+		{
+			contactPoints = { };
+		}
 	}
 
-	// second clip
-	clippedPoinst = ClippingAlgo::Clip(clippedPoinst.Points[0], clippedPoinst.Points[1], -refVec, -Dot(refVec, ref.B));
-
-	// if clipping failed return unresolvable collision result
-	if (clippedPoinst.Size < 2)
+	// if neither of points has been removed, check if they have the same
+	// distance from the reference edge
+	if (contactPoints.Size() == 2)
 	{
-		//return collPoints;
+		float distance1 = Dot(ref.A - contactPoints[0], ref.Normal);
+		float distance2 = Dot(ref.A - contactPoints[1], ref.Normal);
+
+		// if distance1 isn't similar to distance2 remove one point
+		if (!(distance1 < distance2 + 0.01f && distance1 > distance2 - 0.01f))
+		{
+			if (distance1 > distance2)
+			{
+				contactPoints = { contactPoints[0] };
+			}
+			else if (distance2 > distance1)
+			{
+				contactPoints = { contactPoints[1] };
+			}
+		}
 	}
 
-	if (flip)
-		ref.Normal = -ref.Normal;
-	
-	float max = Dot(ref.Normal, ref.Max);
+	// 5. Fix contact points position:
 
-	if (Dot(ref.Normal, clippedPoinst.Points[0]) - max < 0.0f)
+	if (refAndIncAreFlipped)
 	{
-		clippedPoinst.Size--;
-		clippedPoinst.Points[0] = clippedPoinst.Points[1];
-	}
+		// polygonB has ref edge
+		if (polygonB->Movable)
+		{
+			// if polygonB is movable that means
+			// that we have to fix contact points
+			// since polygonB will change it's position
+			// after position solving
 
-	if (Dot(ref.Normal, clippedPoinst.Points[1]) - max < 0.0f)
-	{
-		clippedPoinst.Size--;
-	}
+			sf::Vector2f fixer = manifold.Depth * manifold.Normal;
 
-	/*Line refLine(ref.A, ref.B, 4.0f, sf::Color(200.0f, 0.0f, 50.0f, 160.0f));
-	Line incLine(inc.A, inc.B, 4.0f, sf::Color(0.0f, 200.0f, 50.0f, 160.0f));
+			if (polygonA->Movable)
+				fixer *= 0.5f;
 
-	VisualGizmos::DrawOnce(refLine);
-	VisualGizmos::DrawOnce(incLine);*/
-
-
-	/*sf::VertexArray arr(sf::PrimitiveType::Lines, 2);
-
-	arr[0].position = polygonATransform.getPosition();
-	arr[1].position = polygonATransform.getPosition() - collPoints.Normal * collPoints.Depth;
-
-	arr[0].color = sf::Color::Black;
-	arr[1].color = sf::Color::Green;
-
-	VisualGizmos::DrawOnce(arr);*/
-
-	if (clippedPoinst.Size == 1)
-	{
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(1.0f, 1.0f);
-		circle.setPosition(clippedPoinst.Points[0]);
-
-		VisualGizmos::DrawOnce(circle);
-	}
-	else if (clippedPoinst.Size == 2)
-	{
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(1.0f, 1.0f);
-		circle.setPosition(clippedPoinst.Points[0]);
-
-		CircleShape circle2(2.0f);
-		circle2.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle2.setOrigin(1.0f, 1.0f);
-		circle2.setPosition(clippedPoinst.Points[1]);
-
-		VisualGizmos::DrawOnce(circle2);
-		VisualGizmos::DrawOnce(circle);
+			for (int i = 0; i < contactPoints.Size(); i++)
+				contactPoints[i] += fixer;
+		}
 	}
 	else
 	{
-		//std::cout << "no points\n" << Game::DeltaTime().asSeconds() << std::endl;
+		// polygonA has ref edge
+		if (polygonA->Movable)
+		{
+			// if polygonA is movable that means
+			// that we have to fix contact points
+			// since polygonA will change it's position
+			// after position solving
+
+			sf::Vector2f fixer = -manifold.Depth * manifold.Normal;
+
+			if (polygonB->Movable)
+				fixer *= 0.5f;
+
+			for (int i = 0; i < contactPoints.Size(); i++)
+				contactPoints[i] += fixer;
+		}
 	}
-	
-	/*CircleShape circle(2.0f);
-	circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-	circle.setOrigin(1.0f, 1.0f);
-	circle.setPosition(ref.A);
 
-	CircleShape circle2(2.0f);
-	circle2.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-	circle2.setOrigin(1.0f, 1.0f);
-	circle2.setPosition(ref.B);
+	// assign counted contactPoints to manifold
+	manifold.Points = contactPoints;
 
-	VisualGizmos::DrawOnce(circle);
-	VisualGizmos::DrawOnce(circle2);
-	*/
+	if (contactPoints.Size() == 2)
+	{
+		CircleShape circle(2.0f);
+		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle.setOrigin(2.0f, 2.0f);
+		circle.setPosition(contactPoints[0]);
+
+		CircleShape circle2(2.0f);
+		circle2.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle2.setOrigin(2.0f, 2.0f);
+		circle2.setPosition(contactPoints[1]);
+
+		VisualGizmos::DrawOnce(circle);
+		VisualGizmos::DrawOnce(circle2);
+	}
+	else
+	{
+		CircleShape circle(2.0f);
+		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+		circle.setOrigin(2.0f, 2.0f);
+		circle.setPosition(contactPoints[0]);
+		
+		VisualGizmos::DrawOnce(circle);
+	}
 
 	return manifold;
 }
@@ -1228,33 +1229,47 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPlanePolygonCollisionPoi
 	return manifold;
 }
 
-Basic::ClippingAlgo::ClippedPoints Basic::ClippingAlgo::Clip(
-	const sf::Vector2f& vertex1, const sf::Vector2f& vertex2, const sf::Vector2f& refVec, float dotProduct)
+sf::Vector2f Basic::ClippingAlgo::GetIntersectionPointOfTwoLines(sf::Vector2f A, sf::Vector2f B, sf::Vector2f C, sf::Vector2f D)
+{
+	float num1 = (A.x * B.y - A.y * B.x) * (C.x - D.x) -
+		(A.x - B.x) * (C.x * D.y - C.y * D.x);
+
+	float den1 = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x);
+
+	float num2 = (A.x * B.y - A.y * B.x) * (C.y - D.y) -
+		(A.y - B.y) * (C.x * D.y - C.y * D.x);
+
+	float den2 = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x);
+
+	return sf::Vector2f(num1 / den1, num2 / den2);
+}
+
+void Basic::ClippingAlgo::Clip(const sf::Vector2f& refA, const sf::Vector2f& refB, const sf::Vector2f& incA, const sf::Vector2f& incB, ContactPoints& points)
 {
 	using Maths::Dot;
 
-	ClippedPoints clippedPoints;
+	// define border line by two points
+	sf::Vector2f rAB = refB - refA;
+	sf::Vector2f rABPerp = sf::Vector2f(-rAB.y, rAB.x);
+	sf::Vector2f refC = refA + rABPerp;
 
-	float dotProduct1 = Dot(vertex1, refVec) - dotProduct;
-	float dotProduct2 = Dot(vertex2, refVec) - dotProduct;
+	// border line is defined by refA and refC
+	// incident line is defined by incA and incB
 
-	if (dotProduct1 >= 0.0f)
-		clippedPoints.Points[clippedPoints.Size++] = vertex1;
+	// check if intersection of line refA-refC and segment incA-incB exists
 
-	if (dotProduct2 >= 0.0f)
-		clippedPoints.Points[clippedPoints.Size++] = vertex2;
-			
-	if (dotProduct1 * dotProduct2 < 0.0f)
+	if (Dot(rAB, points[0] - refA) < 0.0f)
 	{
-		sf::Vector2f edgeVec = vertex2 - vertex1;
+		// incA has to be moved
 
-		float location = dotProduct1 / (dotProduct1 - dotProduct2);
-
-		edgeVec *= location;
-		edgeVec += vertex1;
-
-		clippedPoints.Points[clippedPoints.Size++] = edgeVec;
+		points[0] = GetIntersectionPointOfTwoLines(refA, refC, incA, incB);
 	}
+	else if (Dot(rAB, points[1] - refA) < 0.0f)
+	{
+		// incB has to be moved
 
-	return clippedPoints;
+		points[1] = GetIntersectionPointOfTwoLines(refA, refC, incA, incB);
+	}
 }
+
+

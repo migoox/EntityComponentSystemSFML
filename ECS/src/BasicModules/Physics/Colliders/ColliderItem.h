@@ -38,24 +38,9 @@ namespace Basic {
 				
 				i++;
 			}
-
 			m_Size = i;
 
 			return *this;
-		}
-
-		void PushFront(const sf::Vector2f& value)
-		{
-			m_Points = { value, m_Points[0] };
-
-			m_Size = std::min(m_Size + 1, 2);
-		}
-		
-		void PushFront(sf::Vector2f&& value)
-		{
-			m_Points = { std::move(value), m_Points[0] };
-
-			m_Size = std::min(m_Size + 1, 2);
 		}
 
 		void PushBack(const sf::Vector2f& value)
@@ -80,6 +65,21 @@ namespace Basic {
 				return m_Points[index % 2 + 2];
 			else
 				return m_Points[index];
+		}
+
+		const sf::Vector2f& operator[](int index) const
+		{
+			if (index >= 2)
+				return m_Points[index % 2];
+			else if (index < 0)
+				return m_Points[index % 2 + 2];
+			else
+				return m_Points[index];
+		}
+
+		int Size() const
+		{
+			return m_Size;
 		}
 	};
 

@@ -117,16 +117,14 @@ namespace Basic {
 			sf::Vector2f B;
 			sf::Vector2f Normal;
 			float Distance;
-			sf::Vector2f Max;
+			sf::Vector2f FurthestPoint;
 		};
 
-		struct ClippedPoints
-		{
-			sf::Vector2f Points[2];
-			int Size = 0;
-		};
+		sf::Vector2f GetIntersectionPointOfTwoLines(sf::Vector2f A, sf::Vector2f B,
+			sf::Vector2f C, sf::Vector2f D);
 
-		ClippedPoints Clip(const sf::Vector2f& vertex1, const sf::Vector2f& vertex2, const sf::Vector2f& refVec, float dotProduct);
+		void Clip(const sf::Vector2f& refA, const sf::Vector2f& refB, 
+			const sf::Vector2f& incA, const sf::Vector2f& incB, ContactPoints& points);
 	}
 	namespace CollisionDetection {
 		CollisionManifold FindCircleCircleCollisionPoints(

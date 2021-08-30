@@ -12,7 +12,7 @@ namespace Basic {
 		}
 
 	public:
-		using Solver::Solver;
+		using Solver::Solver; // using solver's constructors
 
 		void Solve(std::list<CollisionInfo>& collisions, const sf::Time& deltaTime) override
 		{

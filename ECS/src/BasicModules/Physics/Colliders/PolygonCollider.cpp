@@ -585,56 +585,48 @@ Basic::ClippingAlgo::CPEdge Basic::PolygonCollider::GetTheBestClippingEdge(const
 	using Maths::Dot;
 	using Maths::NormalizeVector;
 
-	// update global vertex array
-	UpdateGlobalVertices(transform);
+	// all operations are done on clockwise, correctly defined convex polygons
+	assert(m_Correct && "PhysicsEngine: Can't find furthest point, since polygon is incorrectly defined.");
 
-	// find the furthest vertex along the collision normal for both shapes
-	int index = FindFurthestPointInDirectionIndex(transform, normal);
+	assert(m_Convex && "PhysicsEngine: Can't find furthest point, since polygon is concave.");
 
-	sf::Vector2f furthestPoint = m_GlobalVertices[index];
+	ClippingAlgo::CPEdge edge;
 
-	// find reference and indicate edges - reference edge is the most perpendicular to the normal
-	// we consider only these edges which contain the furthest point
-	sf::Vector2f prev = PolygonHelpers::GetItem<sf::Vector2f>(m_GlobalVertices, index - 1);
-	sf::Vector2f next = PolygonHelpers::GetItem<sf::Vector2f>(m_GlobalVertices, index + 1);
-	
-	sf::Vector2f v0 = NormalizeVector(furthestPoint - prev);
-	sf::Vector2f v1 = NormalizeVector(next - furthestPoint);
+	// getting furthest point in given direction
+	int furthestPointIndex = FindFurthestPointInDirectionIndex(transform, normal);
 
-	ClippingAlgo::CPEdge result;
-	if (Dot(v0, normal) < Dot(v1, normal))
+	// getting value
+	edge.FurthestPoint = TranslateRelativePointToGlobal(m_Vertices[furthestPointIndex], transform);
+
+	// get neighbours of furthest point
+	int prevIndex = PolygonHelpers::FixIndex(furthestPointIndex - 1, m_Vertices.size());
+	sf::Vector2f prev = TranslateRelativePointToGlobal(m_Vertices[prevIndex], transform);
+
+	int nextIndex = PolygonHelpers::FixIndex(furthestPointIndex + 1, m_Vertices.size());
+	sf::Vector2f next = TranslateRelativePointToGlobal(m_Vertices[nextIndex], transform);
+
+	// create edge vectors(clockwise!)
+	sf::Vector2f vec1 = edge.FurthestPoint - prev;
+	sf::Vector2f vec2 = next - edge.FurthestPoint;
+
+	// check which edge is better one
+	if (std::abs(Dot(vec1, normal)) < std::abs(Dot(vec2, normal)))
 	{
-		// clockwise winding!
-		result.A = prev;
-		result.B = furthestPoint;
-
-		sf::Vector2f AB = sf::Vector2f(result.B - result.A);
-
-		// normal of edge is in opposite direction to it's face
-		result.Normal = sf::Vector2f(-AB.y, AB.x);
-
-		
-
-		result.Distance = Maths::Distance(result.A, result.B);
-		result.Max = furthestPoint;
+		// vec1 is better
+		edge.A = prev;
+		edge.B = edge.FurthestPoint;
+		edge.Distance = Maths::Distance(edge.A, edge.B);
+		edge.Normal = NormalizeVector(sf::Vector2f(vec1.y, -vec1.x));
 	}
 	else
 	{
-		// clockwise winding!
-		result.A = furthestPoint;
-		result.B = next;
-
-		sf::Vector2f AB = sf::Vector2f(result.B - result.A);
-
-		// normal of edge is in opposite direction to it's face
-		result.Normal = sf::Vector2f(-AB.y, AB.x);
-
-		
-
-		result.Distance = Maths::Distance(result.A, result.B);
-		result.Max = furthestPoint;
+		// vec2 is better
+		edge.A = edge.FurthestPoint;
+		edge.B = next;
+		edge.Distance = Maths::Distance(edge.A, edge.B);
+		edge.Normal = NormalizeVector(sf::Vector2f(vec2.y, -vec2.x));
 	}
 
-	return result;
+	return edge;
 }
 
