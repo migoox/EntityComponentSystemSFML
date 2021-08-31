@@ -87,8 +87,8 @@ namespace Basic {
 	{
 		ContactPoints Points;
 
-		sf::Vector2f A;
-		sf::Vector2f B;
+		bool RefEdgeFlipped = false; // 0 - object A has ref edge, 1 - object B has ref edge
+		sf::Vector2f RefEdgeNormal; // normal of ref edge
 
 		sf::Vector2f Normal;
 		float Depth = 0.0f;

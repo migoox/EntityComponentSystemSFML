@@ -224,5 +224,8 @@
     <ClInclude Include="src\BasicModules\Physics\Colliders\RectangleCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ExternalSystems\SpawnSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

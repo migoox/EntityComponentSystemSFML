@@ -2,6 +2,9 @@
 
 void Basic::System::TryToRegisterEntity(Entity entity)
 {
+	if (m_SignatureType == SignatureType::None)
+		return;
+
 	Signature entitySignature = EntityManager::EntitySignature(entity);
 
 	// check if entity is not added
@@ -45,6 +48,9 @@ void Basic::System::TryToRegisterEntity(Entity entity)
 
 void Basic::System::UpdateRegistration(Entity entity)
 {
+	if (m_SignatureType == SignatureType::None)
+		return;
+
 	Signature entitySignature = EntityManager::EntitySignature(entity);
 
 	// check if entity is not added and save iterator in case it is
@@ -100,6 +106,9 @@ void Basic::System::UpdateRegistration(Entity entity)
 
 void Basic::System::TryToUnregisterEntity(Entity entity)
 {
+	if (m_SignatureType == SignatureType::None)
+		return;
+
 	if (m_GameObjects.size() > 0)
 	{
 		auto it = m_GameObjects.begin();

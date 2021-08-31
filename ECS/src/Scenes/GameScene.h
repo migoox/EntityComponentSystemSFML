@@ -11,6 +11,7 @@
 // include external systems
 #include "../ExternalSystems/GrabbableElementsSystem.h"
 #include "../ExternalSystems/InputSystem.h"
+#include "../ExternalSystems/SpawnSystem.h"
 
 // include external components
 #include "../ExternalComponents/GrabbableElement.h"
@@ -31,10 +32,6 @@ using namespace Basic::Components;
 class GameScene : public Scene
 {
 private:
-	GameObject m_Test;
-	GameObject m_Test2;
-	GameObject m_Test3;
-	GameObject m_Test4;
 
 public:
 	using Scene::Scene;

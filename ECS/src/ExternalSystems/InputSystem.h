@@ -32,6 +32,21 @@ private:
 
 	bool BodyIsSelected = false;
 
+private:
+	bool ContainsGlobalPoint(const GameObject& gameObject, const Collider& coll)
+	{
+		auto aabb = coll->GetGlobalAABB(gameObject.GetTransform());
+		auto mousePos = Game::MouseWorldPosition();
+
+		if (aabb.minPoint.x < mousePos.x && aabb.maxPoint.x > mousePos.x &&
+			aabb.minPoint.y < mousePos.y && aabb.maxPoint.y > mousePos.y)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 public:
 	void Init() override
 	{
@@ -55,7 +70,7 @@ public:
 			auto& grabbableElement = gameObject.GetComponent<GrabbableElement>();
 
 			// getting circle collider
-			CircleCollider* circleCollider = (CircleCollider*)gameObject.GetComponent<Collider>().Item;
+			auto& collider = gameObject.GetComponent<Collider>();
 
 			if (grabbableElement.SlingshotStretchingStarted)
 			{
@@ -80,7 +95,7 @@ public:
 			{
 				if (LeftMouseClicked)
 				{
-					if (circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
+					if (ContainsGlobalPoint(gameObject, collider))
 					{
 						if (grabbableElement.Selected)
 							grabbableElement.DoublySelected = true;
@@ -94,7 +109,7 @@ public:
 
 			if (LeftMouseClicked)
 			{
-				if (!circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
+				if (!ContainsGlobalPoint(gameObject, collider))
 				{
 					grabbableElement.Selected = false;
 					grabbableElement.DoublySelected = false;
@@ -108,7 +123,7 @@ public:
 			{
 				if (grabbableElement.DoublySelected)
 				{
-					if (circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
+					if (ContainsGlobalPoint(gameObject, collider))
 					{
 						// begin changing position by mouse
 						grabbableElement.FitMousePosition = true;
@@ -126,7 +141,7 @@ public:
 			{
 				if (grabbableElement.Selected)
 				{
-					if (circleCollider->ContainsGlobalPoint(Game::MouseWorldPosition(), gameObject.GetTransform()))
+					if (ContainsGlobalPoint(gameObject, collider))
 					{
 						// begin stretching the slingshot
 						grabbableElement.SlingshotStretchingStarted = true;

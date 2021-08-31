@@ -29,7 +29,7 @@ namespace Basic {
 			return *this;
 		}
 
-		ColliderItem* operator->()
+		ColliderItem* operator->() const
 		{
 			return Item;
 		}

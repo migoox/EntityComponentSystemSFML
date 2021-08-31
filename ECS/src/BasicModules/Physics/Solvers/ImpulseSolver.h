@@ -26,6 +26,9 @@ namespace Basic {
 
 		void Solve(std::list<CollisionInfo>& collisions, const sf::Time& deltaTime) override
 		{
+			using Maths::Cross;
+			using Maths::Dot;
+
 			SetSignature();
 
 			for (auto& collision : collisions)
@@ -41,283 +44,82 @@ namespace Basic {
 				auto& rigidBodyA = collision.ObjectA.GetComponent<RigidBody>();
 				auto& rigidBodyB = collision.ObjectB.GetComponent<RigidBody>();
 
-				// prepare needed values
-				float mA = rigidBodyA.Mass, mB = rigidBodyB.Mass; // mass A and mass B
+				// get transforms
+				auto& transformA = collision.ObjectA.GetTransform();
+				auto& transformB = collision.ObjectB.GetTransform();
 
-				float iA = colliderA.Item->GetMomentOfInertia(rigidBodyA); // inertia A
-				float iB = colliderB.Item->GetMomentOfInertia(rigidBodyB); // intertia B
-
-				sf::Vector2f vA1 = rigidBodyA.Velocity, vB1 = rigidBodyB.Velocity; // linear velocity before collision
-				float omegaA1 = rigidBodyA.AngleVelocity, omegaB1 = rigidBodyB.AngleVelocity; // angle velocity before collision
-
-				sf::Vector2f vA2, vB2; // linear velocity after collision
-				float omegaA2, omegaB2; // angle velocity after collision
-
-				sf::Vector2f uA1, uB1; // velocity at collision point before impulse
-
-				sf::Vector2f vAB1; // relative velocity normalized in point of contact
-
-				// centers of gravity
-				sf::Vector2f gA = colliderA.Item->GetGlobalCenterOfGravity(collision.ObjectA.GetTransform());
-				sf::Vector2f gB = colliderB.Item->GetGlobalCenterOfGravity(collision.ObjectB.GetTransform());
-
-				sf::Vector2f n = collision.Manifold.Normal; // collision normal
-
-				using Maths::Cross;
-				using Maths::Dot;
-
-				// find out which of the items are solid and fix their positions
-				if (colliderA.Item->Movable && colliderB.Item->Movable)
+				sf::Vector2f contactPoint;
+				if (collision.Manifold.Points.Size() == 2)
 				{
-					// find point of contact:
-					sf::Vector2f pointOfContact = collision.Manifold.A + collision.Manifold.Depth * collision.Manifold.Normal / 2.0f;
-
-					// vector from center of gravity to point of contact for both bodies
-					sf::Vector2f rA = pointOfContact - gA, rB = pointOfContact - gB;
-
-					// count velocity in point of contact
-					uA1 = vA1 + Cross(omegaA1, rA);
-					uB1 = vB1 + Cross(omegaB1, rB);
-
-					// relative velocity
-					vAB1 = uA1 - uB1;
-
-					if (Dot(vAB1, n) >= 0.0f) // a and b are not moving towards each other
-						return;
-
-					if (colliderA.Item->Rotatable && colliderB.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + 1.0f / mB + std::pow(Cross(rA, n), 2) / iA + std::pow(Cross(rB, n), 2) / iB));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-						vB2 = vB1 - j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-						rigidBodyB.Velocity = vB2;
-
-						// counting angular velocity after collision
-						omegaA2 = omegaA1 + Cross(rA, j * n) / iA;
-						omegaB2 = omegaB1 - Cross(rB, j * n) / iB;
-
-						rigidBodyA.AngleVelocity = omegaA2;
-						rigidBodyB.AngleVelocity = omegaB2;
-
-					}
-					else if (colliderA.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + 1.0f / mB + std::pow(Cross(rA, n), 2) / iA));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-						vB2 = vB1 - j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-						rigidBodyB.Velocity = vB2;
-
-						// counting angular velocity after collision
-						omegaA2 = omegaA1 + Cross(rA, j * n) / iA;
-
-						rigidBodyA.AngleVelocity = omegaA2;
-					}
-					else if (colliderB.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + 1.0f / mB + std::pow(Cross(rB, n), 2) / iB));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-						vB2 = vB1 - j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-						rigidBodyB.Velocity = vB2;
-
-						// counting angular velocity after collision
-						omegaB2 = omegaB1 + Cross(rB, j * n) / iB;
-
-						rigidBodyA.AngleVelocity = omegaB2;
-					}
-					else
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + 1.0f / mB));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-						vB2 = vB1 - j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-						rigidBodyB.Velocity = vB2;
-					}
+					contactPoint = collision.Manifold.Points[0] + 
+						(collision.Manifold.Points[1] - collision.Manifold.Points[0]) / 2.0f;
 				}
-				else if (colliderA.Item->Movable)
+				else
 				{
-					// find point of contact:
-					sf::Vector2f pointOfContact = collision.Manifold.B;
-
-					// vector from center of gravity to point of contact for both bodies
-					sf::Vector2f rA = pointOfContact - gA, rB = pointOfContact - gB;
-
-					// count velocity in point of contact
-					uA1 = vA1 + Cross(omegaA1, rA);
-					uB1 = vB1 + Cross(omegaB1, rB);
-
-					// relative velocity
-					vAB1 = uA1 - uB1;
-
-					if (Dot(vAB1, n) >= 0.0f) // a and b are not moving towards each other
-						return;
-
-					if (colliderA.Item->Rotatable && colliderB.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + std::pow(Cross(rA, n), 2) / iA + std::pow(Cross(rB, n), 2) / iB));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-
-						// counting angular velocity after collision
-						omegaA2 = omegaA1 + Cross(rA, j * n) / iA;
-						omegaB2 = omegaB1 - Cross(rB, j * n) / iB;
-
-						rigidBodyA.AngleVelocity = omegaA2;
-						rigidBodyB.AngleVelocity = omegaB2;
-
-					}
-					else if (colliderA.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + std::pow(Cross(rA, n), 2) / iA));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-
-						// counting angular velocity after collision
-						omegaA2 = omegaA1 + Cross(rA, j * n) / iA;
-
-						rigidBodyA.AngleVelocity = omegaA2;
-					}
-					else if (colliderB.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA + std::pow(Cross(rB, n), 2) / iB));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-
-						// counting angular velocity after collision
-						omegaB2 = omegaB1 - Cross(rB, j * n) / iB;
-
-						rigidBodyB.AngleVelocity = omegaB2;
-					}
-					else
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mA));
-
-						// counting linear velocity after collision
-						vA2 = vA1 + j * n / mA;
-
-						// giving velocities to rigid bodies
-						rigidBodyA.Velocity = vA2;
-					}
+					contactPoint = collision.Manifold.Points[0];
 				}
-				else if (colliderB.Item->Movable)
+
+				// masses of both objects
+				float mA = rigidBodyA.Mass, mB = rigidBodyB.Mass;
+
+				// moments of inertia of both objects
+				float iA = colliderA->GetMomentOfInertia(rigidBodyA);
+				float iB = colliderB->GetMomentOfInertia(rigidBodyB);
+
+				// distance vectors from centroid to contact point
+				sf::Vector2f rAP = contactPoint - 
+					colliderA->GetGlobalCenterOfGravity(transformA);
+				sf::Vector2f rBP = contactPoint - 
+					colliderB->GetGlobalCenterOfGravity(transformB);
+
+				// current angle velocities
+				float omegaA1 = rigidBodyA.AngleVelocity, omegaB1 = rigidBodyB.AngleVelocity;
+
+				// current velocities
+				sf::Vector2f vA1 = rigidBodyA.Velocity, vB1 = rigidBodyB.Velocity;
+
+				// velocities in contact point
+				sf::Vector2f vAP1, vBP1;
+
+				// relative velocity
+				sf::Vector2f vAB1;
+
+				// reference edge normal
+				sf::Vector2f n = collision.Manifold.RefEdgeNormal;
+
+				// 1. Count velocity of both bodies in collision point
+				vAP1 = Cross(rAP, omegaA1) + vA1;
+				vBP1 = Cross(rBP, omegaB1) + vB1;
+
+				// 2. Count relative velocity
+				if (collision.Manifold.RefEdgeFlipped)
 				{
-					// find point of contact:
-					sf::Vector2f pointOfContact = collision.Manifold.A;
-
-					// vector from center of gravity to point of contact for both bodies
-					sf::Vector2f rA = pointOfContact - gA, rB = pointOfContact - gB;
-
-					// count velocity in point of contact
-					uA1 = vA1 + Cross(omegaA1, rA);
-					uB1 = vB1 + Cross(omegaB1, rB);
-
-					// relative velocity
-					vAB1 = uA1 - uB1;
-
-					if (Dot(vAB1, n) >= 0.0f) // a and b are not moving towards each other
-						return;
-
-					if (colliderA.Item->Rotatable && colliderB.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mB + std::pow(Cross(rA, n), 2) / iA + std::pow(Cross(rB, n), 2) / iB));
-
-						// counting linear velocity after collision
-						vB2 = vB1 + j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyB.Velocity = vB2;
-
-						// counting angular velocity after collision
-						omegaA2 = omegaA1 + Cross(rA, j * n) / iA;
-						omegaB2 = omegaB1 - Cross(rB, j * n) / iB;
-
-						rigidBodyA.AngleVelocity = omegaA2;
-						rigidBodyB.AngleVelocity = omegaB2;
-
-					}
-					else if (colliderA.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mB + std::pow(Cross(rA, n), 2) / iA));
-
-						// counting linear velocity after collision
-						vB2 = vB1 + j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyB.Velocity = vB2;
-
-						// counting angular velocity after collision
-						omegaA2 = omegaA1 + Cross(rA, j * n) / iA;
-
-						rigidBodyA.AngleVelocity = omegaA2;
-					}
-					else if (colliderB.Item->Rotatable)
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mB + std::pow(Cross(rB, n), 2) / iB));
-
-						// counting linear velocity after collision
-						vB2 = vB1 + j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyB.Velocity = vB2;
-
-						// counting angular velocity after collision
-						omegaB2 = omegaB1 + Cross(rB, j * n) / iB;
-
-						rigidBodyB.AngleVelocity = omegaB2;
-					}
-					else
-					{
-						// counting impulse parameter
-						float j = -(2.0f * Dot(vAB1, n) / (1.0f / mB));
-
-						// counting linear velocity after collision
-						vB2 = vB1 + j * n / mB;
-
-						// giving velocities to rigid bodies
-						rigidBodyB.Velocity = vB2;
-					}
+					// B body has reference edge
+					vAB1 = vAP1 - vBP1;
 				}
+				else
+				{
+					// A body has reference edge
+					vAB1 = vBP1 - vAP1;
+				}
+
+				// 3. Count impulse parameter
+				float j = (-2.0f) * Dot(vAB1, n);
+
+				if (colliderA->Movable && mA > 0.0f)
+					j = j / (1 / mA);
+				if (colliderB->Movable && mB > 0.0f)
+					j = j / (1 / mB);
+				if (colliderA->Rotatable && iA > 0.0f)
+					j = j / (std::pow(Cross(rAP, n), 2) / iA);
+				if (colliderB->Rotatable && iB > 0.0f)
+					j = j / (std::pow(Cross(rBP, n), 2) / iB);
+
+				// 4. Count velocity for object A
+				if(colliderA->Movable)
+					rigidBodyA.Velocity = vA1 + j / mA * n;
+				if(colliderB->Rotatable)
+					rigidBodyA.AngleVelocity = omegaA1 + Cross(rAP, j * n);
 			}
 		}
 	};

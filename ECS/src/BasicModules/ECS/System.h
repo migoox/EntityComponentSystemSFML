@@ -17,7 +17,8 @@ namespace Basic {
 		enum class SignatureType
 		{
 			Inclusive, // (entity's signature & system's signature) == system's signature
-			Constitutive // exactly the same signatures
+			Constitutive, // exactly the same signatures
+			None // no entities included
 		};
 
 	protected:

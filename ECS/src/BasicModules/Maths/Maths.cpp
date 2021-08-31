@@ -66,9 +66,9 @@ sf::Vector3f Basic::Maths::Cross(sf::Vector3f vecA, sf::Vector3f vecB)
 		vecA.x * vecB.y - vecA.y * vecB.x);
 }
 
-sf::Vector2f Basic::Maths::Cross(float vecA, sf::Vector2f vecB)
+sf::Vector2f Basic::Maths::Cross(sf::Vector2f vecA, float vecB)
 {
-	return sf::Vector2f(-vecA * vecB.y, vecA * vecB.x);
+	return sf::Vector2f(-vecB * vecA.y, vecB * vecA.x);
 }
 
 float Basic::Maths::Cross(sf::Vector2f vecA, sf::Vector2f vecB)

@@ -20,6 +20,7 @@ namespace Basic {
 
 			for (auto& collision : collisions)
 			{
+				continue;
 				// check signature
 				if (!HasCorrectSignature(collision.ObjectA) || !HasCorrectSignature(collision.ObjectB)) continue;
 

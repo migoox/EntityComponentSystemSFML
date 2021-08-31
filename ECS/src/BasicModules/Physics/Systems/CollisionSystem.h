@@ -32,7 +32,7 @@ public:
 
 		// add solvers
 		m_Solvers.push_back(std::make_unique<PositionSolver>(m_ParentWorld));
-		//m_Solvers.push_back(std::make_unique<ImpulseSolver>(m_ParentWorld));
+		m_Solvers.push_back(std::make_unique<ImpulseSolver>(m_ParentWorld));
 	}
 
 	void Update(const sf::Time& deltaTime) override
@@ -75,11 +75,11 @@ public:
 						auto& transformB = gameObjectB.GetTransform();
 
 						// collider A collides with collider B and returns collision points
-						CollisionManifold collPoints1 = colliderA->TestCollision(
+						CollisionManifold manifold1 = colliderA->TestCollision(
 							transformA, colliderB.Item, transformB);
 
 						// if collision is detected
-						if (collPoints1.HasCollision)
+						if (manifold1.HasCollision)
 						{
 							// raise the flag that collision happened in current frame
 							colliderA.Item->CollisionTriggered = true;
@@ -89,23 +89,21 @@ public:
 							if (!colliderA.Item->Solve || !colliderB.Item->Solve) continue;
 
 							// if collpoints are unresolvable, skip
-							if (!collPoints1.Resolvable) continue;
+							if (!manifold1.Resolvable) continue;
 
 							// add collision occurance to resolve
 
 							// collision A with B occurance
-							collisions.emplace_back(gameObjectA, gameObjectB, collPoints1);
+							collisions.emplace_back(gameObjectA, gameObjectB, manifold1);
 
 							// reversed collision points
-							CollisionManifold collPoints2;
-							collPoints2.A = collPoints1.B;
-							collPoints2.B = collPoints1.A;
-							collPoints2.Depth = collPoints1.Depth;
-							collPoints2.Normal = -collPoints1.Normal;
-							collPoints2.HasCollision = true;
+							CollisionManifold manifold2;
+							manifold2 = manifold1;
+							manifold2.Normal = -manifold2.Normal;
+							manifold2.RefEdgeFlipped = !manifold2.RefEdgeFlipped;
 
 							// collision B with A occurance
-							collisions.emplace_back(gameObjectB, gameObjectA, collPoints2);
+							collisions.emplace_back(gameObjectB, gameObjectA, manifold2);
 						}
 					}
 
