@@ -145,6 +145,8 @@ public:
 	{
 		sf::Vector2u windowSize = Game::WindowSize();
 
+
+
 		// spawn entites
 		for (size_t i = 0; i < m_4VPolygonsCount; i++)
 		{
@@ -168,7 +170,7 @@ public:
 
 		for (size_t i = 0; i < m_CirclesCount; i++)
 		{
-			//SpawnRandCircle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
+			SpawnRandCircle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
 		}
 
 	}

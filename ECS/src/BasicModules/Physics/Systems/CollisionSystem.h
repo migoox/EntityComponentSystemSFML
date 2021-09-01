@@ -99,7 +99,6 @@ public:
 							// add collision occurance to resolve
 
 							// collision A with B occurance
-							manifold.RefEdgeNormal = -manifold.RefEdgeNormal;
 							manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
 							collisions.emplace_back(gameObjectA, gameObjectB, manifold);
 						}

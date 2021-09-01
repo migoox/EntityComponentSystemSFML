@@ -85,7 +85,7 @@ namespace Basic {
 				sf::Vector2f vAB1;
 
 				// reference edge normal
-				sf::Vector2f n = -collision.Manifold.RefEdgeNormal;
+				sf::Vector2f n = collision.Manifold.Normal;
 
 				// 1. Count velocity of both bodies in collision point
 				vAP1 = Cross(rAP, omegaA1) + vA1;
@@ -102,7 +102,7 @@ namespace Basic {
 					// A body has reference edge
 					vAB1 = vBP1 - vAP1;
 				}
-
+				vAB1 = vAP1 - vBP1;
 				// 3. Count impulse parameter
 				float j = (-2.0f) * Dot(vAB1, n);
 				float denominator = 0.0f;
