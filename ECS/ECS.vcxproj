@@ -157,6 +157,9 @@
     <ClInclude Include="src\BasicModules\Game.h" />
     <ClInclude Include="src\BasicModules\Tools\ResourceManager.h" />
     <ClInclude Include="src\ExternalComponents\GrabbableElement.h" />
+    <ClInclude Include="src\ExternalSystems\GrabbableElementsSystem.h" />
+    <ClInclude Include="src\ExternalSystems\InputSystem.h" />
+    <ClInclude Include="src\ExternalSystems\SpawnSystem.h" />
     <ClInclude Include="src\Scenes\GameScene.h" />
     <ClInclude Include="src\BasicModules\Scene.h" />
     <ClInclude Include="src\BasicModules\StateMachine\State.h" />

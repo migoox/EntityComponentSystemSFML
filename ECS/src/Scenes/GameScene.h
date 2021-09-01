@@ -9,9 +9,9 @@
 #include "../BasicModules/Tools/ResourceManager.h"
 
 // include external systems
-//#include "../ExternalSystems/GrabbableElementsSystem.h"
-//#include "../ExternalSystems/InputSystem.h"
-//#include "../ExternalSystems/SpawnSystem.h"
+#include "../ExternalSystems/GrabbableElementsSystem.h"
+#include "../ExternalSystems/InputSystem.h"
+#include "../ExternalSystems/SpawnSystem.h"
 
 // include external components
 #include "../ExternalComponents/GrabbableElement.h"

@@ -9,9 +9,9 @@ void GameScene::OnEnter()
 {
 	// 1. Add systems (order can be crucial in some cases)
 		// your systems here
-	//AddSystem<SpawnSystem>();
-	//AddSystem<InputSystem>();
-	//AddSystem<GrabbableElementsSystem>();
+	AddSystem<SpawnSystem>();
+	AddSystem<InputSystem>();
+	AddSystem<GrabbableElementsSystem>();
 
 		// default systems
 	AddSystem<PhysicsSystem>();

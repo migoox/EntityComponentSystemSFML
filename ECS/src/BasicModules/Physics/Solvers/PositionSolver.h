@@ -20,7 +20,6 @@ namespace Basic {
 
 			for (auto& collision : collisions)
 			{
-				continue;
 				// check signature
 				if (!HasCorrectSignature(collision.ObjectA) || !HasCorrectSignature(collision.ObjectB)) continue;
 
@@ -31,15 +30,21 @@ namespace Basic {
 				sf::Vector2f fixer;
 
 				// find out which of the items are solid and fix their positions
-				if (colliderA.Item->Movable)
+				if (colliderA.Item->Movable && colliderB.Item->Movable)
 				{
 					fixer = collision.Manifold.Depth * collision.Manifold.Normal / 2.0f;
 					collision.ObjectA.GetTransform().move(fixer);
+					collision.ObjectB.GetTransform().move(-fixer);
 				}
-				else
+				else if(colliderA.Item->Movable)
 				{
 					fixer = collision.Manifold.Depth * collision.Manifold.Normal;
 					collision.ObjectA.GetTransform().move(fixer);
+				}
+				else if (colliderB.Item->Movable)
+				{
+					fixer = collision.Manifold.Depth * collision.Manifold.Normal;
+					collision.ObjectB.GetTransform().move(-fixer);
 				}
 			}
 		}

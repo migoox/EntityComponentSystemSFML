@@ -85,7 +85,7 @@ namespace Basic {
 				sf::Vector2f vAB1;
 
 				// reference edge normal
-				sf::Vector2f n = collision.Manifold.RefEdgeNormal;
+				sf::Vector2f n = -collision.Manifold.RefEdgeNormal;
 
 				// 1. Count velocity of both bodies in collision point
 				vAP1 = Cross(rAP, omegaA1) + vA1;
@@ -105,21 +105,32 @@ namespace Basic {
 
 				// 3. Count impulse parameter
 				float j = (-2.0f) * Dot(vAB1, n);
+				float denominator = 0.0f;
 
 				if (colliderA->Movable && mA > 0.0f)
-					j = j / (1 / mA);
+					denominator += (1.0f / mA);
 				if (colliderB->Movable && mB > 0.0f)
-					j = j / (1 / mB);
-				if (colliderA->Rotatable && iA > 0.0f)
-					j = j / (std::pow(Cross(rAP, n), 2) / iA);
-				if (colliderB->Rotatable && iB > 0.0f)
-					j = j / (std::pow(Cross(rBP, n), 2) / iB);
 
-				// 4. Count velocity for object A
+					denominator += (1.0f / mB);
+				if (colliderA->Rotatable && iA > 0.0f)
+					denominator += (std::pow(Cross(rAP, n), 2) / iA);
+				if (colliderB->Rotatable && iB > 0.0f)
+					denominator += (std::pow(Cross(rBP, n), 2) / iB);
+
+				if (denominator == 0.0f) continue;
+
+				j /= denominator;
+
+				// 4. Count velocity for object A and B
 				if(colliderA->Movable)
 					rigidBodyA.Velocity = vA1 + j / mA * n;
-				if(colliderB->Rotatable)
-					rigidBodyA.AngleVelocity = omegaA1 + Cross(rAP, j * n);
+				if(colliderA->Rotatable)
+					rigidBodyA.AngleVelocity = omegaA1 + Cross(rAP, j * n) / iA;
+
+				if (colliderB->Movable)
+					rigidBodyB.Velocity = vB1 - j / mB * n;
+				if (colliderB->Rotatable)
+					rigidBodyB.AngleVelocity = omegaB1 - Cross(rBP, j * n) / iB;
 			}
 		}
 	};

@@ -10,4 +10,6 @@ struct GrabbableElement
 	bool SlingshotStretchingStarted = false;
 	bool SlingshotStretchingHappens = false;
 	bool SlingshotStretchingFinished = false;
+
+	sf::Color DeafultColor;
 };

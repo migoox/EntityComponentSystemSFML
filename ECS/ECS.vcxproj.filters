@@ -230,5 +230,14 @@
     <ClInclude Include="src\BasicModules\Rendering\Shapes\PolygonShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ExternalSystems\GrabbableElementsSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ExternalSystems\InputSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ExternalSystems\SpawnSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

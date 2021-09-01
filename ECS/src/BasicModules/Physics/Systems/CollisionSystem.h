@@ -5,6 +5,8 @@
 #include "../../Physics/Solvers/ImpulseSolver.h"
 #include "../../Tools/Timer.h"
 
+#include <iostream>
+
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
@@ -97,15 +99,6 @@ public:
 
 							// collision A with B occurance
 							collisions.emplace_back(gameObjectA, gameObjectB, manifold1);
-
-							// reversed collision points
-							CollisionManifold manifold2;
-							manifold2 = manifold1;
-							manifold2.Normal = -manifold2.Normal;
-							manifold2.RefEdgeFlipped = !manifold2.RefEdgeFlipped;
-
-							// collision B with A occurance
-							collisions.emplace_back(gameObjectB, gameObjectA, manifold2);
 						}
 					}
 
