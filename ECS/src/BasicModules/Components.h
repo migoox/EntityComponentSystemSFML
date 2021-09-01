@@ -25,6 +25,9 @@
 #include "Physics/Colliders/RectangleCollider.h"
 
 // animation
+	// component
 #include "Animation/Components/Animator.h"
+
+	// animation
 #include "Animation/Animation.h"
 

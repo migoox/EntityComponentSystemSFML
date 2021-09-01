@@ -60,9 +60,9 @@ void GameScene::UpdateEvents(const sf::Event& event)
 
 void GameScene::Render(sf::RenderTarget& target)
 {
-	auto& shape = test.GetComponent<Basic::Shape>();
+	//auto& shape = test.GetComponent<Basic::Shape>();
 
-	Basic::AABB aabb = shape->GetGlobalAABB(test.GetTransform());
+	//Basic::AABB aabb = shape->GetGlobalAABB(test.GetTransform());
 	
 	
 	/*sf::RectangleShape rect;
@@ -83,6 +83,6 @@ void GameScene::Render(sf::RenderTarget& target)
 	circlePos.setPosition(shape->GetGlobalPosition(test.GetTransform()));
 	circlePos.setFillColor(sf::Color::Blue);
 	target.draw(circlePos);
-
-	RenderWorld(target);*/
+	*/
+	RenderWorld(target);
 }

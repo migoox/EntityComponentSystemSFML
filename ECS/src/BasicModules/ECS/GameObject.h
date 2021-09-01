@@ -68,8 +68,8 @@ namespace Basic {
 
 		Transform& GetTransform() const;
 
-		template <typename ComponentType>
-		ComponentType& AddComponent(ComponentType&& component);
+		template <typename ComponentType, typename ...Args>
+		ComponentType& AddComponent(Args&&... args);
 
 		template <typename ComponentType>
 		void RemoveComponent();

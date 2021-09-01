@@ -141,10 +141,10 @@ namespace Basic {
 			return *m_TransformPtr;
 	}
 
-	template <typename ComponentType>
-	inline ComponentType& GameObject::AddComponent(ComponentType&& component)
+	template<typename ComponentType, typename ...Args>
+	inline ComponentType& GameObject::AddComponent(Args && ...args)
 	{
-		return m_WorldPtr->AddComponent<ComponentType>(m_Entity, std::move(component));
+		return m_WorldPtr->AddComponent<ComponentType>(m_Entity, std::move(ComponentType(std::forward<Args>(args)...)));
 	}
 
 	template <typename ComponentType>
