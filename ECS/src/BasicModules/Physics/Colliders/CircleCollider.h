@@ -58,7 +58,7 @@ namespace Basic {
 
 		void DrawOnceOnVisualGizmos(const Transform& trans) const override
 		{
-			CircleShape shape(m_Radius);
+			/*CircleShape shape(m_Radius);
 			shape.setFillColor(sf::Color(0.0f, 255.0f, 0.0f, 0.8f * 255.0f));
 			shape.setOrigin(m_Radius, m_Radius);
 			shape.setPosition(GetGlobalCenterOfGravity(trans));
@@ -69,19 +69,19 @@ namespace Basic {
 			gCenter.setPosition(GetGlobalCenterOfGravity(trans));
 
 			Basic::VisualGizmos::DrawOnce(shape);
-			Basic::VisualGizmos::DrawOnce(gCenter);
+			Basic::VisualGizmos::DrawOnce(gCenter);*/
 		}
 
 		void DrawAABBOnceOnVisualGizmos(const Transform& trans) const override
 		{
-			AABB aabb = GetGlobalAABB(trans);
+			/*AABB aabb = GetGlobalAABB(trans);
 
 			Basic::RectangleShape rect;
 			rect.setSize(sf::Vector2f(aabb.maxPoint - aabb.minPoint));
 			rect.setPosition(aabb.minPoint);
 			rect.setFillColor(sf::Color(0.0f, 150.0f, 50.0f, 0.4f * 255.0f));
 
-			Basic::VisualGizmos::DrawOnce(rect);
+			Basic::VisualGizmos::DrawOnce(rect);*/
 		}
 
 		bool ContainsGlobalPoint(const sf::Vector2f globalPoint, const Transform& trans)

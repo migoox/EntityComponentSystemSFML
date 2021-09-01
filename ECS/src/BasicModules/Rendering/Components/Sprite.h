@@ -2,12 +2,12 @@
 #include <SFML/Graphics.hpp>
 
 namespace Basic {
-	class Sprite : public sf::Sprite
+	class Sprite
 	{
-	public:
-		using sf::Sprite::Sprite;
+	private:
 
-		void setScale(float factorX, float factorY) = delete;
-		void setScale(const sf::Vector2f& factors) = delete;
+		
+	public:
+
 	};
 }

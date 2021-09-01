@@ -113,26 +113,26 @@ Basic::AABB Basic::PlaneCollider::GetGlobalAABB(const Transform& trans) const
 
 void Basic::PlaneCollider::DrawOnceOnVisualGizmos(const Transform& trans) const
 {
-	Line line(GetGlobalAPoint(trans), GetGlobalBPoint(trans), 4.0f, sf::Color(0.0f, 0.0f, 255.0f, 0.8f * 255.0f));
+	/*Line line(GetGlobalAPoint(trans), GetGlobalBPoint(trans), 4.0f, sf::Color(0.0f, 0.0f, 255.0f, 0.8f * 255.0f));
 	CircleShape gCenter(2.0f);
 	gCenter.setFillColor(sf::Color(255.0f, 0.0f, 0.0f, 0.8f * 255.0f));
 	gCenter.setOrigin(1.0f, 1.0f);
 	gCenter.setPosition(GetGlobalCenterOfGravity(trans));
 
 	Basic::VisualGizmos::DrawOnce(line);
-	Basic::VisualGizmos::DrawOnce(gCenter);
+	Basic::VisualGizmos::DrawOnce(gCenter);*/
 }
 
 void Basic::PlaneCollider::DrawAABBOnceOnVisualGizmos(const Transform& trans) const
 {
-	AABB aabb = GetGlobalAABB(trans);
+	/*AABB aabb = GetGlobalAABB(trans);
 
 	Basic::RectangleShape rect;
 	rect.setSize(sf::Vector2f(aabb.maxPoint - aabb.minPoint));
 	rect.setPosition(aabb.minPoint);
 	rect.setFillColor(sf::Color(0.0f, 150.0f, 50.0f, 0.4f * 255.0f));
 
-	Basic::VisualGizmos::DrawOnce(rect);
+	Basic::VisualGizmos::DrawOnce(rect);*/
 }
 
 void Basic::PlaneCollider::MoveCollider(sf::Vector2f displacement)

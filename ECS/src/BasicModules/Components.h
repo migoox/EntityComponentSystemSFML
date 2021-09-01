@@ -2,12 +2,16 @@
 #include "Transform.h"
 
 // rendering
-#include "Rendering/Components/CircleShape.h"
-#include "Rendering/Components/RectangleShape.h"
-#include "Rendering/Components/ConvexShape.h"
-#include "Rendering/Components/VertexArray.h"
-#include "Rendering/Components/Line.h"
+	// components
 #include "Rendering/Components/Sprite.h"
+#include "Rendering/Components/Shape.h"
+
+	// shapes
+#include "Rendering/Shapes/ShapeDrawing.h"
+#include "Rendering/Shapes/CircleShape.h"
+#include "Rendering/Shapes/BoxShape.h"
+#include "Rendering/Shapes/LineShape.h"
+#include "Rendering/Shapes/PolygonShape.h"
 
 // physics 
 	// components
@@ -23,27 +27,4 @@
 // animation
 #include "Animation/Components/Animator.h"
 #include "Animation/Animation.h"
-
-
-namespace Basic {
-	namespace Components {
-		using Basic::CircleShape;
-		using Basic::RectangleShape;
-		using Basic::ConvexShape;
-		using Basic::VertexArray;
-		using Basic::Line;
-		using Basic::Sprite;
-
-		using Basic::RigidBody;
-		using Basic::Collider;
-
-		using Basic::ColliderItem;
-		using Basic::PlaneCollider;
-		using Basic::CircleCollider;
-		using Basic::PolygonCollider;
-		using Basic::RectangleCollider;
-
-		using Basic::Animation;
-	}
-}
 

@@ -28,7 +28,7 @@ public:
 	void Init() override
 	{
 		SetSignatureType(SignatureType::Inclusive);
-		AddToSignature<Collider>();
+		AddToSignature<Basic::Collider>();
 
 		// add solvers
 		m_Solvers.push_back(std::make_unique<PositionSolver>(m_ParentWorld));
@@ -37,6 +37,8 @@ public:
 
 	void Update(const sf::Time& deltaTime) override
 	{
+		using Basic::Collider;
+
 		// set collision triggered flag as false for all colliders
 		for (auto& gameObject : m_GameObjects)
 		{

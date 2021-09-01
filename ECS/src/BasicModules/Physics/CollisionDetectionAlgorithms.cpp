@@ -661,13 +661,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCircleCircleCollisionPoi
 				fixer *= 0.5f;
 
 			contactPoints[0] += fixer;
-
-			CircleShape circle(2.0f);
-			circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-			circle.setOrigin(2.0f, 2.0f);
-			circle.setPosition(contactPoints[0]);
-
-			VisualGizmos::DrawOnce(circle);
 		}
 
 		manifold.Points = contactPoints;
@@ -724,13 +717,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCirclePlaneCollisionPoin
 			fixer *= 0.5f;
 
 		contactPoints[0] += fixer;
-
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(2.0f, 2.0f);
-		circle.setPosition(contactPoints[0]);
-
-		VisualGizmos::DrawOnce(circle);
 	}
 
 	manifold.Points = contactPoints;
@@ -1088,31 +1074,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPolygonCollisionP
 	// assign counted contactPoints to manifold
 	manifold.Points = contactPoints;
 
-	if (contactPoints.Size() == 2)
-	{
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(2.0f, 2.0f);
-		circle.setPosition(contactPoints[0]);
-
-		CircleShape circle2(2.0f);
-		circle2.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle2.setOrigin(2.0f, 2.0f);
-		circle2.setPosition(contactPoints[1]);
-
-		VisualGizmos::DrawOnce(circle);
-		VisualGizmos::DrawOnce(circle2);
-	}
-	else
-	{
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(2.0f, 2.0f);
-		circle.setPosition(contactPoints[0]);
-		
-		VisualGizmos::DrawOnce(circle);
-	}
-
 	// getting ref edge
 	manifold.RefEdgeFlipped = refAndIncAreFlipped;
 	manifold.RefEdgeNormal = ref.Normal;
@@ -1174,13 +1135,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonCircleCollisionPo
 			fixer *= 0.5f;
 
 		contactPoints[0] += fixer;
-
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(2.0f, 2.0f);
-		circle.setPosition(contactPoints[0]);
-
-		VisualGizmos::DrawOnce(circle);
 	}
 
 	manifold.Points = contactPoints;
@@ -1385,31 +1339,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPlaneCollisionPoi
 
 	// assign counted contactPoints to manifold
 	manifold.Points = contactPoints;
-
-	if (contactPoints.Size() == 2)
-	{
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(2.0f, 2.0f);
-		circle.setPosition(contactPoints[0]);
-
-		CircleShape circle2(2.0f);
-		circle2.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle2.setOrigin(2.0f, 2.0f);
-		circle2.setPosition(contactPoints[1]);
-
-		VisualGizmos::DrawOnce(circle);
-		VisualGizmos::DrawOnce(circle2);
-	}
-	else
-	{
-		CircleShape circle(2.0f);
-		circle.setFillColor(sf::Color(255.0f, 0.0f, 255.0f, 0.8f * 255.0f));
-		circle.setOrigin(2.0f, 2.0f);
-		circle.setPosition(contactPoints[0]);
-
-		VisualGizmos::DrawOnce(circle);
-	}
 
 	// getting ref edge
 	manifold.RefEdgeFlipped = refAndIncAreFlipped;

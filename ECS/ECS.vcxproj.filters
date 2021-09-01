@@ -51,7 +51,7 @@
     <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BasicModules\Rendering\Components\Line.cpp">
+    <ClCompile Include="src\BasicModules\Rendering\Other\Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\BasicModules\Maths\Maths.cpp">
@@ -60,13 +60,22 @@
     <ClCompile Include="src\BasicModules\Physics\Colliders\PolygonCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\BasicModules\Physics\Colliders\PlaneCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\BasicModules\Physics\Colliders\RectangleCollider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\Rendering\Shapes\CircleShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\Rendering\Shapes\BoxShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\Rendering\Shapes\LineShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\Rendering\Shapes\PolygonShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -113,7 +122,7 @@
     <ClInclude Include="src\BasicModules\ECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\Components\CircleShape.h">
+    <ClInclude Include="src\BasicModules\Rendering\Shapes\CircleShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Transform.h">
@@ -125,19 +134,13 @@
     <ClInclude Include="src\BasicModules\Physics\Components\Collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\Components\RectangleShape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\Components\ConvexShape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\BasicModules\Rendering\Components\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Tools\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\Systems\RendererSystem.h">
+    <ClInclude Include="src\BasicModules\Rendering\Systems\ShapeRendererSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Components.h">
@@ -182,10 +185,7 @@
     <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\Components\VertexArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\Components\Line.h">
+    <ClInclude Include="src\BasicModules\Rendering\Other\Line.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Tools\Timer.h">
@@ -206,25 +206,28 @@
     <ClInclude Include="src\ExternalComponents\GrabbableElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\InputSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ExternalSystems\GrabbableElementsSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\BasicModules\Maths\Maths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Physics\Colliders\PolygonCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\BasicModules\Physics\Colliders\RectangleCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ExternalSystems\SpawnSystem.h">
+    <ClInclude Include="src\BasicModules\Rendering\Shapes\ShapeDrawing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Rendering\Components\Shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Rendering\Shapes\BoxShape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Rendering\Shapes\LineShape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Rendering\Shapes\PolygonShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

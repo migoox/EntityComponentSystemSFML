@@ -9,14 +9,14 @@
 #include "../BasicModules/Tools/ResourceManager.h"
 
 // include external systems
-#include "../ExternalSystems/GrabbableElementsSystem.h"
-#include "../ExternalSystems/InputSystem.h"
-#include "../ExternalSystems/SpawnSystem.h"
+//#include "../ExternalSystems/GrabbableElementsSystem.h"
+//#include "../ExternalSystems/InputSystem.h"
+//#include "../ExternalSystems/SpawnSystem.h"
 
 // include external components
 #include "../ExternalComponents/GrabbableElement.h"
 
-#include "../BasicModules/Rendering/VisualGizmos.h"
+//#include "../BasicModules/Rendering/VisualGizmos.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
@@ -27,12 +27,10 @@ using Basic::ResourceManager;
 using Basic::Game;
 using Basic::Scene;
 
-using namespace Basic::Components;
-
 class GameScene : public Scene
 {
 private:
-
+	GameObject test;
 public:
 	using Scene::Scene;
 	~GameScene();

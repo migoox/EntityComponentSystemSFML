@@ -1,5 +1,15 @@
 #include "PolygonCollider.h"
 #include <iostream>
+int Basic::PolygonHelpers::FixIndex(int index, int size)
+{
+	if (index >= size)
+		return index % size;
+	else if (index < 0)
+		return index % size + size;
+	else
+		return index;
+}
+
 bool Basic::PolygonHelpers::PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p)
 {
 	using Maths::Cross;
@@ -326,7 +336,6 @@ sf::Vector2f Basic::PolygonCollider::TranslateRelativePointToGlobal(sf::Vector2f
 
 	global += trans.getPosition();
 
-
 	return global;
 }
 
@@ -476,26 +485,26 @@ void Basic::PolygonCollider::DrawOnceOnVisualGizmos(const Transform& trans) cons
 		arr2[i + 2].color = color;
 	}
 
-	CircleShape gCenter(2.0f);
+	/*CircleShape gCenter(2.0f);
 	gCenter.setFillColor(sf::Color(255.0f, 0.0f, 0.0f, 0.8f * 255.0f));
 	gCenter.setOrigin(1.0f, 1.0f);
 	gCenter.setPosition(GetGlobalCenterOfGravity(trans));
 
 	Basic::VisualGizmos::DrawOnce(arr2);
 	Basic::VisualGizmos::DrawOnce(arr1);
-	Basic::VisualGizmos::DrawOnce(gCenter);
+	Basic::VisualGizmos::DrawOnce(gCenter);*/
 }
 
 void Basic::PolygonCollider::DrawAABBOnceOnVisualGizmos(const Transform& trans) const
 {
-	AABB aabb = GetGlobalAABB(trans);
+	/*AABB aabb = GetGlobalAABB(trans);
 
 	Basic::RectangleShape rect;
 	rect.setSize(sf::Vector2f(aabb.maxPoint - aabb.minPoint));
 	rect.setPosition(aabb.minPoint);
 	rect.setFillColor(sf::Color(0.0f, 150.0f, 50.0f, 0.4f * 255.0f));
 
-	Basic::VisualGizmos::DrawOnce(rect);
+	Basic::VisualGizmos::DrawOnce(rect);*/
 }
 
 const std::vector<sf::Vector2f>& Basic::PolygonCollider::GlobalVertices(const Transform& trans) const

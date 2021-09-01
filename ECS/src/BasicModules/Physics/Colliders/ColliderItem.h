@@ -4,7 +4,6 @@
 #include "../../Transform.h"
 #include "../../ECS/GameObject.h"
 #include "../Components/RigidBody.h"
-#include "../../Rendering/VisualGizmos.h"
 
 namespace Basic {
 	class ContactPoints

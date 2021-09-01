@@ -54,7 +54,7 @@ Basic::RectangleCollider::RectangleCollider(sf::Vector2f size, sf::Vector2f disp
 
 void Basic::RectangleCollider::DrawOnceOnVisualGizmos(const Transform& trans) const
 {
-	UpdateGlobalVertices(trans);
+	/*UpdateGlobalVertices(trans);
 	VertexArray arr(sf::PrimitiveType::Quads, 4);
 	arr[0] = m_GlobalVertices[0];
 	arr[1] = m_GlobalVertices[1];
@@ -72,7 +72,7 @@ void Basic::RectangleCollider::DrawOnceOnVisualGizmos(const Transform& trans) co
 	gCenter.setPosition(GetGlobalCenterOfGravity(trans));
 
 	Basic::VisualGizmos::DrawOnce(arr);
-	Basic::VisualGizmos::DrawOnce(gCenter);
+	Basic::VisualGizmos::DrawOnce(gCenter);*/
 }
 
 void Basic::RectangleCollider::Set(sf::Vector2f size)

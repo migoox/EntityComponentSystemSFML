@@ -9,7 +9,6 @@ using ECSSystem = Basic::System;
 using Basic::GameObject;
 using Basic::Entity;
 
-using namespace Basic::Components;
 
 class PhysicsSystem : public ECSSystem
 {
@@ -21,11 +20,13 @@ public:
 	{
 		SetSignatureType(SignatureType::Inclusive);
 
-		AddToSignature<RigidBody>();
+		AddToSignature<Basic::RigidBody>();
 	}
 
 	void Update(const sf::Time& deltaTime) override
 	{
+		using Basic::RigidBody;
+
 		for (auto& gameObject : m_GameObjects)
 		{
 			auto& rigidBody = gameObject.GetComponent<RigidBody>();

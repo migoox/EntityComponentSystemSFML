@@ -12,7 +12,7 @@
 namespace Basic {
 	namespace PolygonHelpers{
 		template<typename T>
-		static T& GetItem(std::vector<T>& vector, int index)
+		T& GetItem(std::vector<T>& vector, int index)
 		{
 			int n = vector.size();
 			if (index >= n)
@@ -24,7 +24,7 @@ namespace Basic {
 		}
 
 		template<typename T>
-		static const T& GetItem(const std::vector<T>& vector, int index)
+		const T& GetItem(const std::vector<T>& vector, int index)
 		{
 			int n = vector.size();
 			if (index >= n)
@@ -35,19 +35,11 @@ namespace Basic {
 				return vector[index];
 		}
 
-		static int FixIndex(int index, int size)
-		{
-			if (index >= size)
-				return index % size;
-			else if (index < 0)
-				return index % size + size;
-			else
-				return index;
-		}
+		int FixIndex(int index, int size);
 
-		static bool PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p);
+		bool PointInTriangle(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& p);
 
-		static bool LinesIntersect(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d);
+		bool LinesIntersect(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c, const sf::Vector2f& d);
 	}
 
 	class PolygonCollider : public ColliderItem
