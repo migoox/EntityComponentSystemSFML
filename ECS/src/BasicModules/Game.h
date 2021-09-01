@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 #include "StateMachine/StateMachine.h"
-//#include "Rendering/VisualGizmos.h"
+#include "Rendering/VisualGizmos.h"
 
 // fixes scaling to 4k
 #ifdef USING_WINDOWS

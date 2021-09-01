@@ -22,7 +22,7 @@ class SpawnSystem : public ECSSystem
 {
 private:
 	int m_4VPolygonsCount = 2;
-	int m_TrianglesCount = 5;
+	int m_TrianglesCount = 3;
 	int m_RectanglesCount = 3;
 	int m_SquaresCount = 2;
 	int m_CirclesCount = 4;
@@ -35,7 +35,31 @@ private:
 
 	void SpawnRandTriangle(sf::Vector2f pos)
 	{
+		using Basic::Collider;
+		using Basic::Shape;
+		using Basic::RigidBody;
 
+		GameObject rect = Instantiate();
+
+		sf::Vector2f size = sf::Vector2f(float(rand() % 70) + 20.0f,
+			float(rand() % 60) + 50.0f);
+
+		auto& gI = rect.AddComponent<GrabbableElement>(GrabbableElement());
+		gI.DeafultColor = sf::Color(0.0f, float(rand() % 155) + 50.0f, float(rand() % 155) + 50.0f, 200.0f);
+
+		auto& coll = rect.AddComponent<Collider>(new Basic::PolygonCollider(
+			{sf::Vector2f(50.0f, 0.0f), sf::Vector2f(150.0f, 100.0f), sf::Vector2f(0.0f, 150.0f) }));
+
+		auto& shape = rect.AddComponent<Shape>(new Basic::PolygonShape(
+			{ sf::Vector2f(50.0f, 0.0f), sf::Vector2f(150.0f, 100.0f), sf::Vector2f(0.0f, 150.0f) }));
+
+		shape->SetFillColor(gI.DeafultColor);
+
+		rect.AddComponent<RigidBody>(RigidBody());
+
+		rect.GetTransform().setPosition(pos);
+
+		rect.GetTransform().setScale(0.5f, 0.5f);
 	}
 
 	void SpawnRandRectangle(sf::Vector2f pos)
@@ -57,7 +81,7 @@ private:
 		auto& shape = rect.AddComponent<Shape>(new Basic::BoxShape(size));
 		shape->SetFillColor(gI.DeafultColor);
 
-		rect.AddComponent<RigidBody>(RigidBody()).Mass = 3000.0f;
+		rect.AddComponent<RigidBody>(RigidBody());
 
 		rect.GetTransform().setPosition(pos);
 	}
@@ -81,7 +105,7 @@ private:
 		auto& shape = square.AddComponent<Shape>(new Basic::BoxShape(size));
 		shape->SetFillColor(gI.DeafultColor);
 
-		square.AddComponent<RigidBody>(RigidBody()).Mass = 3000.0f;
+		square.AddComponent<RigidBody>(RigidBody());
 
 
 		square.GetTransform().setPosition(pos);
@@ -129,7 +153,7 @@ public:
 
 		for (size_t i = 0; i < m_TrianglesCount; i++)
 		{
-
+			SpawnRandTriangle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
 		}
 
 		for (size_t i = 0; i < m_RectanglesCount; i++)
@@ -139,12 +163,12 @@ public:
 
 		for (size_t i = 0; i < m_SquaresCount; i++)
 		{
-			//SpawnRandSquare(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
+			SpawnRandSquare(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
 		}
 
 		for (size_t i = 0; i < m_CirclesCount; i++)
 		{
-			SpawnRandCircle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
+			//SpawnRandCircle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
 		}
 
 	}

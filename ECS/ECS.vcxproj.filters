@@ -78,6 +78,9 @@
     <ClCompile Include="src\BasicModules\Rendering\Shapes\PolygonShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Game.h">
@@ -237,6 +240,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ExternalSystems\SpawnSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

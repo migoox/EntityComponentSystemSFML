@@ -103,6 +103,7 @@
     <ClCompile Include="src\BasicModules\Rendering\Shapes\CircleShape.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\Shapes\LineShape.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\Shapes\PolygonShape.cpp" />
+    <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp" />
     <ClCompile Include="src\BasicModules\Tools\Random.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\Other\Line.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="src\BasicModules\Rendering\Shapes\LineShape.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\PolygonShape.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\ShapeDrawing.h" />
+    <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h" />
     <ClInclude Include="src\BasicModules\Tools\Timer.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\CircleShape.h" />
     <ClInclude Include="src\BasicModules\Physics\Components\Collider.h" />

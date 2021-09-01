@@ -4,6 +4,7 @@
 #include "../../Physics/Solvers/PositionSolver.h"
 #include "../../Physics/Solvers/ImpulseSolver.h"
 #include "../../Tools/Timer.h"
+#include "../../Rendering/VisualGizmos.h"
 
 #include <iostream>
 
@@ -79,11 +80,11 @@ public:
 						auto& transformB = gameObjectB.GetTransform();
 
 						// collider A collides with collider B and returns collision points
-						CollisionManifold manifold1 = colliderA->TestCollision(
+						CollisionManifold manifold = colliderA->TestCollision(
 							transformA, colliderB.Item, transformB);
 
 						// if collision is detected
-						if (manifold1.HasCollision)
+						if (manifold.HasCollision)
 						{
 							// raise the flag that collision happened in current frame
 							colliderA.Item->CollisionTriggered = true;
@@ -93,12 +94,14 @@ public:
 							if (!colliderA.Item->Solve || !colliderB.Item->Solve) continue;
 
 							// if collpoints are unresolvable, skip
-							if (!manifold1.Resolvable) continue;
+							if (!manifold.Resolvable) continue;
 
 							// add collision occurance to resolve
 
 							// collision A with B occurance
-							collisions.emplace_back(gameObjectA, gameObjectB, manifold1);
+							manifold.RefEdgeNormal = -manifold.RefEdgeNormal;
+							manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
+							collisions.emplace_back(gameObjectA, gameObjectB, manifold);
 						}
 					}
 

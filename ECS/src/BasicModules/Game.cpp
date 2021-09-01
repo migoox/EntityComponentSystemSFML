@@ -64,7 +64,7 @@ void Basic::Game::Render()
 	s_CurrentScene->Render(m_Window);
 
 	// render gizmos
-	//VisualGizmos::Render(m_Window);
+	VisualGizmos::Render(m_Window);
 }
 
 Basic::Game::Game()

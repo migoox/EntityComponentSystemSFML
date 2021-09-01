@@ -110,7 +110,6 @@ namespace Basic {
 				if (colliderA->Movable && mA > 0.0f)
 					denominator += (1.0f / mA);
 				if (colliderB->Movable && mB > 0.0f)
-
 					denominator += (1.0f / mB);
 				if (colliderA->Rotatable && iA > 0.0f)
 					denominator += (std::pow(Cross(rAP, n), 2) / iA);
@@ -123,12 +122,12 @@ namespace Basic {
 
 				// 4. Count velocity for object A and B
 				if(colliderA->Movable)
-					rigidBodyA.Velocity = vA1 + j / mA * n;
+					rigidBodyA.Velocity = vA1 + j * n / mA;
 				if(colliderA->Rotatable)
 					rigidBodyA.AngleVelocity = omegaA1 + Cross(rAP, j * n) / iA;
 
 				if (colliderB->Movable)
-					rigidBodyB.Velocity = vB1 - j / mB * n;
+					rigidBodyB.Velocity = vB1 - j * n / mB;
 				if (colliderB->Rotatable)
 					rigidBodyB.AngleVelocity = omegaB1 - Cross(rBP, j * n) / iB;
 			}
