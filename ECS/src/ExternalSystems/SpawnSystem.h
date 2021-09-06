@@ -28,9 +28,72 @@ private:
 	int m_CirclesCount = 4;
 
 private:
-	void SpawnRand4VPolygon(sf::Vector2f pos)
-	{
 
+	void SpawnStaticWalls()
+	{
+		using Basic::Collider;
+		using Basic::Shape;
+		using Basic::RigidBody;
+
+		sf::Vector2u windowSize = Game::WindowSize();
+
+		// left wall:
+		GameObject wall1 = Instantiate();
+
+		auto& shape1 = wall1.AddComponent<Shape>(new Basic::LineShape(windowSize.y, 4.0f));
+		shape1->SetFillColor(sf::Color::Black);
+
+		auto& coll1 = wall1.AddComponent<Collider>(new Basic::PlaneCollider(windowSize.y));
+		coll1->Movable = false;
+		coll1->Rotatable = false;
+
+		wall1.AddComponent<RigidBody>();
+		
+		wall1.GetTransform().setPosition(sf::Vector2f(0.0f, windowSize.y / 2.0f));
+		wall1.GetTransform().setRotation(90.0f);
+
+		// right wall:
+		GameObject wall2 = Instantiate();
+
+		auto& shape2 = wall2.AddComponent<Shape>(new Basic::LineShape(windowSize.y, 4.0f));
+		shape2->SetFillColor(sf::Color::Black);
+
+		auto& coll2 = wall2.AddComponent<Collider>(new Basic::PlaneCollider(windowSize.y));
+		coll2->Movable = false;
+		coll2->Rotatable = false;
+
+		wall2.AddComponent<RigidBody>();
+
+		wall2.GetTransform().setPosition(sf::Vector2f(windowSize.x, windowSize.y / 2.0f));
+		wall2.GetTransform().setRotation(90.0f);
+
+		// top wall:
+		GameObject wall3 = Instantiate();
+
+		auto& shape3 = wall3.AddComponent<Shape>(new Basic::LineShape(windowSize.x, 4.0f));
+		shape3->SetFillColor(sf::Color::Black);
+
+		auto& coll3 = wall3.AddComponent<Collider>(new Basic::PlaneCollider(windowSize.x));
+		coll3->Movable = false;
+		coll3->Rotatable = false;
+
+		wall3.AddComponent<RigidBody>();
+
+		wall3.GetTransform().setPosition(sf::Vector2f(windowSize.x / 2.0f, 0.0f));
+
+		// bottom wall:
+		GameObject wall4 = Instantiate();
+
+		auto& shape4 = wall4.AddComponent<Shape>(new Basic::LineShape(windowSize.x, 4.0f));
+		shape4->SetFillColor(sf::Color::Black);
+
+		auto& coll4 = wall4.AddComponent<Collider>(new Basic::PlaneCollider(windowSize.x));
+		coll4->Movable = false;
+		coll4->Rotatable = false;
+
+		wall4.AddComponent<RigidBody>();
+
+		wall4.GetTransform().setPosition(sf::Vector2f(windowSize.x / 2.0f, windowSize.y));
 	}
 
 	void SpawnRandTriangle(sf::Vector2f pos)
@@ -145,7 +208,7 @@ public:
 	{
 		sf::Vector2u windowSize = Game::WindowSize();
 
-
+		SpawnStaticWalls();
 
 		// spawn entites
 		for (size_t i = 0; i < m_4VPolygonsCount; i++)

@@ -666,10 +666,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCircleCircleCollisionPoi
 		manifold.Points = contactPoints;
 	}
 
-	// getting ref edge
-	manifold.RefEdgeFlipped = true;
-	manifold.RefEdgeNormal = manifold.Normal;
-
 	return manifold;
 }
 
@@ -721,10 +717,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCirclePlaneCollisionPoin
 
 	manifold.Points = contactPoints;
 
-	// getting ref edge
-	manifold.RefEdgeFlipped = true;
-	manifold.RefEdgeNormal = manifold.Normal;
-
 	return manifold;
 }
 
@@ -734,7 +726,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPlaneCircleCollisionPoin
 {
 	CollisionManifold manifold = FindCirclePlaneCollisionPoints(circleB, circleBTransform, planeA, planeATransform);
 
-	manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
 	manifold.Normal *= (-1.0f);
 
 	return manifold;
@@ -1074,10 +1065,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPolygonCollisionP
 	// assign counted contactPoints to manifold
 	manifold.Points = contactPoints;
 
-	// getting ref edge
-	manifold.RefEdgeFlipped = refAndIncAreFlipped;
-	manifold.RefEdgeNormal = ref.Normal;
-
 	return manifold;
 }
 
@@ -1139,10 +1126,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonCircleCollisionPo
 
 	manifold.Points = contactPoints;
 
-	// getting ref edge
-	manifold.RefEdgeFlipped = false;
-	manifold.RefEdgeNormal = manifold.Normal;
-
 	return manifold;
 }
 
@@ -1154,7 +1137,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindCirclePolygonCollisionPo
 		polygonB, polygonBTransform, 
 		circleA, circleATransform);
 
-	manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
 	manifold.Normal = -manifold.Normal;
 	
 	return manifold;
@@ -1340,10 +1322,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPolygonPlaneCollisionPoi
 	// assign counted contactPoints to manifold
 	manifold.Points = contactPoints;
 
-	// getting ref edge
-	manifold.RefEdgeFlipped = refAndIncAreFlipped;
-	manifold.RefEdgeNormal = ref.Normal;
-
 	return manifold;
 }
 
@@ -1355,7 +1333,6 @@ Basic::CollisionManifold Basic::CollisionDetection::FindPlanePolygonCollisionPoi
 		polygonB, polygonBTransform,
 		planeA, planeATransform);
 
-	manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
 	manifold.Normal = -manifold.Normal;
 
 	return manifold;

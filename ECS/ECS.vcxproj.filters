@@ -245,5 +245,11 @@
     <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\BasicModules\Physics\Systems\TopViewFrictionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Physics\Components\PhysicMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

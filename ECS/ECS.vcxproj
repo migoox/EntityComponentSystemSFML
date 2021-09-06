@@ -119,6 +119,7 @@
     <ClInclude Include="src\BasicModules\Physics\Colliders\ColliderItem.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\PolygonCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\RectangleCollider.h" />
+    <ClInclude Include="src\BasicModules\Physics\Components\PhysicMaterial.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\ImpulseSolver.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\PlaneCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\PositionSolver.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h" />
     <ClInclude Include="src\BasicModules\Physics\Systems\CollisionSystem.h" />
     <ClInclude Include="src\BasicModules\Physics\Systems\PhysicsSystem.h" />
+    <ClInclude Include="src\BasicModules\Physics\Systems\TopViewFrictionSystem.h" />
     <ClInclude Include="src\BasicModules\Rendering\Components\Shape.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\BoxShape.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\LineShape.h" />

@@ -20,7 +20,6 @@ namespace Basic
 		void RegisterComponent()
 		{
 			const char* name = typeid(ComponentType).name();
-
 			// id assignment
 			m_ComponentIDs[name] = m_NextComponentID;
 
@@ -143,8 +142,15 @@ namespace Basic
 		bool EntityHasThisComponent(Entity entity)
 		{
 			const char* name = typeid(ComponentType).name();
+
+			auto iter = m_ComponentArrays.find(name);
+
+			if (iter != m_ComponentArrays.end())
+			{
+				return iter->second->EntityHasThisComponent(entity);
+			}
 			
-			return m_ComponentArrays[name]->EntityHasThisComponent();
+			return false;
 		}
 	};
 } // end of Basic

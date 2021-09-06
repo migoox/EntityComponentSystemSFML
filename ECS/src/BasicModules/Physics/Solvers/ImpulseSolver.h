@@ -92,19 +92,31 @@ namespace Basic {
 				vBP1 = Cross(rBP, omegaB1) + vB1;
 
 				// 2. Count relative velocity
-				if (collision.Manifold.RefEdgeFlipped)
-				{
-					// B body has reference edge
-					vAB1 = vAP1 - vBP1;
-				}
-				else
-				{
-					// A body has reference edge
-					vAB1 = vBP1 - vAP1;
-				}
 				vAB1 = vAP1 - vBP1;
-				// 3. Count impulse parameter
-				float j = (-2.0f) * Dot(vAB1, n);
+
+				// 3. Count bounciness factor
+				float bouncinessFactor = 1.0f;
+
+				if (collision.ObjectA.HasComponent<PhysicMaterial>() && collision.ObjectB.HasComponent<PhysicMaterial>())
+				{
+					auto& matA = collision.ObjectA.GetComponent<PhysicMaterial>();
+					auto& matB = collision.ObjectB.GetComponent<PhysicMaterial>();
+
+					bouncinessFactor = (matA.Bounciness + matB.Bounciness) / 2.0f;
+				}
+				else if (collision.ObjectA.HasComponent<PhysicMaterial>())
+				{
+					auto& matA = collision.ObjectA.GetComponent<PhysicMaterial>();
+					bouncinessFactor = (matA.Bounciness + 1.0f) / 2.0f;
+				}
+				else if (collision.ObjectB.HasComponent<PhysicMaterial>())
+				{
+					auto& matB = collision.ObjectB.GetComponent<PhysicMaterial>();
+					bouncinessFactor = (matB.Bounciness + 1.0f) / 2.0f;
+				}
+				
+				// 4. Count impulse parameter
+				float j = -(1.0f + bouncinessFactor) * Dot(vAB1, n);
 				float denominator = 0.0f;
 
 				if (colliderA->Movable && mA > 0.0f)
@@ -120,7 +132,7 @@ namespace Basic {
 
 				j /= denominator;
 
-				// 4. Count velocity for object A and B
+				// 5. Count velocities
 				if(colliderA->Movable)
 					rigidBodyA.Velocity = vA1 + j * n / mA;
 				if(colliderA->Rotatable)

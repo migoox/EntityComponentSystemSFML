@@ -16,6 +16,7 @@
 // physics 
 	// components
 #include "Physics/Components/RigidBody.h"
+#include "Physics/Components/PhysicMaterial.h"
 #include "Physics/Components/Collider.h"
 
 	// colliders
