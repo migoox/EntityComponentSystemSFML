@@ -5,6 +5,8 @@
 #include "../BasicModules/Components.h"
 #include "../BasicModules/EventSystem/Event.h"
 
+#include <array>
+
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
 
@@ -21,13 +23,103 @@ using Basic::ColliderItem;
 class SpawnSystem : public ECSSystem
 {
 private:
-	int m_4VPolygonsCount = 2;
 	int m_TrianglesCount = 3;
 	int m_RectanglesCount = 3;
 	int m_SquaresCount = 2;
 	int m_CirclesCount = 4;
 
 private:
+
+	std::array<sf::Vector2f, 3> GenerateRandomTrianglePoints(float radius)
+	{
+		std::array<sf::Vector2f, 3> points;
+
+		float x = std::rand() % (2 * int(radius)) - radius;
+		float y = -std::sqrt(std::abs(std::pow(radius, 2) - std::pow(x, 2)));
+		points[0] = sf::Vector2f(x, y);
+
+		if (x > 0.0f)
+		{
+			x = std::rand() % (2 * int(radius)) - radius;
+			y = std::sqrt(std::abs(std::pow(radius, 2) - std::pow(x, 2)));
+
+			points[1] = sf::Vector2f(x, y);
+
+			x = std::rand() % (int(radius)) - radius;
+			y = -std::sqrt(std::abs(std::pow(radius, 2) - std::pow(x, 2)));
+
+			points[2] = sf::Vector2f(x, y);
+		}
+		else
+		{
+			x = std::rand() % (int(radius));
+			int randValue = std::rand() % 2;
+			if (randValue == 0)
+			{
+				y = std::sqrt(std::abs(std::pow(radius, 2) - std::pow(x, 2)));
+			}
+			else
+			{
+				y = -std::sqrt(std::abs(std::pow(radius, 2) - std::pow(x, 2)));
+			}
+
+			points[1] = sf::Vector2f(x, y);
+
+			x = std::rand() % (int(radius)) - radius;
+			y = std::sqrt(std::abs(std::pow(radius, 2) - std::pow(x, 2)));
+
+			points[2] = sf::Vector2f(x, y);
+		}
+
+		for (auto& point : points)
+			point += sf::Vector2f(radius, radius);
+
+		return points;
+	}
+
+private:
+
+	void Spawn4VPolygon(sf::Vector2f pos)
+	{
+		using Basic::Collider;
+		using Basic::Shape;
+		using Basic::RigidBody;
+		using Basic::PhysicMaterial;
+
+		GameObject pol = Instantiate();
+
+		sf::Vector2f size = sf::Vector2f(float(rand() % 70) + 20.0f,
+			float(rand() % 60) + 50.0f);
+
+		auto& gI = pol.AddComponent<GrabbableElement>(GrabbableElement());
+		gI.DeafultColor = sf::Color(0.0f, float(rand() % 155) + 50.0f, float(rand() % 155) + 50.0f, 200.0f);
+
+		auto& coll = pol.AddComponent<Collider>(new Basic::PolygonCollider(
+			{
+				sf::Vector2f(0.0f, 0.0f),
+				sf::Vector2f(300.0f, 100.0f),
+				sf::Vector2f(200.0f, 200.0f),
+				sf::Vector2f(10.0f, 50.0f)
+			}));
+
+		auto& shape = pol.AddComponent<Shape>(new Basic::PolygonShape({
+				sf::Vector2f(0.0f, 0.0f),
+				sf::Vector2f(300.0f, 100.0f),
+				sf::Vector2f(200.0f, 200.0f),
+				sf::Vector2f(10.0f, 50.0f)
+			}));
+
+		shape->SetFillColor(gI.DeafultColor);
+
+		auto& mat = pol.AddComponent<PhysicMaterial>();
+		mat.Bounciness = 0.7f;
+		mat.DynamicFriction = 0.15f;
+
+		pol.AddComponent<RigidBody>(RigidBody());
+
+		pol.GetTransform().setScale(0.5f, 0.5f);
+		pol.GetTransform().setPosition(pos);
+	}
 
 	void SpawnStaticWalls()
 	{
@@ -101,28 +193,36 @@ private:
 		using Basic::Collider;
 		using Basic::Shape;
 		using Basic::RigidBody;
+		using Basic::PhysicMaterial;
 
-		GameObject rect = Instantiate();
+		GameObject triangle = Instantiate();
+
+		auto vertices = GenerateRandomTrianglePoints(float(rand() % 20) + 100.0f);
 
 		sf::Vector2f size = sf::Vector2f(float(rand() % 70) + 20.0f,
 			float(rand() % 60) + 50.0f);
 
-		auto& gI = rect.AddComponent<GrabbableElement>(GrabbableElement());
+
+		auto& gI = triangle.AddComponent<GrabbableElement>(GrabbableElement());
 		gI.DeafultColor = sf::Color(0.0f, float(rand() % 155) + 50.0f, float(rand() % 155) + 50.0f, 200.0f);
 
-		auto& coll = rect.AddComponent<Collider>(new Basic::PolygonCollider(
-			{sf::Vector2f(50.0f, 0.0f), sf::Vector2f(150.0f, 100.0f), sf::Vector2f(0.0f, 150.0f) }));
+		auto& coll = triangle.AddComponent<Collider>(new Basic::PolygonCollider(
+			{vertices[0], vertices[1], vertices[2] }));
 
-		auto& shape = rect.AddComponent<Shape>(new Basic::PolygonShape(
-			{ sf::Vector2f(50.0f, 0.0f), sf::Vector2f(150.0f, 100.0f), sf::Vector2f(0.0f, 150.0f) }));
+		auto& shape = triangle.AddComponent<Shape>(new Basic::PolygonShape(
+			{ vertices[0], vertices[1], vertices[2] }));
 
 		shape->SetFillColor(gI.DeafultColor);
 
-		rect.AddComponent<RigidBody>(RigidBody());
+		triangle.AddComponent<RigidBody>();
 
-		rect.GetTransform().setPosition(pos);
+		auto& mat = triangle.AddComponent<PhysicMaterial>();
+		mat.Bounciness = 0.7f;
+		mat.DynamicFriction = 0.15f;
 
-		rect.GetTransform().setScale(0.5f, 0.5f);
+		triangle.GetTransform().setPosition(pos);
+
+		triangle.GetTransform().setScale(0.5f, 0.5f);
 	}
 
 	void SpawnRandRectangle(sf::Vector2f pos)
@@ -130,6 +230,7 @@ private:
 		using Basic::Collider;
 		using Basic::Shape;
 		using Basic::RigidBody;
+		using Basic::PhysicMaterial;
 
 		GameObject rect = Instantiate();
 
@@ -144,6 +245,10 @@ private:
 		auto& shape = rect.AddComponent<Shape>(new Basic::BoxShape(size));
 		shape->SetFillColor(gI.DeafultColor);
 
+		auto& mat = rect.AddComponent<PhysicMaterial>();
+		mat.Bounciness = 0.7f;
+		mat.DynamicFriction = 0.15f;
+
 		rect.AddComponent<RigidBody>(RigidBody());
 
 		rect.GetTransform().setPosition(pos);
@@ -154,6 +259,7 @@ private:
 		using Basic::Collider;
 		using Basic::Shape;
 		using Basic::RigidBody;
+		using Basic::PhysicMaterial;
 
 		GameObject square = Instantiate();
 
@@ -168,8 +274,11 @@ private:
 		auto& shape = square.AddComponent<Shape>(new Basic::BoxShape(size));
 		shape->SetFillColor(gI.DeafultColor);
 
-		square.AddComponent<RigidBody>(RigidBody());
+		square.AddComponent<RigidBody>();
 
+		auto& mat = square.AddComponent<PhysicMaterial>();
+		mat.Bounciness = 0.7f;
+		mat.DynamicFriction = 0.15f;
 
 		square.GetTransform().setPosition(pos);
 	}
@@ -179,6 +288,7 @@ private:
 		using Basic::Collider;
 		using Basic::Shape;
 		using Basic::RigidBody;
+		using Basic::PhysicMaterial;
 
 		GameObject circle = Instantiate();
 
@@ -192,30 +302,22 @@ private:
 		auto& shape = circle.AddComponent<Shape>(new Basic::CircleShape(radius));
 		shape->SetFillColor(gI.DeafultColor);
 
-		circle.AddComponent<RigidBody>(RigidBody());
+		circle.AddComponent<RigidBody>();
+
+		auto& mat = circle.AddComponent<PhysicMaterial>();
+		mat.Bounciness = 0.7f;
+		mat.DynamicFriction = 0.15f;
 
 		circle.GetTransform().setPosition(pos);
 	}
 
-public:
-	void Init() override
-	{
-		// no entites assigned
-		SetSignatureType(SignatureType::None);
-	}
-
-	void OnStart() override
+	void Spawn()
 	{
 		sf::Vector2u windowSize = Game::WindowSize();
 
 		SpawnStaticWalls();
-
+		Spawn4VPolygon(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
 		// spawn entites
-		for (size_t i = 0; i < m_4VPolygonsCount; i++)
-		{
-
-		}
-
 		for (size_t i = 0; i < m_TrianglesCount; i++)
 		{
 			SpawnRandTriangle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
@@ -235,7 +337,16 @@ public:
 		{
 			SpawnRandCircle(sf::Vector2f(rand() % windowSize.x, rand() % windowSize.y));
 		}
-
 	}
 
+public:
+	void Init() override
+	{
+		SetSignatureType(SignatureType::None);
+	}
+
+	void OnStart() override
+	{
+		Spawn();
+	}
 };

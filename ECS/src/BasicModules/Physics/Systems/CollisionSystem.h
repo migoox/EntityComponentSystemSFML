@@ -53,70 +53,13 @@ public:
 		// create collision info container
 		std::list<CollisionInfo> collisions;
 
-		auto colliders = m_ComponentManager->ArrayData<Collider>();
-		size_t collidersCount = m_ComponentManager->Size<Collider>();
-		if (colliders != nullptr)
+		// iterate trough all game object's
+		for (int i = 0; i < m_GameObjects.size(); i++)
 		{
-			for (size_t i = 0; i < collidersCount; i++)
+			for (int j = i + 1; j < m_GameObjects.size(); j++)
 			{
-				for (size_t j = i + 1; j < collidersCount; j++)
-				{
-					auto gameObjectA = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Collider>(i));
-					auto gameObjectB = m_ParentWorld->GetGameObject(m_ComponentManager->GetEntityByComponentArrayIndex<Collider>(j));
-					if (gameObjectA.IsActive() && gameObjectB.IsActive())
-					{
-						// get colliders
-						auto& colliderA = colliders[i];
-						auto& colliderB = colliders[j];
-
-						// if one of colliders is blank, skip
-						if (colliderA.Item == nullptr || colliderB.Item == nullptr) continue;
-
-						// if one of colliders is not active, skip
-						if (!colliderA->Active || !colliderB->Active) continue;
-
-						// get transforms
-						auto& transformA = gameObjectA.GetTransform();
-						auto& transformB = gameObjectB.GetTransform();
-
-						// collider A collides with collider B and returns collision points
-						CollisionManifold manifold = colliderA->TestCollision(
-							transformA, colliderB.Item, transformB);
-
-						// if collision is detected
-						if (manifold.HasCollision)
-						{
-							// raise the flag that collision happened in current frame
-							colliderA.Item->CollisionTriggered = true;
-							colliderB.Item->CollisionTriggered = true;
-
-							// if one of colliders is marked not to solve, skip
-							if (!colliderA.Item->Solve || !colliderB.Item->Solve) continue;
-
-							// if collpoints are unresolvable, skip
-							if (!manifold.Resolvable) continue;
-
-							// add collision occurance to resolve
-
-							// collision A with B occurance
-							//manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
-							collisions.emplace_back(gameObjectA, gameObjectB, manifold);
-						}
-					}
-
-				}
-			}
-		}
-
-		/* slow alternative
-		// collision detection loop
-		for (auto gameObjectA : m_GameObjects)
-		{
-			for (auto gameObjectB : m_GameObjects)
-			{
-				// if objects are the same, skip
-				if (gameObjectA == gameObjectB) continue;
-
+				auto& gameObjectA = m_GameObjects[i];
+				auto& gameObjectB = m_GameObjects[j];
 				if (gameObjectA.IsActive() && gameObjectB.IsActive())
 				{
 					// get colliders
@@ -134,11 +77,11 @@ public:
 					auto& transformB = gameObjectB.GetTransform();
 
 					// collider A collides with collider B and returns collision points
-					CollisionPoints collPoints = colliderA->TestCollision(
+					CollisionManifold manifold = colliderA->TestCollision(
 						transformA, colliderB.Item, transformB);
 
 					// if collision is detected
-					if (collPoints.HasCollision)
+					if (manifold.HasCollision)
 					{
 						// raise the flag that collision happened in current frame
 						colliderA.Item->CollisionTriggered = true;
@@ -148,16 +91,17 @@ public:
 						if (!colliderA.Item->Solve || !colliderB.Item->Solve) continue;
 
 						// if collpoints are unresolvable, skip
-						if (!collPoints.Resolvable) continue;
-
+						if (!manifold.Resolvable) continue;
 
 						// add collision occurance to resolve
-						collisions.emplace_back(gameObjectA, gameObjectB, collPoints);
+
+						// collision A with B occurance
+						//manifold.RefEdgeFlipped = !manifold.RefEdgeFlipped;
+						collisions.emplace_back(gameObjectA, gameObjectB, manifold);
 					}
 				}
 			}
 		}
-		*/
 
 		// collision resolving
 		for (auto& solver : m_Solvers)

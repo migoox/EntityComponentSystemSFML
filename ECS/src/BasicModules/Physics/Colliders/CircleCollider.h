@@ -96,6 +96,11 @@ namespace Basic {
 			return GetGlobalCenterOfGravity(transform) + m_Radius * Maths::NormalizeVector(direction);
 		}
 
+		float GetLongestDistanceFromCentroid() const
+		{
+			return m_Radius;
+		}
+
 		// collision tests
 		CollisionManifold TestCollision(
 			const Transform& transform,

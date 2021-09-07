@@ -80,6 +80,8 @@ void Basic::PolygonCollider::UpdatePolygon()
 
 	// counting fixer
 	m_Fixer = -m_CenterOfGravity;
+
+	m_FurthestPointFromCentroidIndex = FindFurthestPointFromCentroidIndex();
 }
 
 void Basic::PolygonCollider::UpdateGlobalVertices(const Transform& trans) const
@@ -339,6 +341,28 @@ sf::Vector2f Basic::PolygonCollider::TranslateRelativePointToGlobal(sf::Vector2f
 	return global;
 }
 
+int Basic::PolygonCollider::FindFurthestPointFromCentroidIndex()
+{
+	using Maths::VectorDistance;
+
+	float maxDistance = -FLT_MAX;
+	int bestIndex = 0;
+
+	int i = 0;
+	for (auto& point : m_Vertices)
+	{
+		float distance = VectorDistance(m_CenterOfGravity - point);
+		if (distance > maxDistance)
+		{
+			bestIndex = i;
+			maxDistance = distance;
+		}
+		i++;
+	}
+
+	return bestIndex;
+}
+
 Basic::PolygonCollider::PolygonCollider()
 {
 	Init();
@@ -575,6 +599,12 @@ int Basic::PolygonCollider::FindFurthestPointInDirectionIndex(const Transform& t
 	}
 
 	return index;
+}
+
+float Basic::PolygonCollider::GetLongestDistanceFromCentroid() const
+{
+	using Maths::VectorDistance;
+	return VectorDistance(m_CenterOfGravity - m_Vertices[m_FurthestPointFromCentroidIndex]);
 }
 
 sf::Vector2f Basic::PolygonCollider::GetGlobalPoint(const Transform& transform, int index) const

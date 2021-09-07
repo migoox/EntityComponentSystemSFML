@@ -54,6 +54,8 @@ namespace Basic {
 		sf::Vector2f m_ColliderDisplacement;
 		float m_ColliderRotation;
 
+		int m_FurthestPointFromCentroidIndex;
+
 		bool m_Correct;
 		bool m_Convex;
 
@@ -84,6 +86,8 @@ namespace Basic {
 		sf::Vector2f FindCenterOfGravity(const std::vector<sf::Vector2f>& vertices) const;
 
 		sf::Vector2f TranslateRelativePointToGlobal(sf::Vector2f point, const Transform& trans) const;
+
+		int FindFurthestPointFromCentroidIndex();
 
 	public:
 		PolygonCollider();
@@ -128,6 +132,8 @@ namespace Basic {
 		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override;
 
 		int FindFurthestPointInDirectionIndex(const Transform& transform, sf::Vector2f direction) const;
+
+		float GetLongestDistanceFromCentroid() const;
 
 		sf::Vector2f GetGlobalPoint(const Transform& transform, int index) const;
 

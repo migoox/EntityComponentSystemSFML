@@ -81,6 +81,12 @@
     <ClCompile Include="src\BasicModules\Rendering\VisualGizmos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BasicModules\Physics\PhysicsEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasicModules\Physics\Systems\RotationalMovementSystem.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BasicModules\Game.h">
@@ -173,7 +179,7 @@
     <ClInclude Include="src\BasicModules\Animation\Systems\AnimatorSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Physics\Systems\PhysicsSystem.h">
+    <ClInclude Include="src\BasicModules\Physics\Systems\LinearMovementSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Physics\Systems\CollisionSystem.h">
@@ -245,10 +251,16 @@
     <ClInclude Include="src\BasicModules\Rendering\VisualGizmos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BasicModules\Physics\Systems\TopViewFrictionSystem.h">
+    <ClInclude Include="src\BasicModules\Physics\Systems\LinearFrictionSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BasicModules\Physics\Components\PhysicMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Physics\PhysicsEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BasicModules\Physics\Systems\RotationalFrictionSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

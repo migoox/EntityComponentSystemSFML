@@ -30,7 +30,7 @@ using Basic::Scene;
 class GameScene : public Scene
 {
 private:
-	GameObject test;
+
 public:
 	using Scene::Scene;
 	~GameScene();

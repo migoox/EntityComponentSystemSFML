@@ -26,7 +26,12 @@ float Basic::Maths::VectorDistance(sf::Vector2f vector)
 
 sf::Vector2f Basic::Maths::NormalizeVector(sf::Vector2f vector)
 {
-	return vector / Maths::VectorDistance(vector);
+	float distance = Maths::VectorDistance(vector);
+
+	if (distance == 0.0f)
+		return sf::Vector2f();
+
+	return vector / distance;
 }
 
 float Basic::Maths::IsUnderLine(sf::Vector2f point, sf::Vector2f lineA, sf::Vector2f lineB)

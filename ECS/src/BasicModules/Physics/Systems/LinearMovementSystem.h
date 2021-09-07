@@ -2,6 +2,7 @@
 #include "../../ECS.h"
 #include "../../Components.h"
 #include "../../Game.h"
+#include "../PhysicsEngine.h"
 
 using ECSWorld = Basic::World;
 using ECSSystem = Basic::System;
@@ -10,10 +11,9 @@ using Basic::GameObject;
 using Basic::Entity;
 
 
-class PhysicsSystem : public ECSSystem
+class LinearMovementSystem : public ECSSystem
 {
 private:
-	sf::Vector2f GravityAcceleration = sf::Vector2f(0.0f, 1000.0f);
 
 public:
 	void Init() override
@@ -26,12 +26,13 @@ public:
 	void Update(const sf::Time& deltaTime) override
 	{
 		using Basic::RigidBody;
+		using Basic::PhysicsEngine;
 
 		for (auto& gameObject : m_GameObjects)
 		{
 			auto& rigidBody = gameObject.GetComponent<RigidBody>();
 			
-			/* MOVEMENT */
+			/* LINEAR MOVEMENT */
 
 			// update acceleration
 			if(!rigidBody.FreezeXAxisMovement)
@@ -46,18 +47,30 @@ public:
 			if (rigidBody.UseGravity)
 			{
 				if (!rigidBody.FreezeXAxisMovement)
-					resultantAcceleration.x += GravityAcceleration.x;
+					resultantAcceleration.x += PhysicsEngine::GravityAccelerationValue() * 
+					PhysicsEngine::GravityAccelerationDirection().x;
 
 				if (!rigidBody.FreezeYAxisMovement)
-					resultantAcceleration.y += GravityAcceleration.y;
+					resultantAcceleration.y += PhysicsEngine::GravityAccelerationValue() * 
+					PhysicsEngine::GravityAccelerationDirection().y;
 			}
 
 			// update velocity
+				// acceleration
 			if (!rigidBody.FreezeXAxisMovement)
 				rigidBody.Velocity.x += resultantAcceleration.x * deltaTime.asSeconds();
 
 			if (!rigidBody.FreezeYAxisMovement)
 				rigidBody.Velocity.y += resultantAcceleration.y * deltaTime.asSeconds();
+				// impulse
+			if (!rigidBody.FreezeXAxisMovement)
+				rigidBody.Velocity.x += rigidBody.Impulse.x * deltaTime.asSeconds() / rigidBody.Mass;
+
+			if (!rigidBody.FreezeYAxisMovement)
+				rigidBody.Velocity.y += rigidBody.Impulse.y * deltaTime.asSeconds() / rigidBody.Mass;
+
+			// delete impulse after frame
+			rigidBody.Impulse = sf::Vector2f();
 
 			// move rigidBody
 			if (!rigidBody.FreezeXAxisMovement)
@@ -65,11 +78,6 @@ public:
 
 			if (!rigidBody.FreezeYAxisMovement)
 				gameObject.GetTransform().move(0.0f, rigidBody.Velocity.y * deltaTime.asSeconds());
-
-			/* ROTATION */
-
-			// rotate
-			gameObject.GetTransform().rotate(rigidBody.AngleVelocity * 180.0f / 3.14159265f * deltaTime.asSeconds());
 		}
 	}
 };

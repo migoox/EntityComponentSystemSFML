@@ -168,3 +168,8 @@ sf::Vector2f Basic::PlaneCollider::FindFurthestPointInDirection(const Transform&
 	else
 		return bPoint;
 }
+
+float Basic::PlaneCollider::GetLongestDistanceFromCentroid() const
+{
+	return m_Distance / 2.0f;
+}

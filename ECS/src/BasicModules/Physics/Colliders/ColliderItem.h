@@ -139,6 +139,8 @@ namespace Basic {
 
 		virtual sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const = 0;
 
+		virtual float GetLongestDistanceFromCentroid() const = 0;
+
 		virtual CollisionManifold TestCollision(
 			const Transform& transform,
 			const ColliderItem* circleCollider,

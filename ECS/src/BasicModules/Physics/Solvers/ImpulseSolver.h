@@ -8,8 +8,6 @@
 // maths
 #include "../../Maths/Maths.h"
 
-#include <iostream>
-
 namespace Basic {
 	class ImpulseSolver : public Solver
 	{
@@ -115,6 +113,9 @@ namespace Basic {
 					bouncinessFactor = (matB.Bounciness + 1.0f) / 2.0f;
 				}
 				
+				if (bouncinessFactor > 1.0f)
+					bouncinessFactor = 1.0f;
+
 				// 4. Count impulse parameter
 				float j = -(1.0f + bouncinessFactor) * Dot(vAB1, n);
 				float denominator = 0.0f;

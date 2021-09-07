@@ -99,6 +99,8 @@
     <ClCompile Include="src\BasicModules\Physics\Colliders\PolygonCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\Colliders\RectangleCollider.cpp" />
     <ClCompile Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.cpp" />
+    <ClCompile Include="src\BasicModules\Physics\PhysicsEngine.cpp" />
+    <ClCompile Include="src\BasicModules\Physics\Systems\RotationalMovementSystem.h" />
     <ClCompile Include="src\BasicModules\Rendering\Shapes\BoxShape.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\Shapes\CircleShape.cpp" />
     <ClCompile Include="src\BasicModules\Rendering\Shapes\LineShape.cpp" />
@@ -120,14 +122,16 @@
     <ClInclude Include="src\BasicModules\Physics\Colliders\PolygonCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\RectangleCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Components\PhysicMaterial.h" />
+    <ClInclude Include="src\BasicModules\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\ImpulseSolver.h" />
     <ClInclude Include="src\BasicModules\Physics\Colliders\PlaneCollider.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\PositionSolver.h" />
     <ClInclude Include="src\BasicModules\Physics\Solvers\Solver.h" />
     <ClInclude Include="src\BasicModules\Physics\CollisionDetectionAlgorithms.h" />
     <ClInclude Include="src\BasicModules\Physics\Systems\CollisionSystem.h" />
-    <ClInclude Include="src\BasicModules\Physics\Systems\PhysicsSystem.h" />
-    <ClInclude Include="src\BasicModules\Physics\Systems\TopViewFrictionSystem.h" />
+    <ClInclude Include="src\BasicModules\Physics\Systems\LinearMovementSystem.h" />
+    <ClInclude Include="src\BasicModules\Physics\Systems\LinearFrictionSystem.h" />
+    <ClInclude Include="src\BasicModules\Physics\Systems\RotationalFrictionSystem.h" />
     <ClInclude Include="src\BasicModules\Rendering\Components\Shape.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\BoxShape.h" />
     <ClInclude Include="src\BasicModules\Rendering\Shapes\LineShape.h" />

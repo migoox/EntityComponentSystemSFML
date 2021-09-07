@@ -43,6 +43,8 @@ namespace Basic {
 
 		sf::Vector2f FindFurthestPointInDirection(const Transform& transform, sf::Vector2f direction) const override;
 
+		float GetLongestDistanceFromCentroid() const;
+
 		// collision tests
 		CollisionManifold TestCollision(
 			const Transform& transform,
